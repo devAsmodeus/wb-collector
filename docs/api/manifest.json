@@ -1,0 +1,70 @@
+{
+  "fetched_at": "2026-03-15T20:55:29Z",
+  "files": [
+    {
+      "file": "01-general.yaml",
+      "sha256": "d7beb4673971fc94b6eaf388f703fbdcf0d86993b4c5307566f2286c9ed9953d",
+      "size": 50590
+    },
+    {
+      "file": "02-products.yaml",
+      "sha256": "c9b2bef87951543c94264494108b563d459b643d209c673ab34e5225d31f8511",
+      "size": 329678
+    },
+    {
+      "file": "03-orders-fbs.yaml",
+      "sha256": "909df29338c364b70a7c98d6bf997870aa19782d94a2cdd9117f34f0b4e95235",
+      "size": 159508
+    },
+    {
+      "file": "04-orders-dbw.yaml",
+      "sha256": "3c58fe7fbc0c08779d391ecd2cf95b6c1f917ea3064ac0302577d272069691e4",
+      "size": 86002
+    },
+    {
+      "file": "05-orders-dbs.yaml",
+      "sha256": "39aaffabdbda5297787562810a38868e65a4d6faa625f21de9573a6549ac6547",
+      "size": 134706
+    },
+    {
+      "file": "06-in-store-pickup.yaml",
+      "sha256": "fdc4912aea01a045b3fb96e4df1c7335abd93cbf9d8158489a5a6496326fece4",
+      "size": 97224
+    },
+    {
+      "file": "07-orders-fbw.yaml",
+      "sha256": "b1cee39bb9f6ec1f3c51789231aa0f8c66be2a2fe580c96510d75e7da57d9ce5",
+      "size": 46171
+    },
+    {
+      "file": "08-promotion.yaml",
+      "sha256": "0dabe4309363055ed0977b592acc122f9dee788da5e0233d43c4124664e80766",
+      "size": 227386
+    },
+    {
+      "file": "09-communications.yaml",
+      "sha256": "b192d9af1efc894f6c2ba0a5589618cfd04f7bda047399df51368e3aae0013af",
+      "size": 176265
+    },
+    {
+      "file": "10-tariffs.yaml",
+      "sha256": "71b2a6a704bfc0a66e4061034f7c8baf15e98740c52de3fd544d6555b61d7190",
+      "size": 41966
+    },
+    {
+      "file": "11-analytics.yaml",
+      "sha256": "ad08aeb4bad4220ac78390f33de7a1d9e8aa1d5dbcef2b829cdcf0282a1a134f",
+      "size": 238354
+    },
+    {
+      "file": "12-reports.yaml",
+      "sha256": "ddfac5d234e8aa65341dc27461a463939fa3a63d68cf5cbae3caa9d9fc490f2c",
+      "size": 153922
+    },
+    {
+      "file": "13-finances.yaml",
+      "sha256": "f219f95f1c16de757304f0bd9eb4c7aff19e8e14d437169355dcfc059ce31d2f",
+      "size": 46703
+    }
+  ]
+}

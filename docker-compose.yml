@@ -68,6 +68,11 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "celery", "-A", "src.tasks.celery_app", "inspect", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
 
   celery_beat:
@@ -85,6 +90,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    healthcheck:
+      disable: true
     restart: unless-stopped
 
   # ─── Nginx ───────────────────────────────────────────────────────────────────
@@ -93,7 +100,7 @@ services:
     image: nginx:alpine
     container_name: wb_nginx
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
@@ -124,7 +131,7 @@ services:
       - "3100:3100"
     volumes:
       - ./monitoring/loki-config.yml:/etc/loki/loki-config.yml:ro
-      - loki_data:/tmp/loki
+      - loki_data:/loki
     command: -config.file=/etc/loki/loki-config.yml
     restart: unless-stopped
 

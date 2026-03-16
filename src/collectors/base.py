@@ -63,6 +63,7 @@ class WBApiClient:
         *,
         params: dict | None = None,
         json: Any = None,
+        body: Any = None,
     ) -> Any:
         """Выполняет запрос с ретраями."""
         last_exc = None
@@ -106,3 +107,9 @@ class WBApiClient:
 
     async def put(self, path: str, json: Any = None) -> Any:
         return await self._request("PUT", path, json=json)
+
+    async def patch(self, path: str, json: Any = None) -> Any:
+        return await self._request("PATCH", path, json=json)
+
+    async def delete(self, path: str, json: Any = None, params: dict | None = None) -> Any:
+        return await self._request("DELETE", path, json=json, params=params)

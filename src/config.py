@@ -9,7 +9,16 @@ class Settings(BaseSettings):
 
     # WB API
     WB_API_TOKEN: str = ""
-    WB_API_BASE_URL: str = "https://suppliers-api.wildberries.ru"
+
+    # Базовые хосты (у WB разные хосты для разных разделов)
+    WB_API_BASE_URL: str = "https://common-api.wildberries.ru"
+    WB_PRICES_URL: str = "https://discounts-prices-api.wildberries.ru"
+    WB_CONTENT_URL: str = "https://content-api.wildberries.ru"
+    WB_STATS_URL: str = "https://statistics-api.wildberries.ru"
+    WB_ANALYTICS_URL: str = "https://seller-analytics-api.wildberries.ru"
+    WB_FINANCE_URL: str = "https://finance-api.wildberries.ru"
+    WB_MARKETPLACE_URL: str = "https://marketplace-api.wildberries.ru"
+    WB_ADVERT_URL: str = "https://advert-api.wildberries.ru"
 
     # PostgreSQL
     DB_HOST: str = "localhost"

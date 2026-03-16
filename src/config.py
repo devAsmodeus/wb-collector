@@ -7,8 +7,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     MODE: Literal["TEST", "LOCAL", "DEV", "PROD"] = "LOCAL"
 
-    # WB API
-    WB_API_TOKEN: str = ""
+    # WB API токены
+    WB_API_TOKEN: str = ""          # Базовый / персональный токен (основной)
+    WB_PERSONAL_TOKEN: str = ""     # Персональный токен (для управления пользователями)
+
+    @property
+    def wb_user_mgmt_token(self) -> str:
+        """Токен для управления пользователями: персональный если задан, иначе основной."""
+        return self.WB_PERSONAL_TOKEN or self.WB_API_TOKEN
 
     # Базовые хосты (у WB разные хосты для разных разделов)
     WB_API_BASE_URL: str = "https://common-api.wildberries.ru"

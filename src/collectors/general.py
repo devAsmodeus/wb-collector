@@ -22,8 +22,11 @@ from src.schemas.seller import (
 class GeneralCollector:
     def __init__(self):
         self._client = WBApiClient(base_url=settings.WB_API_BASE_URL)
-        # Управление пользователями — отдельный хост
-        self._user_client = WBApiClient(base_url=settings.WB_USER_MGMT_URL)
+        # Управление пользователями — отдельный хост + персональный токен если задан
+        self._user_client = WBApiClient(
+            base_url=settings.WB_USER_MGMT_URL,
+            token=settings.wb_user_mgmt_token,
+        )
 
     async def __aenter__(self):
         await self._client.__aenter__()

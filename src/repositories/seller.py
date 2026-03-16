@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import insert
 from src.models.seller import SellerOrm
 from src.repositories.base import BaseRepository
 from src.repositories.mappers.mappers import SellerMapper
-from src.schemas.seller import SellerInfo
+from src.schemas.general.seller import SellerInfo
 
 
 class SellerRepository(BaseRepository):

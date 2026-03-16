@@ -33,9 +33,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Роутеры подключаются здесь по мере разработки
-# from src.api.goods import router as router_goods
-# app.include_router(router_goods)
+from src.api.general import router as router_general
+app.include_router(router_general)
 
 
 @app.get("/docs", include_in_schema=False)

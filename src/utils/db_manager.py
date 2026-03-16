@@ -8,9 +8,8 @@ class DBManager:
     async def __aenter__(self):
         self.session = self.session_factory()
 
-        # Репозитории подключаются здесь по мере разработки:
-        # from src.repositories.goods import GoodsRepository
-        # self.goods = GoodsRepository(self.session)
+        from src.repositories.seller import SellerRepository
+        self.seller = SellerRepository(self.session)
 
         return self
 

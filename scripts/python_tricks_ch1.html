@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Tricks — Глава 1</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3250;
+    --accent: #5c6bc0;
+    --accent2: #7986cb;
+    --green: #66bb6a;
+    --red: #ef5350;
+    --yellow: #ffa726;
+    --text: #e8eaf6;
+    --text2: #9fa8da;
+    --code-bg: #12151f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* ─── Hero ─── */
+  .hero {
+    background: linear-gradient(135deg, #1a1d27 0%, #0d1033 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 50px;
+    text-align: center;
+  }
+  .hero .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .hero p {
+    color: var(--text2);
+    font-size: 16px;
+  }
+
+  /* ─── Layout ─── */
+  .layout {
+    display: flex;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    gap: 30px;
+  }
+
+  /* ─── Sidebar ─── */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 20px;
+    align-self: flex-start;
+  }
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 12px;
+    padding-left: 12px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text2);
+    font-size: 14px;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+    text-decoration: none;
+  }
+  .nav-item:hover { background: var(--surface); color: var(--text); }
+  .nav-item.active {
+    background: var(--surface2);
+    color: #fff;
+    border-color: var(--border);
+  }
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-item .count {
+    margin-left: auto;
+    font-size: 11px;
+    background: var(--accent);
+    color: #fff;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  /* ─── Content ─── */
+  .content { flex: 1; min-width: 0; }
+
+  .section {
+    display: none;
+    animation: fadeIn 0.2s ease;
+  }
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    margin-bottom: 32px;
+  }
+  .section-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .section-header p {
+    color: var(--text2);
+    font-size: 15px;
+  }
+
+  /* ─── Cards ─── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .card-tag {
+    font-size: 11px;
+    padding: 2px 9px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin-left: auto;
+  }
+  .tag-good  { background: rgba(102,187,106,0.15); color: var(--green); }
+  .tag-bad   { background: rgba(239,83,80,0.15);   color: var(--red); }
+  .tag-tip   { background: rgba(92,107,192,0.15);  color: var(--accent2); }
+  .tag-warn  { background: rgba(255,167,38,0.15);  color: var(--yellow); }
+
+  .card-body { padding: 20px; }
+
+  /* ─── Compare ─── */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .compare-box {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .compare-label {
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .label-bad  { background: rgba(239,83,80,0.12);  color: var(--red); }
+  .label-good { background: rgba(102,187,106,0.12); color: var(--green); }
+
+  /* ─── Code ─── */
+  pre {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+  pre code {
+    font-size: 13.5px !important;
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace !important;
+    padding: 16px 20px !important;
+    display: block;
+    line-height: 1.6 !important;
+    background: var(--code-bg) !important;
+  }
+
+  /* ─── Output ─── */
+  .output {
+    background: #080b14;
+    border-top: 1px solid var(--border);
+    padding: 14px 20px;
+  }
+  .output-label {
+    font-size: 11px;
+    color: var(--text2);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .output-label::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+  .output pre {
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 13px;
+    color: #a8ffb0;
+    white-space: pre-wrap;
+  }
+
+  /* ─── Alert ─── */
+  .alert {
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .alert-warn { background: rgba(255,167,38,0.1); border: 1px solid rgba(255,167,38,0.3); color: var(--yellow); }
+  .alert-info { background: rgba(92,107,192,0.1); border: 1px solid rgba(92,107,192,0.3); color: var(--accent2); }
+  .alert-good { background: rgba(102,187,106,0.1); border: 1px solid rgba(102,187,106,0.3); color: var(--green); }
+  .alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ─── Table ─── */
+  .ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+  .ref-table th {
+    background: var(--surface2);
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+  .ref-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .ref-table tr:last-child td { border-bottom: none; }
+  .ref-table tr:hover td { background: var(--surface); }
+  .ref-table code {
+    font-family: 'Cascadia Code', monospace;
+    background: var(--code-bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--accent2);
+  }
+
+  /* ─── Summary ─── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .summary-card .num {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent2);
+    margin-bottom: 4px;
+  }
+  .summary-card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .summary-card p {
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .zen-box {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    font-family: 'Cascadia Code', monospace;
+    font-size: 13px;
+    line-height: 2;
+    color: var(--text2);
+    margin-bottom: 24px;
+  }
+  .zen-box span { color: var(--accent2); }
+
+  @media (max-width: 900px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; position: static; }
+    .compare { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="badge">Python Tricks · Дэн Бейдер</div>
+  <h1>Глава 1 — Паттерны чистого Python</h1>
+  <p>Идиомы и соглашения, которые делают код питоническим</p>
+</div>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Темы</div>
+    <a class="nav-item active" onclick="show('assert')">
+      <span class="icon">🔒</span> Assert
+      <span class="count">1</span>
+    </a>
+    <a class="nav-item" onclick="show('commas')">
+      <span class="icon">✏️</span> Запятые
+      <span class="count">2</span>
+    </a>
+    <a class="nav-item" onclick="show('context')">
+      <span class="icon">📦</span> Context Managers
+      <span class="count">3</span>
+    </a>
+    <a class="nav-item" onclick="show('underscore')">
+      <span class="icon">_</span> Подчёркивания
+      <span class="count">4</span>
+    </a>
+    <a class="nav-item" onclick="show('strings')">
+      <span class="icon">💬</span> Строки
+      <span class="count">5</span>
+    </a>
+    <a class="nav-item" onclick="show('summary')">
+      <span class="icon">📚</span> Итог
+    </a>
+  </aside>
+
+  <!-- Content -->
+  <main class="content">
+
+    <!-- ══ 1. ASSERT ══ -->
+    <div class="section active" id="assert">
+      <div class="section-header">
+        <h2>🔒 Assert — Утверждения</h2>
+        <p>Инструмент для проверки инвариантов, а не обработки ошибок</p>
+      </div>
+
+      <div class="alert alert-info">
+        <span class="alert-icon">💡</span>
+        <div><strong>Инвариант</strong> — условие, которое <em>всегда</em> должно быть истинным. Если оно нарушено — это баг в программе, а не ошибка пользователя.</div>
+      </div>
+
+      <div class="compare">
+        <div class="compare-box">
+          <div class="compare-label label-bad">❌ Неправильно</div>
+          <pre><code class="language-python">def delete_user(user_id):
+    # Нельзя — assert можно отключить!
+    assert user_id > 0, "ID > 0"
+    db.delete(user_id)</code></pre>
+        </div>
+        <div class="compare-box">
+          <div class="compare-label label-good">✅ Правильно</div>
+          <pre><code class="language-python">def delete_user(user_id):
+    # Для внешних данных — ValueError
+    if user_id <= 0:
+        raise ValueError("ID > 0")
+    db.delete(user_id)</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Пример — проверка скидки</h3>
+          <span class="card-tag tag-good">✅ Правильное использование</span>
+        </div>
+        <pre><code class="language-python">def apply_discount(price, discount):
+    # Скидка — внутренний параметр.
+    # Значение вне [0, 1] — это баг в коде, не ввод пользователя.
+    assert 0 <= discount <= 1, f"Скидка должна быть от 0 до 1, получено: {discount}"
+    return price * (1 - discount)
+
+print(apply_discount(1000, 0.2))   # → 800.0
+print(apply_discount(500, 0.5))    # → 250.0
+print(apply_discount(100, 1.5))    # → AssertionError: Скидка должна быть от 0 до 1</code></pre>
+        <div class="output">
+          <div class="output-label">Вывод</div>
+          <pre>800.0
+250.0
+AssertionError: Скидка должна быть от 0 до 1, получено: 1.5</pre>
+        </div>
+      </div>
+
+      <div class="alert alert-warn">
+        <span class="alert-icon">⚠️</span>
+        <div><strong>Главная ловушка:</strong> Python позволяет отключить все assert одним флагом:<br>
+        <code style="font-family:monospace; color:#ffa726;">python -O script.py</code><br>
+        Никогда не используй assert для валидации пользовательского ввода, данных из БД или внешних API.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Assert с кортежем — классический баг</h3>
+          <span class="card-tag tag-warn">⚠️ Ловушка</span>
+        </div>
+        <pre><code class="language-python"># ВСЕГДА True! Кортеж непустой → True
+assert(1 == 2, "Это должно упасть")   # ← НЕ упадёт!
+
+# Правильно — без скобок:
+assert 1 == 2, "Это упадёт"           # ← AssertionError</code></pre>
+        <div class="output">
+          <div class="output-label">Вывод</div>
+          <pre># Первая строка не бросает исключение (кортеж всегда True)
+# Вторая строка: AssertionError: Это упадёт</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 2. ЗАПЯТЫЕ ══ -->
+    <div class="section" id="commas">
+      <div class="section-header">
+        <h2>✏️ Висящие запятые</h2>
+        <p>Маленькое соглашение, которое предотвращает незаметные баги</p>
+      </div>
+
+      <div class="compare">
+        <div class="compare-box">
+          <div class="compare-label label-bad">❌ Баг</div>
+          <pre><code class="language-python">names = ['Иван',
+         'Мария'   # ← нет запятой!
+         'Сергей']
+
+print(names)
+# ['Иван', 'МарияСергей']
+# Python склеил строки!</code></pre>
+        </div>
+        <div class="compare-box">
+          <div class="compare-label label-good">✅ Правильно</div>
+          <pre><code class="language-python">names = [
+    'Иван',
+    'Мария',
+    'Сергей',    # ← висящая запятая
+]
+
+print(names)
+# ['Иван', 'Мария', 'Сергей']</code></pre>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <span class="alert-icon">💡</span>
+        <div>Python автоматически склеивает строковые литералы стоящие рядом: <code style="font-family:monospace">'Мария' 'Сергей'</code> → <code style="font-family:monospace">'МарияСергей'</code>. Это фича для длинных строк, но ловушка в списках.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Работает везде: dict, tuple, аргументы функций</h3>
+          <span class="card-tag tag-tip">Хорошая практика</span>
+        </div>
+        <pre><code class="language-python"># Словарь
+user = {
+    'name': 'Иван',
+    'email': 'ivan@example.com',
+    'role': 'admin',      # ← можно добавить новый ключ без правки предыдущей строки
+}
+
+# Аргументы функции
+def create_user(
+    name: str,
+    email: str,
+    role: str = 'user',   # ← висящая запятая
+) -> dict:
+    return {'name': name, 'email': email, 'role': role}
+
+# Вызов функции
+result = create_user(
+    name='Иван',
+    email='ivan@example.com',
+    role='admin',         # ← можно добавить kwarg в конец
+)</code></pre>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Git diff без лишних изменений</h3>
+          <span class="card-tag tag-good">Бонус</span>
+        </div>
+        <pre><code class="language-python"># Без висящей запятой — при добавлении элемента меняются 2 строки:
+# -    'Сергей'
+# +    'Сергей',
+# +    'Алексей'
+
+# С висящей запятой — меняется только 1 строка:
+# +    'Алексей',
+</code></pre>
+      </div>
+    </div>
+
+    <!-- ══ 3. CONTEXT MANAGERS ══ -->
+    <div class="section" id="context">
+      <div class="section-header">
+        <h2>📦 Context Managers</h2>
+        <p>Паттерн «открыть → использовать → закрыть» гарантированно</p>
+      </div>
+
+      <div class="compare">
+        <div class="compare-box">
+          <div class="compare-label label-bad">❌ Утечка ресурса</div>
+          <pre><code class="language-python">f = open('data.txt', 'r')
+data = f.read()  # исключение здесь?
+f.close()        # тогда не выполнится!</code></pre>
+        </div>
+        <div class="compare-box">
+          <div class="compare-label label-good">✅ Гарантированное закрытие</div>
+          <pre><code class="language-python">with open('data.txt', 'r') as f:
+    data = f.read()
+# f.close() — вызовется всегда</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Как работает изнутри — магические методы</h3>
+          <span class="card-tag tag-tip">Механика</span>
+        </div>
+        <pre><code class="language-python">class ManagedFile:
+    def __init__(self, name: str):
+        self.name = name
+
+    def __enter__(self):
+        """Вызывается при входе в блок with. Возвращает объект после 'as'."""
+        print(f"Открываю {self.name}")
+        self.file = open(self.name, 'r')
+        return self.file
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Вызывается при выходе из with — всегда, даже при исключении."""
+        print(f"Закрываю {self.name}")
+        self.file.close()
+        return False   # False = не подавлять исключения
+
+# Использование:
+with ManagedFile('data.txt') as f:
+    content = f.read()</code></pre>
+        <div class="output">
+          <div class="output-label">Вывод</div>
+          <pre>Открываю data.txt
+Закрываю data.txt</pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Проще — декоратор @contextmanager</h3>
+          <span class="card-tag tag-good">Рекомендуется</span>
+        </div>
+        <pre><code class="language-python">from contextlib import contextmanager
+import time
+
+@contextmanager
+def timer(label: str):
+    """Замеряет время выполнения блока."""
+    start = time.monotonic()
+    print(f"⏱ {label} — старт")
+    try:
+        yield          # всё до yield = __enter__
+    finally:
+        elapsed = time.monotonic() - start
+        print(f"⏱ {label} — {elapsed:.3f} сек")  # finally = __exit__
+
+# Использование:
+with timer("Загрузка данных"):
+    time.sleep(0.5)
+    data = [i ** 2 for i in range(100000)]</code></pre>
+        <div class="output">
+          <div class="output-label">Вывод</div>
+          <pre>⏱ Загрузка данных — старт
+⏱ Загрузка данных — 0.512 сек</pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Реальный пример — подключение к БД</h3>
+          <span class="card-tag tag-tip">Практика</span>
+        </div>
+        <pre><code class="language-python">from contextlib import contextmanager
+
+@contextmanager
+def db_transaction(connection):
+    """Автоматический commit или rollback."""
+    try:
+        yield connection
+        connection.commit()
+        print("✅ Транзакция зафиксирована")
+    except Exception as e:
+        connection.rollback()
+        print(f"❌ Откат транзакции: {e}")
+        raise
+
+with db_transaction(conn) as db:
+    db.execute("INSERT INTO users VALUES (?)", (1, "Иван"))</code></pre>
+      </div>
+    </div>
+
+    <!-- ══ 4. ПОДЧЁРКИВАНИЯ ══ -->
+    <div class="section" id="underscore">
+      <div class="section-header">
+        <h2>_ Подчёркивания и дандеры</h2>
+        <p>Соглашения об именовании — 5 видов, каждый со своим смыслом</p>
+      </div>
+
+      <table class="ref-table">
+        <thead>
+          <tr>
+            <th>Вид</th>
+            <th>Название</th>
+            <th>Смысл</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>_var</code></td>
+            <td>Внутренний</td>
+            <td>«Не трогай снаружи». Не экспортируется через <code>import *</code></td>
+          </tr>
+          <tr>
+            <td><code>__var</code></td>
+            <td>Приватный (mangling)</td>
+            <td>Python переименует в <code>_ClassName__var</code>. Реально скрыт.</td>
+          </tr>
+          <tr>
+            <td><code>__var__</code></td>
+            <td>Дандер (dunder)</td>
+            <td>Магические методы Python. Не создавай свои!</td>
+          </tr>
+          <tr>
+            <td><code>var_</code></td>
+            <td>Без конфликта</td>
+            <td>Избегаем совпадения с ключевым словом: <code>class_</code>, <code>type_</code></td>
+          </tr>
+          <tr>
+            <td><code>_</code></td>
+            <td>Одноразовый</td>
+            <td>Значение не нужно. Также — последнее значение в интерпретаторе.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>_var — одно подчёркивание</h3>
+          <span class="card-tag tag-tip">Соглашение</span>
+        </div>
+        <pre><code class="language-python">class BankAccount:
+    def __init__(self, owner, balance):
+        self.owner = owner      # публичный — используй смело
+        self._balance = balance  # внутренний — лучше не трогать напрямую
+
+    def deposit(self, amount):
+        self._balance += amount
+
+    def get_balance(self):
+        return self._balance
+
+account = BankAccount("Иван", 1000)
+print(account.owner)      # → 'Иван'  ✓
+print(account._balance)   # → 1000   (работает, но нарушает соглашение!)</code></pre>
+        <div class="output">
+          <div class="output-label">Вывод</div>
+          <pre>Иван
+1000</pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>__var — name mangling</h3>
+          <span class="card-tag tag-warn">Сильная защита</span>
+        </div>
+        <pre><code class="language-python">class SecureVault:
+    def __init__(self, secret):
+        self.__secret = secret    # Python переименует в _SecureVault__secret
+
+    def reveal(self):
+        return self.__secret      # внутри класса работает как обычно
+
+vault = SecureVault("abc123")
+print(vault.reveal())            # → 'abc123'  ✓
+
+# Прямой доступ снаружи:
+# vault.__secret                 → AttributeError!
+# vault._SecureVault__secret     → 'abc123' (обходной путь)
+
+# Зачем это нужно? Защита при наследовании:
+class EvilVault(SecureVault):
+    def __init__(self):
+        self.__secret = "взломан"   # → _EvilVault__secret (другое имя!)
+        super().__init__("original")
+
+ev = EvilVault()
+print(ev.reveal())  # → 'original' (не перезаписано!)</code></pre>
+        <div class="output">
+          <div class="output-label">Вывод</div>
+          <pre>abc123
+original</pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>_ — одноразовая переменная</h3>
+          <span class="card-tag tag-good">Чистый код</span>
+        </div>
+        <pre><code class="language-python"># Цикл без счётчика
+for _ in range(5):
+    print("Привет!")    # выведет 5 раз
+
+# Распаковка — нужны только первый и последний
+first, *_, last = [1, 2, 3, 4, 5]
+print(first, last)      # → 1 5
+
+# Координаты — нужны только x и z
+x, _, z = get_coordinates()
+
+# В интерпретаторе _ = предыдущий результат
+# >>> 2 + 2
+# 4
+# >>> _ * 3
+# 12</code></pre>
+        <div class="output">
+          <div class="output-label">Вывод</div>
+          <pre>Привет!  (× 5)
+1 5</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 5. СТРОКИ ══ -->
+    <div class="section" id="strings">
+      <div class="section-header">
+        <h2>💬 Форматирование строк</h2>
+        <p>Четыре способа — когда какой использовать</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Все четыре способа</h3>
+        </div>
+        <pre><code class="language-python">name = "Боб"
+age  = 30
+
+# 1. %-форматирование (старый C-стиль, Python 2)
+result = "Привет %s, тебе %d лет" % (name, age)
+
+# 2. str.format() (Python 2.7+)
+result = "Привет {}, тебе {} лет".format(name, age)
+result = "Привет {name}, тебе {age} лет".format(name=name, age=age)
+
+# 3. f-строки (Python 3.6+) ← ИСПОЛЬЗУЙ ЭТО
+result = f"Привет {name}, тебе {age} лет"
+result = f"Через 10 лет: {age + 10}"   # можно выражения!
+
+# 4. Template (для пользовательских шаблонов)
+from string import Template
+t = Template("Привет $name, тебе $age лет")
+result = t.substitute(name=name, age=age)
+result = t.safe_substitute(name=name)   # не бросает при отсутствии переменной</code></pre>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Суперсилы f-строк</h3>
+          <span class="card-tag tag-good">Python 3.6+</span>
+        </div>
+        <pre><code class="language-python">price = 1_234_567.89
+pi    = 3.14159265
+name  = "Python"
+x     = 42
+
+# Форматирование чисел
+print(f"{price:,.2f}")      # → 1,234,567.89
+print(f"{pi:.4f}")          # → 3.1416
+print(f"{42:08b}")          # → 00101010  (двоичное, 8 знаков)
+print(f"{0.75:.1%}")        # → 75.0%
+
+# Выравнивание текста
+print(f"|{'влево':<12}|")   # → |влево       |
+print(f"|{'центр':^12}|")   # → |   центр    |
+print(f"|{'вправо':>12}|")  # → |      вправо|
+
+# Отладка (Python 3.8+) — самое удобное!
+print(f"{x = }")            # → x = 42
+print(f"{price = :,.0f}")   # → price = 1,234,568</code></pre>
+        <div class="output">
+          <div class="output-label">Вывод</div>
+          <pre>1,234,567.89
+3.1416
+00101010
+75.0%
+|влево       |
+|   центр    |
+|      вправо|
+x = 42
+price = 1,234,568</pre>
+        </div>
+      </div>
+
+      <div class="alert alert-warn">
+        <span class="alert-icon">⚠️</span>
+        <div>
+          <strong>f-строки выполняют код!</strong> Никогда не используй f-строки с пользовательским вводом:<br>
+          <code style="font-family:monospace; color:#ffa726;">template = input()  →  f"{template}"</code> — это уязвимость.<br>
+          Для шаблонов от пользователя используй <code style="font-family:monospace">Template.safe_substitute()</code>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Когда что использовать</h3>
+          <span class="card-tag tag-tip">Правило Бейдера</span>
+        </div>
+        <pre><code class="language-python"># f-строки — везде (по умолчанию)
+message = f"Пользователь {user.name} вошёл в {datetime.now():%H:%M}"
+
+# Template — если шаблон приходит снаружи (файл, БД, пользователь)
+email_body = Template(open('templates/email.txt').read())
+sent = email_body.safe_substitute(name=user.name, order_id=order.id)
+
+# .format() — если нужна совместимость с Python < 3.6
+# % — только в легаси-коде, новый код не пиши так</code></pre>
+      </div>
+    </div>
+
+    <!-- ══ 6. ИТОГ ══ -->
+    <div class="section" id="summary">
+      <div class="section-header">
+        <h2>📚 Итог главы</h2>
+        <p>Python Tricks — Дэн Бейдер · Глава 1</p>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="num">1</div>
+          <h4>Assert</h4>
+          <p>Только для инвариантов программы. Никогда — для валидации внешних данных. Флаг <code style="font-family:monospace">-O</code> их отключает.</p>
+        </div>
+        <div class="summary-card">
+          <div class="num">2</div>
+          <h4>Висящие запятые</h4>
+          <p>В конце последнего элемента списка, словаря, аргументов функции. Предотвращает склейку строк и упрощает git diff.</p>
+        </div>
+        <div class="summary-card">
+          <div class="num">3</div>
+          <h4>Context Managers</h4>
+          <p>Используй <code style="font-family:monospace">with</code> для всего что нужно закрыть: файлы, соединения, блокировки, транзакции.</p>
+        </div>
+        <div class="summary-card">
+          <div class="num">4</div>
+          <h4>Подчёркивания</h4>
+          <p><code style="font-family:monospace">_var</code> внутренний, <code style="font-family:monospace">__var</code> приватный, <code style="font-family:monospace">__var__</code> не трогай, <code style="font-family:monospace">_</code> одноразовый.</p>
+        </div>
+        <div class="summary-card" style="grid-column: 1/-1;">
+          <div class="num">5</div>
+          <h4>F-строки</h4>
+          <p>Используй везде начиная с Python 3.6. <code style="font-family:monospace">Template</code> — только для шаблонов от пользователя. <code style="font-family:monospace">%</code> и <code style="font-family:monospace">.format()</code> — легаси.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-bottom:16px; color: var(--text2); font-size:14px; letter-spacing:1px; text-transform:uppercase;">Дзен Python — import this</h3>
+      <div class="zen-box">
+        <span>Beautiful is better than ugly.</span><br>
+        <span>Explicit is better than implicit.</span><br>
+        Simple is better than complex.<br>
+        Complex is better than complicated.<br>
+        Flat is better than nested.<br>
+        Sparse is better than dense.<br>
+        <span>Readability counts.</span><br>
+        Special cases aren't special enough to break the rules.<br>
+        <span>Although practicality beats purity.</span><br>
+        Errors should never pass silently.<br>
+        Unless explicitly silenced.<br>
+        In the face of ambiguity, refuse the temptation to guess.<br>
+        <span>There should be one — and preferably only one — obvious way to do it.</span><br>
+        Now is better than never.<br>
+        Although never is often better than *right* now.<br>
+        <span>If the implementation is hard to explain, it's a bad idea.</span><br>
+        <span>If the implementation is easy to explain, it may be a good idea.</span><br>
+        Namespaces are one honking great idea — let's do more of those!
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  hljs.highlightAll();
+
+  function show(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.currentTarget.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

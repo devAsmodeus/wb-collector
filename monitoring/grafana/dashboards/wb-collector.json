@@ -1,0 +1,136 @@
+{
+  "title": "WB Collector",
+  "uid": "wb-collector-main",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" },
+  "tags": ["wb-collector"],
+  "panels": [
+    {
+      "id": 1,
+      "title": "HTTP Запросы к API (rps)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "rate(http_requests_total{job=\"wb-collector\"}[1m])",
+        "legendFormat": "{{method}} {{handler}} {{status_code}}"
+      }]
+    },
+    {
+      "id": 2,
+      "title": "Время ответа API (p95)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=\"wb-collector\"}[5m]))",
+        "legendFormat": "p95 {{handler}}"
+      }]
+    },
+    {
+      "id": 3,
+      "title": "WB API — Запросы по хосту",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "rate(wb_api_requests_total[1m])",
+        "legendFormat": "{{host}} {{status}}"
+      }]
+    },
+    {
+      "id": 4,
+      "title": "WB API — Время ответа (p95)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "histogram_quantile(0.95, rate(wb_api_response_seconds_bucket[5m]))",
+        "legendFormat": "p95 {{host}}"
+      }]
+    },
+    {
+      "id": 5,
+      "title": "Rate Limit Hits (429)",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 16 },
+      "options": { "colorMode": "background", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": 0 },
+              { "color": "yellow", "value": 1 },
+              { "color": "red", "value": 10 }
+            ]
+          }
+        }
+      },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "sum(increase(wb_rate_limit_hits_total[1h]))",
+        "legendFormat": "429 за час"
+      }]
+    },
+    {
+      "id": 6,
+      "title": "Ошибки WB API",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 16 },
+      "options": { "colorMode": "background", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": 0 },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        }
+      },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "sum(increase(wb_api_errors_total[1h]))",
+        "legendFormat": "Ошибок за час"
+      }]
+    },
+    {
+      "id": 7,
+      "title": "Сбор данных — запуски",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "rate(wb_collection_runs_total[5m])",
+        "legendFormat": "{{module}} {{status}}"
+      }]
+    },
+    {
+      "id": 8,
+      "title": "Собрано записей по модулям",
+      "type": "bargauge",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "increase(wb_collection_items_total[24h])",
+        "legendFormat": "{{module}}"
+      }]
+    },
+    {
+      "id": 9,
+      "title": "Логи (ERROR / WARNING)",
+      "type": "logs",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 32 },
+      "options": { "showTime": true, "showLabels": true, "wrapLogMessage": true },
+      "targets": [{
+        "datasource": "Loki",
+        "expr": "{project=\"wb-collector\", service=\"app\"} |= ``",
+        "legendFormat": ""
+      }]
+    }
+  ]
+}

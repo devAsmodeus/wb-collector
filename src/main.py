@@ -9,9 +9,15 @@ from fastapi.responses import RedirectResponse
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
+from prometheus_fastapi_instrumentator import Instrumentator
 
 sys.path.append(str(Path(__file__).parent.parent))
-logging.basicConfig(level=logging.INFO)
+
+# Настроить JSON-логирование ДО всего остального
+from src.logging_config import setup_logging
+setup_logging(level="INFO")
+
+logger = logging.getLogger(__name__)
 
 from src.init import redis_manager
 
@@ -20,9 +26,10 @@ from src.init import redis_manager
 async def lifespan(_: FastAPI):
     await redis_manager.connect()
     FastAPICache.init(RedisBackend(redis_manager.redis), prefix="wb-cache")
-    logging.info("WB Collector started")
+    logger.info("WB Collector started", extra={"event": "startup"})
     yield
     await redis_manager.close()
+    logger.info("WB Collector stopped", extra={"event": "shutdown"})
 
 
 app = FastAPI(
@@ -33,11 +40,26 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# ─── Prometheus метрики (/metrics) ───────────────────────────────────────────
+Instrumentator(
+    should_group_status_codes=False,
+    should_ignore_untemplated=True,
+    should_respect_env_var=False,
+    should_instrument_requests_inprogress=True,
+    excluded_handlers=["/metrics", "/health"],
+    inprogress_name="http_requests_inprogress",
+    inprogress_labels=True,
+).instrument(app).expose(app, endpoint="/metrics", include_in_schema=False)
+
+# ─── Роутеры ─────────────────────────────────────────────────────────────────
 from src.api.general import router as router_general
 from src.api.products import router as router_products
+
 app.include_router(router_general)   # 01 — Общее
 app.include_router(router_products)  # 02 — Работа с товарами
 
+
+# ─── Системные эндпоинты ─────────────────────────────────────────────────────
 
 @app.get("/docs", include_in_schema=False)
 async def swagger_ui():
@@ -54,9 +76,9 @@ async def root():
     return RedirectResponse(url="/docs")
 
 
-@app.get("/health")
+@app.get("/health", tags=["System"])
 async def health():
-    return {"status": "ok"}
+    return {"status": "ok", "version": "0.1.0"}
 
 
 if __name__ == "__main__":

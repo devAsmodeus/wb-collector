@@ -4,6 +4,13 @@
 
 ---
 
+## Документация
+
+- [README.md](README.md) — этот файл: архитектура, модули, установка
+- [docs/MONITORING.md](docs/MONITORING.md) — мониторинг: Grafana, Loki, Prometheus, Promtail
+
+---
+
 ## Содержание
 
 1. [Что делает проект](#что-делает-проект)

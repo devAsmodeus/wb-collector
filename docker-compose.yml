@@ -1,5 +1,7 @@
 services:
 
+  # ─── Инфраструктура ──────────────────────────────────────────────────────────
+
   postgres:
     image: postgres:16-alpine
     container_name: wb_postgres
@@ -32,11 +34,31 @@ services:
       retries: 5
     restart: unless-stopped
 
+  # ─── Приложение ──────────────────────────────────────────────────────────────
+
+  app:
+    build: .
+    container_name: wb_app
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    env_file: .env
+    labels:
+      - "com.docker.compose.project=wb-collector"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
   celery_worker:
     build: .
     container_name: wb_celery
     command: celery -A src.tasks.celery_app worker --loglevel=info --concurrency=4
     env_file: .env
+    labels:
+      - "com.docker.compose.project=wb-collector"
     depends_on:
       postgres:
         condition: service_healthy
@@ -49,6 +71,8 @@ services:
     container_name: wb_celery_beat
     command: celery -A src.tasks.celery_app beat --loglevel=info
     env_file: .env
+    labels:
+      - "com.docker.compose.project=wb-collector"
     depends_on:
       postgres:
         condition: service_healthy
@@ -56,20 +80,67 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  app:
-    build: .
-    container_name: wb_app
-    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+  # ─── Мониторинг ──────────────────────────────────────────────────────────────
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: wb_prometheus
     ports:
-      - "8000:8000"
-    env_file: .env
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=30d"
+      - "--web.enable-lifecycle"
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:latest
+    container_name: wb_loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./monitoring/loki-config.yml:/etc/loki/loki-config.yml:ro
+      - loki_data:/tmp/loki
+    command: -config.file=/etc/loki/loki-config.yml
+    restart: unless-stopped
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: wb_promtail
+    volumes:
+      - ./monitoring/promtail-config.yml:/etc/promtail/promtail-config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: -config.file=/etc/promtail/promtail-config.yml
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - loki
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: wb_grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/etc/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+      - loki
     restart: unless-stopped
 
 volumes:
   postgres_data:
   redis_data:
+  prometheus_data:
+  loki_data:
+  grafana_data:

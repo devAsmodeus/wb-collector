@@ -1,0 +1,52 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+        filters:
+          # Собираем логи только из нашего проекта
+          - name: label
+            values: ["com.docker.compose.project=wb-collector"]
+
+    relabel_configs:
+      # Лейбл: имя контейнера
+      - source_labels: [__meta_docker_container_name]
+        regex: /(.*)
+        target_label: container
+
+      # Лейбл: имя сервиса (app, celery_worker и т.д.)
+      - source_labels: [__meta_docker_container_label_com_docker_compose_service]
+        target_label: service
+
+      # Лейбл: название compose-проекта
+      - source_labels: [__meta_docker_container_label_com_docker_compose_project]
+        target_label: project
+
+    pipeline_stages:
+      # Парсим JSON-логи из stdout (то что пишет наш FastAPI)
+      - json:
+          expressions:
+            level: level
+            logger: logger
+            message: message
+            timestamp: timestamp
+
+      # Добавляем уровень лога как лейбл (для фильтрации в Grafana)
+      - labels:
+          level:
+          logger:
+
+      # Устанавливаем время из поля timestamp
+      - timestamp:
+          source: timestamp
+          format: "2006-01-02T15:04:05"

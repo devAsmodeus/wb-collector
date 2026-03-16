@@ -7,6 +7,7 @@
 """
 import asyncio
 import logging
+import time
 from typing import Any
 
 import httpx
@@ -17,6 +18,7 @@ from src.exceptions import (
     WBApiRateLimitException,
     WBApiUnauthorizedException,
 )
+from src.metrics import WB_API_REQUESTS, WB_API_ERRORS, WB_API_RESPONSE_TIME, WB_RATE_LIMIT_HITS
 
 logger = logging.getLogger(__name__)
 
@@ -68,31 +70,47 @@ class WBApiClient:
         """Выполняет запрос с ретраями."""
         last_exc = None
 
+        host = self.base_url.replace("https://", "").replace("http://", "")
+
         for attempt in range(1, RETRY_COUNT + 1):
+            t_start = time.monotonic()
             try:
                 response = await self._client.request(
                     method, path, params=params, json=json
                 )
+                duration = time.monotonic() - t_start
+                WB_API_RESPONSE_TIME.labels(host=host, endpoint=path).observe(duration)
 
                 if response.status_code == 200:
+                    WB_API_REQUESTS.labels(host=host, method=method, status="200").inc()
                     return response.json()
 
                 if response.status_code == 401:
+                    WB_API_ERRORS.labels(host=host, error_type="unauthorized").inc()
+                    WB_API_REQUESTS.labels(host=host, method=method, status="401").inc()
                     raise WBApiUnauthorizedException(401, "Неверный или просроченный токен")
 
                 if response.status_code == 429:
-                    logger.warning(f"Rate limit (попытка {attempt}), ждём {RATE_LIMIT_DELAY}с...")
+                    WB_RATE_LIMIT_HITS.labels(host=host).inc()
+                    WB_API_ERRORS.labels(host=host, error_type="rate_limit").inc()
+                    logger.warning(f"Rate limit (попытка {attempt}), ждём {RATE_LIMIT_DELAY}с...",
+                                   extra={"host": host, "path": path})
                     await asyncio.sleep(RATE_LIMIT_DELAY)
                     last_exc = WBApiRateLimitException(429, "Rate limit exceeded")
                     continue
 
                 # Другие ошибки
                 body = response.text[:200]
-                logger.error(f"WB API {response.status_code}: {path} — {body}")
+                WB_API_REQUESTS.labels(host=host, method=method, status=str(response.status_code)).inc()
+                WB_API_ERRORS.labels(host=host, error_type="server_error").inc()
+                logger.error(f"WB API {response.status_code}: {path} — {body}",
+                             extra={"host": host, "status": response.status_code})
                 raise WBApiException(response.status_code, body)
 
             except (httpx.TimeoutException, httpx.ConnectError) as e:
-                logger.warning(f"Сетевая ошибка (попытка {attempt}/{RETRY_COUNT}): {e}")
+                WB_API_ERRORS.labels(host=host, error_type="timeout").inc()
+                logger.warning(f"Сетевая ошибка (попытка {attempt}/{RETRY_COUNT}): {e}",
+                               extra={"host": host, "path": path})
                 last_exc = e
                 if attempt < RETRY_COUNT:
                     await asyncio.sleep(RETRY_DELAY * attempt)

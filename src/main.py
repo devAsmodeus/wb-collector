@@ -35,8 +35,8 @@ app = FastAPI(
 
 from src.api.general import router as router_general
 from src.api.products import router as router_products
-app.include_router(router_general)
-app.include_router(router_products)
+app.include_router(router_general)   # 01 — Общее
+app.include_router(router_products)  # 02 — Работа с товарами
 
 
 @app.get("/docs", include_in_schema=False)

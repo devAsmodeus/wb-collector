@@ -1,6 +1,6 @@
 from src.repositories.mappers.base import DataMapper
 from src.models.seller import SellerOrm
-from src.schemas.seller import SellerInfo
+from src.schemas.general.seller import SellerInfo
 
 
 class SellerMapper(DataMapper):

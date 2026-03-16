@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     WB_FINANCE_URL: str = "https://finance-api.wildberries.ru"
     WB_MARKETPLACE_URL: str = "https://marketplace-api.wildberries.ru"
     WB_ADVERT_URL: str = "https://advert-api.wildberries.ru"
+    WB_USER_MGMT_URL: str = "https://user-management-api.wildberries.ru"
 
     # PostgreSQL
     DB_HOST: str = "localhost"

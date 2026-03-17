@@ -48,6 +48,7 @@ async def health() -> dict:
 from src.api.general import general_router
 from src.api.products import products_router
 from src.api.fbs import fbs_router
+from src.api.dbw import dbw_router
 
 # ---------------------------------------------------------------------------
 # Приложение
@@ -66,6 +67,7 @@ app = Litestar(
         general_router,
         products_router,
         fbs_router,
+        dbw_router,
     ],
     lifespan=[lifespan],
     dependencies={
@@ -96,6 +98,8 @@ app = Litestar(
             Tag(name="Сборочные задания FBS", description="WB API / Заказы FBS / Сборочные задания"),
             Tag(name="Метаданные FBS", description="WB API / Заказы FBS / Метаданные сборочных заданий"),
             Tag(name="Поставки FBS", description="WB API / Заказы FBS / Поставки и короба"),
+            Tag(name="Сборочные задания DBW", description="WB API / Заказы DBW / Сборочные задания"),
+            Tag(name="Метаданные DBW", description="WB API / Заказы DBW / Метаданные сборочных заданий"),
             Tag(name="Internal", description="Кастомные методы — агрегация, экспорт, аналитика"),
         ],
         path="/docs",

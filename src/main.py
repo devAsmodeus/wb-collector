@@ -54,6 +54,8 @@ from src.api.pickup import pickup_router
 from src.api.fbw import fbw_router
 from src.api.promotion import promotion_router
 from src.api.communications import communications_router
+from src.api.tariffs import tariffs_router
+from src.api.analytics import analytics_router
 
 # ---------------------------------------------------------------------------
 # Приложение
@@ -78,6 +80,8 @@ app = Litestar(
         fbw_router,
         promotion_router,
         communications_router,
+        tariffs_router,
+        analytics_router,
     ],
     lifespan=[lifespan],
     dependencies={
@@ -129,6 +133,16 @@ app = Litestar(
             Tag(name="Закреплённые отзывы", description="WB API / Коммуникации / Закреплённые отзывы"),
             Tag(name="Чат с покупателями", description="WB API / Коммуникации / Чат с покупателями"),
             Tag(name="Возвраты покупателями", description="WB API / Коммуникации / Возвраты по отзывам"),
+            Tag(name="Тарифы", description="WB API / Тарифы WB / Общие тарифы"),
+            Tag(name="Комиссии", description="WB API / Тарифы WB / Комиссии по категориям"),
+            Tag(name="Стоимость возврата продавцу", description="WB API / Тарифы WB / Возврат со складов WB"),
+            Tag(name="Тарифы на остаток", description="WB API / Тарифы WB / Хранение и доставка"),
+            Tag(name="Тарифы на поставку", description="WB API / Тарифы WB / Коэффициенты складов"),
+            Tag(name="Аналитика", description="WB API / Аналитика / Общая аналитика продавца"),
+            Tag(name="Воронка продаж", description="WB API / Аналитика / Воронка продаж"),
+            Tag(name="Аналитика продавца CSV", description="WB API / Аналитика / CSV-отчёты"),
+            Tag(name="Поисковые запросы по вашим товарам", description="WB API / Аналитика / Поисковые запросы"),
+            Tag(name="История остатков", description="WB API / Аналитика / История остатков"),
             Tag(name="Internal", description="Кастомные методы — агрегация, экспорт, аналитика"),
         ],
         path="/docs",

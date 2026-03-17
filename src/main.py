@@ -53,6 +53,7 @@ from src.api.dbs import dbs_router
 from src.api.pickup import pickup_router
 from src.api.fbw import fbw_router
 from src.api.promotion import promotion_router
+from src.api.communications import communications_router
 
 # ---------------------------------------------------------------------------
 # Приложение
@@ -76,6 +77,7 @@ app = Litestar(
         pickup_router,
         fbw_router,
         promotion_router,
+        communications_router,
     ],
     lifespan=[lifespan],
     dependencies={
@@ -122,6 +124,11 @@ app = Litestar(
             Tag(name="Статистика", description="WB API / Маркетинг / Статистика кампаний"),
             Tag(name="Медиа", description="WB API / Маркетинг / Медиакампании"),
             Tag(name="Календарь акций", description="WB API / Маркетинг / Календарь промоакций WB"),
+            Tag(name="Вопросы", description="WB API / Коммуникации / Вопросы покупателей"),
+            Tag(name="Отзывы", description="WB API / Коммуникации / Отзывы покупателей"),
+            Tag(name="Закреплённые отзывы", description="WB API / Коммуникации / Закреплённые отзывы"),
+            Tag(name="Чат с покупателями", description="WB API / Коммуникации / Чат с покупателями"),
+            Tag(name="Возвраты покупателями", description="WB API / Коммуникации / Возвраты по отзывам"),
             Tag(name="Internal", description="Кастомные методы — агрегация, экспорт, аналитика"),
         ],
         path="/docs",

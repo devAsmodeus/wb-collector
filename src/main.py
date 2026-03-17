@@ -50,7 +50,7 @@ from src.api.products import products_router
 from src.api.fbs import fbs_router
 from src.api.dbw import dbw_router
 from src.api.dbs import dbs_router
-from src.api.dbs import dbs_router
+from src.api.pickup import pickup_router
 
 # ---------------------------------------------------------------------------
 # Приложение
@@ -71,6 +71,7 @@ app = Litestar(
         fbs_router,
         dbw_router,
         dbs_router,
+        pickup_router,
     ],
     lifespan=[lifespan],
     dependencies={
@@ -105,8 +106,8 @@ app = Litestar(
             Tag(name="Метаданные DBW", description="WB API / Заказы DBW / Метаданные сборочных заданий"),
             Tag(name="Сборочные задания DBS", description="WB API / Заказы DBS / Сборочные задания"),
             Tag(name="Метаданные DBS", description="WB API / Заказы DBS / Метаданные сборочных заданий"),
-            Tag(name="Сборочные задания DBS", description="WB API / Заказы DBS / Сборочные задания"),
-            Tag(name="Метаданные DBS", description="WB API / Заказы DBS / Метаданные сборочных заданий"),
+            Tag(name="Сборочные задания Самовывоз", description="WB API / Самовывоз / Сборочные задания"),
+            Tag(name="Метаданные Самовывоз", description="WB API / Самовывоз / Метаданные сборочных заданий"),
             Tag(name="Internal", description="Кастомные методы — агрегация, экспорт, аналитика"),
         ],
         path="/docs",

@@ -1,124 +1,182 @@
-"""Схемы: Работа с товарами — Карточки товаров."""
+"""Схемы: Товары — Карточки товаров."""
 from typing import Any
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
+
+# ---------------------------------------------------------------------------
+# Вложенные схемы карточки
+# ---------------------------------------------------------------------------
 
 class CardPhoto(BaseModel):
-    big: str | None = None
-    c246x328: str | None = None
-    c516x688: str | None = None
-    square: str | None = None
-    tm: str | None = None
+    """Фотографии карточки товара в разных размерах."""
+    big: str | None = Field(None, description="URL фото большого размера")
+    c246x328: str | None = Field(None, description="URL фото 246×328 px")
+    c516x688: str | None = Field(None, description="URL фото 516×688 px")
+    square: str | None = Field(None, description="URL квадратного фото")
+    tm: str | None = Field(None, description="URL миниатюры")
 
 
 class CardSize(BaseModel):
-    chrtID: int | None = None
-    techSize: str = ""
-    wbSize: str = ""
-    skus: list[str] = []
-    price: int | None = None
+    """Размер / вариант товара (SKU)."""
+    chrtID: int | None = Field(None, description="ID характеристики размера")
+    techSize: str = Field(default="", description="Технический размер (напр. '42', 'XL', '0')")
+    wbSize: str = Field(default="", description="Размер в российской таблице WB")
+    skus: list[str] = Field(default=[], description="Список баркодов (EAN-13) для данного размера")
+    price: int | None = Field(None, description="Цена размера в копейках × 100 (напр. 300000 = 3000 ₽)")
 
 
 class CardCharacteristic(BaseModel):
-    id: int
-    name: str
-    value: Any = None
+    """Характеристика карточки товара."""
+    id: int = Field(description="ID характеристики (charcID из справочника)")
+    name: str = Field(description="Название характеристики (напр. 'Цвет', 'Материал')")
+    value: Any = Field(None, description="Значение характеристики (строка, число или список)")
 
 
 class CardTag(BaseModel):
-    id: int
-    name: str
-    color: str
+    """Тег, привязанный к карточке."""
+    id: int = Field(description="ID тега")
+    name: str = Field(description="Название тега")
+    color: str = Field(description="Цвет тега в HEX без # (напр. 'D41D1D')")
 
 
 class CardDimensions(BaseModel):
-    length: float | None = None
-    width: float | None = None
-    height: float | None = None
-    weightBrutto: float | None = None
+    """Габариты и вес товара."""
+    length: float | None = Field(None, description="Длина упаковки, см")
+    width: float | None = Field(None, description="Ширина упаковки, см")
+    height: float | None = Field(None, description="Высота упаковки, см")
+    weightBrutto: float | None = Field(None, description="Вес брутто (с упаковкой), кг")
 
+
+# ---------------------------------------------------------------------------
+# Карточка товара
+# ---------------------------------------------------------------------------
 
 class ProductCard(BaseModel):
-    nmID: int
-    imtID: int | None = None
-    nmUUID: str | None = None
-    subjectID: int | None = None
-    subjectName: str | None = None
-    vendorCode: str = ""
-    brand: str = ""
-    title: str = ""
-    description: str = ""
-    needKiz: bool = False
-    photos: list[CardPhoto] = []
-    video: str | None = None
-    dimensions: CardDimensions | None = None
-    characteristics: list[CardCharacteristic] = []
-    sizes: list[CardSize] = []
-    tags: list[CardTag] = []
-    createdAt: str | None = None
-    updatedAt: str | None = None
+    """Карточка товара WB."""
+    nmID: int = Field(description="Артикул WB (числовой идентификатор карточки)")
+    imtID: int | None = Field(None, description="ID предмета (группы карточек одного товара)")
+    nmUUID: str | None = Field(None, description="UUID карточки")
+    subjectID: int | None = Field(None, description="ID предмета (категории) карточки")
+    subjectName: str | None = Field(None, description="Название предмета (напр. 'Футболка')")
+    vendorCode: str = Field(default="", description="Артикул продавца (ваш внутренний код товара)")
+    brand: str = Field(default="", description="Бренд товара")
+    title: str = Field(default="", description="Наименование товара")
+    description: str = Field(default="", description="Описание товара")
+    needKiz: bool = Field(default=False, description="Требуется ли маркировка КИЗ (честный знак)")
+    photos: list[CardPhoto] = Field(default=[], description="Фотографии товара")
+    video: str | None = Field(None, description="URL видео товара")
+    dimensions: CardDimensions | None = Field(None, description="Габариты и вес")
+    characteristics: list[CardCharacteristic] = Field(default=[], description="Характеристики карточки")
+    sizes: list[CardSize] = Field(default=[], description="Размеры / варианты товара с баркодами")
+    tags: list[CardTag] = Field(default=[], description="Теги, привязанные к карточке")
+    createdAt: str | None = Field(None, description="Дата создания карточки (ISO 8601)")
+    updatedAt: str | None = Field(None, description="Дата последнего обновления (ISO 8601)")
 
+
+# ---------------------------------------------------------------------------
+# Список карточек (cursor-based пагинация)
+# ---------------------------------------------------------------------------
 
 class CardCursor(BaseModel):
-    updatedAt: str | None = None
-    nmID: int | None = None
-    total: int = 0
+    """Курсор для следующей страницы при запросе карточек."""
+    updatedAt: str | None = Field(None, description="Дата обновления последней карточки в ответе — передать в следующий запрос")
+    nmID: int | None = Field(None, description="nmID последней карточки в ответе — передать в следующий запрос")
+    total: int = Field(default=0, description="Общее количество карточек (только в первом ответе)")
 
 
 class CardsListResponse(BaseModel):
-    cards: list[ProductCard] = []
-    cursor: CardCursor | None = None
+    """Ответ со списком карточек товаров."""
+    cards: list[ProductCard] = Field(default=[], description="Список карточек")
+    cursor: CardCursor | None = Field(None, description="Курсор для получения следующей страницы")
 
 
-class CardsListSettings(BaseModel):
-    cursor: dict | None = None
-    filter: dict | None = None
-    sort: dict | None = None
+class CardsCursorRequest(BaseModel):
+    """Курсор для запроса следующей страницы карточек."""
+    updatedAt: str | None = Field(None, description="updatedAt из предыдущего ответа")
+    nmID: int | None = Field(None, description="nmID из предыдущего ответа")
+    limit: int = Field(default=100, ge=1, le=1000, description="Количество карточек на странице (1–1000)")
+
+
+class CardsFilterRequest(BaseModel):
+    """Фильтры для запроса карточек."""
+    textSearch: str | None = Field(None, description="Поиск по названию, артикулу продавца или nmID")
+    allowedCategoriesOnly: bool | None = Field(None, description="Только карточки разрешённых категорий")
+    tagIDs: list[int] | None = Field(None, description="Фильтр по ID тегов")
+    objectIDs: list[int] | None = Field(None, description="Фильтр по ID предметов (subjectID)")
+    brands: list[str] | None = Field(None, description="Фильтр по названиям брендов")
+    imtID: int | None = Field(None, description="Фильтр по imtID (группе карточек)")
 
 
 class CardsListRequest(BaseModel):
-    settings: CardsListSettings | None = None
+    """Тело запроса для получения списка карточек товаров."""
+    settings: dict | None = Field(
+        None,
+        description=(
+            "Параметры запроса. Пример:\n"
+            "```json\n"
+            '{"cursor": {"limit": 100}, "filter": {"textSearch": "футболка"}}\n'
+            "```"
+        ),
+    )
 
+
+# ---------------------------------------------------------------------------
+# Лимиты карточек
+# ---------------------------------------------------------------------------
 
 class CardLimits(BaseModel):
-    freeToUse: int | None = None
-    freeLimitBase: int | None = None
-    paidLimitBase: int | None = None
-    used: int | None = None
+    """Лимиты на создание карточек товаров."""
+    freeToUse: int | None = Field(None, description="Доступно для создания карточек прямо сейчас")
+    freeLimitBase: int | None = Field(None, description="Базовый бесплатный лимит карточек")
+    paidLimitBase: int | None = Field(None, description="Платный лимит карточек")
+    used: int | None = Field(None, description="Использовано карточек из лимита")
 
 
 class CardLimitsResponse(BaseModel):
-    error: bool = False
-    errorText: str = ""
-    data: CardLimits | Any = None
+    """Ответ с лимитами карточек."""
+    error: bool = Field(default=False, description="Признак ошибки")
+    errorText: str = Field(default="", description="Текст ошибки")
+    data: CardLimits | Any = Field(None, description="Данные лимитов")
 
+
+# ---------------------------------------------------------------------------
+# Баркоды
+# ---------------------------------------------------------------------------
 
 class BarcodesResponse(BaseModel):
-    error: bool = False
-    errorText: str = ""
-    data: list[str] = []
+    """Ответ с созданными баркодами."""
+    error: bool = Field(default=False, description="Признак ошибки")
+    errorText: str = Field(default="", description="Текст ошибки")
+    data: list[str] = Field(default=[], description="Список сгенерированных баркодов (EAN-13)")
 
+
+# ---------------------------------------------------------------------------
+# Карточки с ошибками
+# ---------------------------------------------------------------------------
 
 class CardErrorItem(BaseModel):
-    batchUUID: str | None = None
-    vendorCodes: list[str] = []
-    errors: dict | None = None
-    subjects: dict | None = None
-    brands: dict | None = None
+    """Карточка с ошибками при создании / редактировании."""
+    batchUUID: str | None = Field(None, description="UUID батча загрузки")
+    vendorCodes: list[str] = Field(default=[], description="Артикулы продавца с ошибками")
+    errors: dict | None = Field(None, description="Список ошибок по полям")
+    subjects: dict | None = Field(None, description="Ошибки по предметам")
+    brands: dict | None = Field(None, description="Ошибки по брендам")
 
 
 class CardErrorCursor(BaseModel):
-    next: bool = False
-    updatedAt: str | None = None
-    batchUUID: str | None = None
+    """Курсор пагинации для карточек с ошибками."""
+    next: bool = Field(default=False, description="Есть ли следующая страница")
+    updatedAt: str | None = Field(None, description="Дата последней ошибки в ответе")
+    batchUUID: str | None = Field(None, description="UUID последнего батча в ответе")
 
 
 class CardErrorData(BaseModel):
-    items: list[CardErrorItem] = []
-    cursor: CardErrorCursor | None = None
+    items: list[CardErrorItem] = Field(default=[], description="Карточки с ошибками")
+    cursor: CardErrorCursor | None = Field(None, description="Курсор для следующей страницы")
 
 
 class CardErrorsResponse(BaseModel):
-    error: bool = False
-    errorText: str = ""
-    data: CardErrorData | None = None
+    """Ответ со списком карточек, содержащих ошибки."""
+    error: bool = Field(default=False, description="Признак ошибки запроса")
+    errorText: str = Field(default="", description="Текст ошибки запроса")
+    data: CardErrorData | None = Field(None, description="Карточки с ошибками и курсор")

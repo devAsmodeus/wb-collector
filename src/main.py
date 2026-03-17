@@ -56,6 +56,8 @@ from src.api.promotion import promotion_router
 from src.api.communications import communications_router
 from src.api.tariffs import tariffs_router
 from src.api.analytics import analytics_router
+from src.api.reports import reports_router
+from src.api.finances import finances_router
 
 # ---------------------------------------------------------------------------
 # Приложение
@@ -82,6 +84,8 @@ app = Litestar(
         communications_router,
         tariffs_router,
         analytics_router,
+        reports_router,
+        finances_router,
     ],
     lifespan=[lifespan],
     dependencies={
@@ -143,6 +147,21 @@ app = Litestar(
             Tag(name="Аналитика продавца CSV", description="WB API / Аналитика / CSV-отчёты"),
             Tag(name="Поисковые запросы по вашим товарам", description="WB API / Аналитика / Поисковые запросы"),
             Tag(name="История остатков", description="WB API / Аналитика / История остатков"),
+            Tag(name="Отчёты", description="WB API / Отчёты / Общие отчёты"),
+            Tag(name="Основные отчёты", description="WB API / Отчёты / Остатки, заказы, продажи"),
+            Tag(name="Отчёт об остатках на складах", description="WB API / Отчёты / Остатки на складах WB"),
+            Tag(name="Отчёты об удержаниях", description="WB API / Отчёты / Удержания, штрафы, обмеры"),
+            Tag(name="Операции при приёмке", description="WB API / Отчёты / Приёмка товаров"),
+            Tag(name="Платное хранение", description="WB API / Отчёты / Платное хранение на складах WB"),
+            Tag(name="Продажи по регионам", description="WB API / Отчёты / Региональные продажи"),
+            Tag(name="Доля бренда в продажах", description="WB API / Отчёты / Доля бренда"),
+            Tag(name="Скрытые товары", description="WB API / Отчёты / Заблокированные и скрытые товары"),
+            Tag(name="Отчёт о возвратах и перемещении товаров", description="WB API / Отчёты / Возвраты"),
+            Tag(name="Отчёт о товарах c обязательной маркировкой", description="WB API / Отчёты / Маркировка"),
+            Tag(name="Финансы WB", description="WB API / Финансы / Баланс, отчёты, документы"),
+            Tag(name="Баланс", description="WB API / Финансы / Баланс продавца"),
+            Tag(name="Финансовые отчёты", description="WB API / Финансы / Детальный финансовый отчёт"),
+            Tag(name="Документы", description="WB API / Финансы / Документы продавца"),
             Tag(name="Internal", description="Кастомные методы — агрегация, экспорт, аналитика"),
         ],
         path="/docs",

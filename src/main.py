@@ -47,6 +47,7 @@ async def health() -> dict:
 
 from src.api.general import general_router
 from src.api.products import products_router
+from src.api.fbs import fbs_router
 
 # ---------------------------------------------------------------------------
 # Приложение
@@ -64,6 +65,7 @@ app = Litestar(
         PrometheusController,  # GET /metrics
         general_router,
         products_router,
+        fbs_router,
     ],
     lifespan=[lifespan],
     dependencies={
@@ -90,6 +92,10 @@ app = Litestar(
             Tag(name="Products — Карточки", description="WB API / Товары / Карточки"),
             Tag(name="Products — Цены", description="WB API / Товары / Цены и скидки"),
             Tag(name="Products — Склады", description="WB API / Товары / Остатки и склады"),
+            Tag(name="Пропуска FBS", description="WB API / Заказы FBS / Пропуска на склады WB"),
+            Tag(name="Сборочные задания FBS", description="WB API / Заказы FBS / Сборочные задания"),
+            Tag(name="Метаданные FBS", description="WB API / Заказы FBS / Метаданные сборочных заданий"),
+            Tag(name="Поставки FBS", description="WB API / Заказы FBS / Поставки и короба"),
             Tag(name="Internal", description="Кастомные методы — агрегация, экспорт, аналитика"),
         ],
         path="/docs",

@@ -1,25 +1,33 @@
+"""Схемы: Товары — реэкспорт всех подмодулей."""
 from src.schemas.products.directories import (
+    WBResponse,
     ParentCategory, ParentCategoriesResponse,
     Subject, SubjectsResponse,
     SubjectCharc, SubjectCharcsResponse,
     TnvedCode, TnvedResponse,
     Brand, BrandsResponse,
-    WBResponse,
+    DirectoryItem, DirectoryResponse,
 )
-from src.schemas.products.tags import Tag, TagCreate, TagUpdate, TagsResponse
+from src.schemas.products.tags import (
+    WBTag, TagsResponse,
+    TagCreateRequest, TagUpdateRequest, TagLinkRequest,
+)
 from src.schemas.products.cards import (
     CardPhoto, CardSize, CardCharacteristic, CardTag, CardDimensions,
-    ProductCard, CardCursor, CardsListResponse, CardsListSettings,
+    ProductCard, CardCursor, CardsListResponse,
     CardsListRequest, CardLimits, CardLimitsResponse, BarcodesResponse,
     CardErrorItem, CardErrorCursor, CardErrorData, CardErrorsResponse,
 )
 from src.schemas.products.media import MediaUploadByUrlRequest, MediaUploadResponse
 from src.schemas.products.prices import (
     GoodsSize, GoodsItem, GoodsListData, GoodsListResponse,
-    PriceTaskRequest, PriceHistoryTask, PriceHistoryResponse,
+    PriceHistoryTask, PriceHistoryResponse,
+    QuarantineItem, QuarantineData, QuarantineResponse,
+    UploadGoodsItem, UploadGoodsData, UploadGoodsResponse,
 )
 from src.schemas.products.warehouses import (
-    StockItem, WBOffice, WBOfficesResponse,
+    StockItem, StocksRequest, StocksResponse,
+    WBOffice, WBOfficesResponse,
     SellerWarehouse, SellerWarehousesResponse,
     DBWContact, DBWContactsResponse,
 )
@@ -31,15 +39,19 @@ __all__ = [
     "SubjectCharc", "SubjectCharcsResponse",
     "TnvedCode", "TnvedResponse",
     "Brand", "BrandsResponse",
-    "Tag", "TagCreate", "TagUpdate", "TagsResponse",
+    "DirectoryItem", "DirectoryResponse",
+    "WBTag", "TagsResponse",
+    "TagCreateRequest", "TagUpdateRequest", "TagLinkRequest",
     "CardPhoto", "CardSize", "CardCharacteristic", "CardTag", "CardDimensions",
-    "ProductCard", "CardCursor", "CardsListResponse", "CardsListSettings",
+    "ProductCard", "CardCursor", "CardsListResponse",
     "CardsListRequest", "CardLimits", "CardLimitsResponse", "BarcodesResponse",
     "CardErrorItem", "CardErrorCursor", "CardErrorData", "CardErrorsResponse",
     "MediaUploadByUrlRequest", "MediaUploadResponse",
     "GoodsSize", "GoodsItem", "GoodsListData", "GoodsListResponse",
-    "PriceTaskRequest", "PriceHistoryTask", "PriceHistoryResponse",
-    "StockItem", "WBOffice", "WBOfficesResponse",
+    "PriceHistoryTask", "PriceHistoryResponse",
+    "QuarantineItem", "QuarantineData", "QuarantineResponse",
+    "UploadGoodsItem", "UploadGoodsData", "UploadGoodsResponse",
+    "StockItem", "StocksRequest", "StocksResponse",
+    "WBOffice", "WBOfficesResponse",
     "SellerWarehouse", "SellerWarehousesResponse",
-    "DBWContact", "DBWContactsResponse",
 ]

@@ -59,8 +59,8 @@ class TagsController(Controller):
     )
     async def update_tag(
         self,
+        data: TagUpdateRequest,
         tag_id: int = Parameter(description="ID тега, который нужно изменить"),
-        data: TagUpdateRequest = ...,
     ) -> TagsResponse:
         return await TagsService().update_tag(
             tag_id=tag_id,

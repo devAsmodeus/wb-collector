@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 # Response схемы
 # ---------------------------------------------------------------------------
 
-class Tag(BaseModel):
+class WBTag(BaseModel):
     """Тег карточки товара."""
     id: int = Field(description="Уникальный ID тега")
     name: str = Field(description="Название тега (напр. 'Акция', 'Новинка', 'Хит продаж')")
@@ -23,7 +23,7 @@ class TagsResponse(BaseModel):
     """Ответ со списком тегов."""
     error: bool = Field(default=False, description="Признак ошибки")
     errorText: str = Field(default="", description="Текст ошибки (если error=true)")
-    data: list[Tag] | Any = Field(None, description="Список тегов продавца")
+    data: list[WBTag] | Any = Field(None, description="Список тегов продавца")
 
 
 # ---------------------------------------------------------------------------

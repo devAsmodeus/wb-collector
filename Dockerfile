@@ -9,11 +9,11 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 WORKDIR /app
 
-# Копируем манифест и lockfile — кешируем слой зависимостей
-COPY pyproject.toml uv.lock* ./
+# Копируем манифест — кешируем слой зависимостей
+COPY pyproject.toml ./
 
-# Устанавливаем только prod-зависимости
-RUN uv sync --system --frozen --no-dev --no-cache
+# Устанавливаем prod-зависимости в системный Python
+RUN uv pip install --system --no-cache .
 
 COPY . .
 

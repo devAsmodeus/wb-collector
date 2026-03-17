@@ -64,10 +64,10 @@ class WarehousesController(Controller):
     )
     async def get_stocks(
         self,
+        data: StocksRequest,
         warehouse_id: int = Parameter(
             description="ID склада продавца (из `/warehouses`).",
         ),
-        data: StocksRequest = ...,
     ) -> StocksResponse:
         return await WarehousesService().get_stocks(
             warehouse_id=warehouse_id,

@@ -87,3 +87,19 @@ class SellerWarehousesResponse(BaseModel):
         None,
         description="Список складов продавца",
     )
+
+
+# ---------------------------------------------------------------------------
+# Контакты DBW (не используется в FBW, оставлено для совместимости)
+# ---------------------------------------------------------------------------
+
+class DBWContact(BaseModel):
+    """Контакт склада DBW (доставка силами продавца)."""
+    name: str | None = Field(None, description="Имя контактного лица")
+    phone: str | None = Field(None, description="Телефон контактного лица")
+    email: str | None = Field(None, description="Email контактного лица")
+
+
+class DBWContactsResponse(BaseModel):
+    """Ответ с контактами DBW склада."""
+    result: list[DBWContact] | None = Field(None, description="Список контактов")

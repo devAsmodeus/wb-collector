@@ -45,7 +45,9 @@ async def health() -> dict:
 # Роутеры (подключаем по мере реализации)
 # ---------------------------------------------------------------------------
 
-from src.api.general import general_router
+from src.api.wb import wb_router
+from src.api.sync import sync_router
+from src.api.db import db_router
 from src.api.products import products_router
 from src.api.fbs import fbs_router
 from src.api.dbw import dbw_router
@@ -73,7 +75,9 @@ app = Litestar(
     route_handlers=[
         health,
         PrometheusController,  # GET /metrics
-        general_router,
+        wb_router,
+        sync_router,
+        db_router,
         products_router,
         fbs_router,
         dbw_router,
@@ -104,8 +108,9 @@ app = Litestar(
         ),
         tags=[
             Tag(name="System", description="Служебные эндпоинты"),
-            Tag(name="General — Продавец", description="WB API / Общее / Информация о продавце"),
-            Tag(name="General — Новости", description="WB API / Общее / Новости"),
+            Tag(name="WB / General", description="Прокси к WB API / Общее (01)"),
+            Tag(name="Sync / General", description="Синхронизация в БД / Общее (01)"),
+            Tag(name="DB / General", description="Данные из БД / Общее (01)"),
             Tag(name="General — Пользователи", description="WB API / Общее / Управление пользователями"),
             Tag(name="Products — Справочники", description="WB API / Товары / Справочники"),
             Tag(name="Products — Теги", description="WB API / Товары / Теги"),

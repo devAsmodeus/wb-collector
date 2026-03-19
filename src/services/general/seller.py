@@ -13,6 +13,11 @@ class SellerService(BaseService):
         async with SellerCollector() as c:
             return await c.ping()
 
+    async def get_seller_info(self) -> SellerInfo:
+        """Получает данные продавца из WB API (без сохранения в БД)."""
+        async with SellerCollector() as c:
+            return await c.get_seller_info()
+
     async def sync_seller_info(self) -> SellerInfo:
         async with SellerCollector() as c:
             seller = await c.get_seller_info()

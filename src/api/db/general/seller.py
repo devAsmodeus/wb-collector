@@ -1,0 +1,21 @@
+"""DB: General / Продавец."""
+from litestar import Controller, get
+from src.schemas.general.seller import SellerInfo
+from src.utils.db_manager import DBManager
+
+
+class DbSellerController(Controller):
+    path = "/seller"
+    tags = ["DB / General"]
+
+    @get(
+        "/",
+        summary="Информация о продавце из БД",
+        description=(
+            "Возвращает данные о продавце из таблицы `sellers`.\n\n"
+            "Перед первым вызовом выполните `POST /sync/general/seller/full`."
+        ),
+    )
+    async def get_seller(self) -> SellerInfo:
+        async with DBManager() as db:
+            return await db.seller.get_one()

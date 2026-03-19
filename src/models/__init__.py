@@ -5,6 +5,7 @@ from src.models.reports import WbStock, WbOrderReport, WbSaleReport, WbFinancial
 from src.models.promotion import WbCampaign, WbCampaignStat, WbPromotion
 from src.models.communications import WbFeedback, WbQuestion, WbClaim
 from src.models.references import (
+    WbNews,
     WbTariffCommission, WbTariffBox, WbTariffPallet, WbTariffSupply, WbSyncState,
 )
 
@@ -15,6 +16,7 @@ __all__ = [
     "WbStock", "WbOrderReport", "WbSaleReport", "WbFinancialReport",
     "WbCampaign", "WbCampaignStat", "WbPromotion",
     "WbFeedback", "WbQuestion", "WbClaim",
+    "WbNews",
     "WbTariffCommission", "WbTariffBox", "WbTariffPallet", "WbTariffSupply",
     "WbSyncState",
 ]

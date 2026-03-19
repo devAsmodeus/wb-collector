@@ -1,8 +1,21 @@
-"""ORM модели: Справочники — тарифы, склады WB, комиссии."""
+"""ORM модели: Справочники — новости, тарифы, склады WB, комиссии."""
 from datetime import datetime
-from sqlalchemy import BigInteger, Boolean, Float, Integer, Numeric, String, DateTime, JSON
+from sqlalchemy import BigInteger, Boolean, Float, Integer, Numeric, String, DateTime, JSON, Text
 from sqlalchemy.orm import Mapped, mapped_column
 from src.database import Base
+
+
+class WbNews(Base):
+    """Новость портала продавцов WB."""
+    __tablename__ = "wb_news"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    news_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False, index=True, comment="ID новости")
+    header: Mapped[str | None] = mapped_column(String(500), nullable=True, comment="Заголовок новости")
+    content: Mapped[str | None] = mapped_column(Text, nullable=True, comment="Текст новости (HTML)")
+    date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True, comment="Дата публикации")
+    types: Mapped[dict | None] = mapped_column(JSON, nullable=True, comment="Теги новости [{id, name}]")
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")
 
 
 class WbTariffCommission(Base):

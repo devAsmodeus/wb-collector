@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-03-17T05:00:14Z",
+  "fetched_at": "2026-03-19T05:00:21Z",
   "files": [
     {
       "file": "01-general.yaml",
@@ -8,23 +8,23 @@
     },
     {
       "file": "02-products.yaml",
-      "sha256": "c9b2bef87951543c94264494108b563d459b643d209c673ab34e5225d31f8511",
-      "size": 329678
+      "sha256": "c593e4de7b71eeb7b7cf9d6fc9d6edc8e3266d7c171182790d4e247a42f86831",
+      "size": 329709
     },
     {
       "file": "03-orders-fbs.yaml",
-      "sha256": "909df29338c364b70a7c98d6bf997870aa19782d94a2cdd9117f34f0b4e95235",
-      "size": 159508
+      "sha256": "f03fb3417efde5ef61576ddbe952d164dca630955e2b60ecc3793f357b051d6c",
+      "size": 159196
     },
     {
       "file": "04-orders-dbw.yaml",
-      "sha256": "3c58fe7fbc0c08779d391ecd2cf95b6c1f917ea3064ac0302577d272069691e4",
-      "size": 86002
+      "sha256": "df51e26acf78b804c5565b5858535f7405e9c3e0bc15038515dd66fdffa1786f",
+      "size": 86019
     },
     {
       "file": "05-orders-dbs.yaml",
-      "sha256": "39aaffabdbda5297787562810a38868e65a4d6faa625f21de9573a6549ac6547",
-      "size": 134706
+      "sha256": "56bf4f2ff4c8664cf7f74efe834c938f2573fc0d97dfbd4b18fd94c6a2355162",
+      "size": 134201
     },
     {
       "file": "06-in-store-pickup.yaml",
@@ -33,23 +33,23 @@
     },
     {
       "file": "07-orders-fbw.yaml",
-      "sha256": "a8f955b443c43e6075cef7a9fc9876d9b67e0227eddb26a9c98d21e7fcbb073f",
-      "size": 47698
+      "sha256": "63c139db626e3c7723109f461d8672e9c288eafc6e62cd51863bb929b9068e4a",
+      "size": 47696
     },
     {
       "file": "08-promotion.yaml",
-      "sha256": "0dabe4309363055ed0977b592acc122f9dee788da5e0233d43c4124664e80766",
-      "size": 227386
+      "sha256": "e10027b8743d796bbd4dbcddee4e179a104691b66227e7596eeaa58986814a01",
+      "size": 227384
     },
     {
       "file": "09-communications.yaml",
-      "sha256": "b192d9af1efc894f6c2ba0a5589618cfd04f7bda047399df51368e3aae0013af",
-      "size": 176265
+      "sha256": "cb8dfa7c9962a30408005998d34068d91ef49f549d358026cbf01194aa641cca",
+      "size": 176457
     },
     {
       "file": "10-tariffs.yaml",
-      "sha256": "71b2a6a704bfc0a66e4061034f7c8baf15e98740c52de3fd544d6555b61d7190",
-      "size": 41966
+      "sha256": "ac67a763f1eca6c44afe2fd48bd65e4fc80b183ba78bc24d7f7280729ee82093",
+      "size": 41964
     },
     {
       "file": "11-analytics.yaml",
@@ -58,13 +58,13 @@
     },
     {
       "file": "12-reports.yaml",
-      "sha256": "ddfac5d234e8aa65341dc27461a463939fa3a63d68cf5cbae3caa9d9fc490f2c",
+      "sha256": "1c3750d416d50050565a0f3d5188d6b9ef7f75b07d380a1def5c7acc8ea4a903",
       "size": 153922
     },
     {
       "file": "13-finances.yaml",
-      "sha256": "f219f95f1c16de757304f0bd9eb4c7aff19e8e14d437169355dcfc059ce31d2f",
-      "size": 46703
+      "sha256": "cb6307b8247099e559550efcbb2a89dd93b4e7851199421a8fe38f96b7a0da4f",
+      "size": 46701
     }
   ]
 }

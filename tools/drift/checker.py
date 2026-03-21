@@ -1,152 +1,168 @@
 """
-Проверка дрейфа схем: YAML → Pydantic → ORM.
+Проверка дрейфа схем: YAML → Pydantic → ORM (SQLAlchemy).
 
-Для каждого YAML файла сравниваем поля в схемах компонентов с тем,
-что объявлено в наших Pydantic и ORM моделях.
+Логика:
+  - Берём семантический снимок из manifest.json (поля схем)
+  - Сканируем src/schemas/**/*.py — собираем Pydantic-поля
+  - Сканируем src/models/**/*.py — собираем ORM-колонки
+  - Выводим расхождения
 """
 import ast
-import sys
+import json
 from pathlib import Path
 
-import yaml
-
-REPO_DIR    = Path(__file__).parent.parent.parent
-DOCS_DIR    = REPO_DIR / "docs" / "api"
-SCHEMAS_DIR = REPO_DIR / "src" / "schemas"
-MODELS_DIR  = REPO_DIR / "src" / "models"
-
-# YAML файл → [(yaml_schema_name, pydantic_file, pydantic_class)]
-# Неполный маппинг — покрываем ключевые схемы
-MAPPINGS: list[tuple[str, str, str, str]] = [
-    # (yaml_file, yaml_schema, pydantic_file, pydantic_class)
-    ("07-orders-fbw", "models.Supply",        "fbw/supplies.py",    "FBWSupply"),
-    ("07-orders-fbw", "models.SupplyDetails", "fbw/supplies.py",    "FBWSupply"),
-    ("07-orders-fbw", "models.OptionsResultModel", "fbw/acceptance.py", "FBWAcceptanceWarehouse"),
-    ("03-orders-fbs", "Supply",               "fbs/supplies.py",    "Supply"),
-    ("05-orders-dbs", "OrderNew",             "dbs/orders.py",      "DbsOrderNew"),
-    ("02-products",   "Card",                 "products/cards.py",  "CardItem"),
-]
-
-# ORM модели: (таблица, orm_file, orm_class)
-ORM_MAPPINGS: list[tuple[str, str, str]] = [
-    ("fbs_orders",          "orders.py",    "FbsOrder"),
-    ("dbw_orders",          "orders.py",    "DbwOrder"),
-    ("dbs_orders",          "orders.py",    "DbsOrder"),
-    ("pickup_orders",       "orders.py",    "PickupOrder"),
-    ("wb_stocks",           "reports.py",   "WbStock"),
-    ("wb_orders_report",    "reports.py",   "WbOrderReport"),
-    ("wb_sales_report",     "reports.py",   "WbSaleReport"),
-    ("wb_financial_report", "reports.py",   "WbFinancialReport"),
-    ("wb_cards",            "products.py",  "WbCard"),
-    ("wb_prices",           "products.py",  "WbPrice"),
-    ("wb_news",             "references.py","WbNews"),
-]
+REPO_DIR      = Path(__file__).parent.parent.parent
+MANIFEST_PATH = REPO_DIR / "docs" / "api" / "manifest.json"
+SCHEMAS_DIR   = REPO_DIR / "src" / "schemas"
+MODELS_DIR    = REPO_DIR / "src" / "models"
 
 
-def get_yaml_schema_fields(yaml_name: str, schema_name: str) -> set[str]:
-    """Возвращает поля схемы из YAML компонентов."""
-    path = DOCS_DIR / f"{yaml_name}.yaml"
-    if not path.exists():
-        return set()
-    try:
-        d = yaml.safe_load(path.read_text(encoding="utf-8"))
-    except Exception:
-        return set()
-    schema = (d.get("components") or {}).get("schemas", {}).get(schema_name, {})
-    return set((schema.get("properties") or {}).keys())
+# ─── Чтение манифеста ────────────────────────────────────────────────────────
+
+def load_yaml_fields() -> dict[str, set[str]]:
+    """
+    Возвращает {schema_name: {field1, field2, ...}} из manifest.json.
+    Объединяет схемы со всех 13 файлов.
+    """
+    if not MANIFEST_PATH.exists():
+        return {}
+    raw   = json.loads(MANIFEST_PATH.read_text(encoding="utf-8-sig"))
+    files = raw.get("files", [])
+    if isinstance(files, dict):
+        files = list(files.values())
+
+    result: dict[str, set[str]] = {}
+    for entry in files:
+        for schema_name, fields in entry.get("semantics", {}).get("schemas", {}).items():
+            # Нормализуем: models.Supply → Supply
+            short_name = schema_name.split(".")[-1]
+            result.setdefault(short_name, set()).update(fields)
+    return result
 
 
-def get_pydantic_fields(rel_path: str, class_name: str) -> set[str]:
-    """Извлекает поля Pydantic класса через AST."""
-    path = SCHEMAS_DIR / rel_path
-    if not path.exists():
-        return set()
-    try:
-        tree = ast.parse(path.read_text(encoding="utf-8"))
-    except Exception:
-        return set()
+# ─── Сканирование Pydantic схем ──────────────────────────────────────────────
+
+def _parse_pydantic_class(node: ast.ClassDef) -> set[str]:
+    """Извлекает имена полей из Pydantic BaseModel класса."""
     fields = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.ClassDef) and node.name == class_name:
-            for item in node.body:
-                if isinstance(item, ast.AnnAssign) and isinstance(item.target, ast.Name):
-                    fields.add(item.target.id)
+    for item in node.body:
+        if isinstance(item, ast.AnnAssign) and isinstance(item.target, ast.Name):
+            fields.add(item.target.id)
     return fields
 
 
-def get_orm_fields(rel_path: str, class_name: str) -> set[str]:
-    """Извлекает поля ORM класса через AST."""
-    path = MODELS_DIR / rel_path
-    if not path.exists():
-        return set()
-    try:
-        tree = ast.parse(path.read_text(encoding="utf-8"))
-    except Exception:
-        return set()
-    fields = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.ClassDef) and node.name == class_name:
-            for item in node.body:
-                if isinstance(item, ast.AnnAssign) and isinstance(item.target, ast.Name):
-                    name = item.target.id
-                    if not name.startswith("_") and name not in ("id", "fetched_at"):
-                        fields.add(name)
-    return fields
-
-
-def check_pydantic_drift() -> list[dict]:
+def load_pydantic_fields() -> dict[str, set[str]]:
     """
-    Проверяет YAML схемы vs Pydantic классы.
-    Возвращает список расхождений.
+    Сканирует src/schemas/**/*.py.
+    Возвращает {ClassName: {field1, field2, ...}}.
     """
-    issues = []
-    for yaml_file, yaml_schema, pydantic_file, pydantic_class in MAPPINGS:
-        yaml_fields     = get_yaml_schema_fields(yaml_file, yaml_schema)
-        pydantic_fields = get_pydantic_fields(pydantic_file, pydantic_class)
-
-        if not yaml_fields or not pydantic_fields:
+    result: dict[str, set[str]] = {}
+    for py_file in SCHEMAS_DIR.rglob("*.py"):
+        if py_file.name == "__init__.py":
             continue
-
-        missing_in_pydantic = yaml_fields - pydantic_fields
-        extra_in_pydantic   = pydantic_fields - yaml_fields
-
-        if missing_in_pydantic or extra_in_pydantic:
-            issues.append({
-                "layer":    "YAML → Pydantic",
-                "source":   f"{yaml_file} / {yaml_schema}",
-                "target":   f"src/schemas/{pydantic_file} / {pydantic_class}",
-                "missing":  sorted(missing_in_pydantic),
-                "extra":    sorted(extra_in_pydantic),
-            })
-    return issues
+        try:
+            tree = ast.parse(py_file.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ClassDef):
+                fields = _parse_pydantic_class(node)
+                if fields:
+                    result[node.name] = fields
+    return result
 
 
-def check_orm_drift() -> list[dict]:
+# ─── Сканирование ORM моделей ─────────────────────────────────────────────────
+
+def load_orm_fields() -> dict[str, set[str]]:
     """
-    Проверяет ORM модели — смотрит что таблицы существуют.
-    Полноценный field-level drift для ORM требует introspection через SQLAlchemy.
-    Здесь делаем проверку через AST.
+    Сканирует src/models/**/*.py.
+    Возвращает {TableName: {column1, column2, ...}}.
     """
+    result: dict[str, set[str]] = {}
+    for py_file in MODELS_DIR.rglob("*.py"):
+        if py_file.name == "__init__.py":
+            continue
+        try:
+            tree = ast.parse(py_file.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ClassDef):
+                fields = set()
+                for item in node.body:
+                    # Mapped[...] аннотации
+                    if isinstance(item, ast.AnnAssign) and isinstance(item.target, ast.Name):
+                        name = item.target.id
+                        # Пропускаем служебные: id, fetched_at, __tablename__
+                        if not name.startswith("_"):
+                            fields.add(name)
+                if fields:
+                    result[node.name] = fields
+    return result
+
+
+# ─── Сравнение ───────────────────────────────────────────────────────────────
+
+def check_drift() -> dict:
+    """
+    Сравнивает три слоя. Возвращает отчёт о расхождениях.
+    """
+    yaml_schemas    = load_yaml_fields()
+    pydantic_fields = load_pydantic_fields()
+    orm_fields      = load_orm_fields()
+
     issues = []
-    for table, orm_file, orm_class in ORM_MAPPINGS:
-        fields = get_orm_fields(orm_file, orm_class)
-        if not fields:
-            issues.append({
-                "layer":   "ORM",
-                "source":  f"src/models/{orm_file} / {orm_class}",
-                "target":  f"table: {table}",
-                "missing": [],
-                "extra":   [],
-                "warning": "Класс не найден или пустой",
-            })
-    return issues
 
+    # YAML схемы с именами похожими на наши Pydantic классы
+    for yaml_name, yaml_flds in yaml_schemas.items():
+        # Ищем совпадение в Pydantic (по имени или частичному совпадению)
+        pydantic_match = None
+        for cls_name in pydantic_fields:
+            if cls_name.lower() == yaml_name.lower() or yaml_name.lower() in cls_name.lower():
+                pydantic_match = cls_name
+                break
 
-def run() -> dict:
-    pydantic_issues = check_pydantic_drift()
-    orm_issues      = check_orm_drift()
+        if pydantic_match:
+            pydantic_flds = pydantic_fields[pydantic_match]
+            missing_in_pydantic = yaml_flds - pydantic_flds
+            extra_in_pydantic   = pydantic_flds - yaml_flds
+            if missing_in_pydantic or extra_in_pydantic:
+                issues.append({
+                    "layer":              "yaml→pydantic",
+                    "yaml_schema":        yaml_name,
+                    "pydantic_class":     pydantic_match,
+                    "missing_in_code":    sorted(missing_in_pydantic),
+                    "extra_in_code":      sorted(extra_in_pydantic),
+                })
+
+    # Pydantic vs ORM — для каждого ORM класса ищем Pydantic аналог
+    for orm_name, orm_flds in orm_fields.items():
+        pydantic_match = None
+        for cls_name in pydantic_fields:
+            # ORM: FbsOrder → Pydantic: Order, FBSOrder, etc.
+            if cls_name.lower().replace("orm", "") == orm_name.lower().replace("orm", ""):
+                pydantic_match = cls_name
+                break
+
+        if pydantic_match:
+            pydantic_flds = pydantic_fields[pydantic_match]
+            # Нормализуем ORM поля — убираем служебные
+            skip = {"id", "fetched_at"}
+            orm_clean      = {f for f in orm_flds if f not in skip}
+            missing_in_orm = pydantic_flds - orm_clean - skip
+            if missing_in_orm:
+                issues.append({
+                    "layer":          "pydantic→orm",
+                    "pydantic_class": pydantic_match,
+                    "orm_class":      orm_name,
+                    "missing_in_orm": sorted(missing_in_orm),
+                })
+
     return {
-        "pydantic": pydantic_issues,
-        "orm":      orm_issues,
-        "clean":    not pydantic_issues and not orm_issues,
+        "yaml_schemas":    len(yaml_schemas),
+        "pydantic_classes": len(pydantic_fields),
+        "orm_classes":     len(orm_fields),
+        "issues":          issues,
+        "issues_count":    len(issues),
     }

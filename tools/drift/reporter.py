@@ -1,34 +1,37 @@
-"""Форматирование отчёта дрейфа схем."""
+"""Форматирование отчёта о дрейфе схем."""
 
 
 def format_report(result: dict) -> str:
-    lines = []
+    issues = result["issues"]
+    lines  = [
+        f"🔍 Drift check: {result['yaml_schemas']} YAML схем | "
+        f"{result['pydantic_classes']} Pydantic классов | "
+        f"{result['orm_classes']} ORM моделей"
+    ]
 
-    pydantic_issues = result.get("pydantic", [])
-    orm_issues      = result.get("orm", [])
+    if not issues:
+        lines.append("✅ Дрейфа нет — все слои синхронизированы.")
+        return "\n".join(lines)
 
-    if result.get("clean"):
-        return "✅ Drift check — расхождений нет. YAML, Pydantic и ORM синхронизированы."
+    lines.append(f"⚠️  Найдено расхождений: {len(issues)}\n")
+
+    yaml_issues     = [i for i in issues if i["layer"] == "yaml→pydantic"]
+    pydantic_issues = [i for i in issues if i["layer"] == "pydantic→orm"]
+
+    if yaml_issues:
+        lines.append("── YAML → Pydantic ──────────────────────────")
+        for issue in yaml_issues:
+            lines.append(f"  {issue['yaml_schema']} → {issue['pydantic_class']}")
+            if issue["missing_in_code"]:
+                lines.append(f"    ❌ нет в Pydantic: {', '.join(issue['missing_in_code'])}")
+            if issue["extra_in_code"]:
+                lines.append(f"    ➕ лишние в Pydantic: {', '.join(issue['extra_in_code'])}")
 
     if pydantic_issues:
-        lines.append(f"⚠️  YAML → Pydantic расхождения ({len(pydantic_issues)}):")
+        lines.append("\n── Pydantic → ORM ───────────────────────────")
         for issue in pydantic_issues:
-            lines.append(f"\n  {issue['source']}")
-            lines.append(f"  → {issue['target']}")
-            if issue["missing"]:
-                lines.append(f"    ❌ Нет в Pydantic: {', '.join(issue['missing'])}")
-                lines.append(f"       Добавьте поля в: {issue['target'].split(' / ')[0]}")
-            if issue["extra"]:
-                lines.append(f"    ℹ️  Лишние в Pydantic (нет в YAML): {', '.join(issue['extra'])}")
-
-    if orm_issues:
-        lines.append(f"\n⚠️  ORM предупреждения ({len(orm_issues)}):")
-        for issue in orm_issues:
-            warn = issue.get("warning", "")
-            if warn:
-                lines.append(f"  {issue['source']}: {warn}")
-
-    if not lines:
-        return "✅ Drift check — расхождений нет."
+            lines.append(f"  {issue['pydantic_class']} → {issue['orm_class']}")
+            if issue["missing_in_orm"]:
+                lines.append(f"    ❌ нет в ORM: {', '.join(issue['missing_in_orm'])}")
 
     return "\n".join(lines)

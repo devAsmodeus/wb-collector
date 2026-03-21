@@ -1,5 +1,6 @@
-"""Скачивание YAML файлов WB API."""
+"""Скачивает YAML файлы с WB API."""
 import requests
+from pathlib import Path
 
 BASE_URL = "https://dev.wildberries.ru/api/swagger/yaml/ru/"
 TIMEOUT  = 15
@@ -20,12 +21,13 @@ DOCS = [
     ("13-finances",        "Финансы"),
 ]
 
+DOCS_DIR = Path(__file__).parent.parent.parent / "docs" / "api"
 
-def fetch_yaml(name: str) -> str | None:
-    """Скачивает YAML файл по имени главы. Возвращает текст или None при ошибке."""
-    url = f"{BASE_URL}{name}.yaml"
+
+def fetch(name: str) -> str | None:
+    """Скачивает один YAML файл. Возвращает текст или None при ошибке."""
     try:
-        r = requests.get(url, timeout=TIMEOUT)
+        r = requests.get(f"{BASE_URL}{name}.yaml", timeout=TIMEOUT)
         r.raise_for_status()
         return r.text
     except Exception:
@@ -33,5 +35,20 @@ def fetch_yaml(name: str) -> str | None:
 
 
 def fetch_all() -> dict[str, str | None]:
-    """Скачивает все YAML файлы. Возвращает {name: text|None}."""
-    return {name: fetch_yaml(name) for name, _ in DOCS}
+    """Скачивает все YAML файлы. Возвращает {filename: content}."""
+    result = {}
+    for name, _ in DOCS:
+        result[f"{name}.yaml"] = fetch(name)
+    return result
+
+
+def save(name: str, text: str) -> None:
+    """Сохраняет YAML на диск."""
+    DOCS_DIR.mkdir(parents=True, exist_ok=True)
+    (DOCS_DIR / f"{name}.yaml").write_text(text, encoding="utf-8")
+
+
+def read_local(name: str) -> str | None:
+    """Читает локальную копию YAML."""
+    path = DOCS_DIR / f"{name}.yaml"
+    return path.read_text(encoding="utf-8") if path.exists() else None

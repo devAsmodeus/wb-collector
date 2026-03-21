@@ -1,15 +1,14 @@
 """
-Обёртка для cron — запускает только sync через tools.
-
-Для полного прохода используйте: python -m tools
-Для только sync: python -m tools sync
+Обёртка для обратной совместимости с cron.
+Основная логика — в tools/sync_docs/
 """
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from tools.cli import main
+from tools.sync_docs.runner import run
 
-result = main(["sync"])
-sys.exit(result)
+if __name__ == "__main__":
+    result = run()
+    print(result["report"])

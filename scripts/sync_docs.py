@@ -57,6 +57,23 @@ REPO_DIR = Path(__file__).parent.parent
 MANIFEST = DOCS_DIR / "manifest.json"
 TIMEOUT  = 15
 
+# Маппинг: имя YAML → папки со схемами/моделями/контроллерами
+CHAPTER_MAP = {
+    "01-general":         ["src/schemas/general", "src/models/references.py", "src/api/wb/general"],
+    "02-products":        ["src/schemas/products", "src/models/products.py",   "src/api/wb/products"],
+    "03-orders-fbs":      ["src/schemas/fbs",      "src/models/orders.py",     "src/api/wb/fbs"],
+    "04-orders-dbw":      ["src/schemas/dbw",      "src/models/orders.py",     "src/api/wb/dbw"],
+    "05-orders-dbs":      ["src/schemas/dbs",      "src/models/orders.py",     "src/api/wb/dbs"],
+    "06-in-store-pickup": ["src/schemas/pickup",   "src/models/orders.py",     "src/api/wb/pickup"],
+    "07-orders-fbw":      ["src/schemas/fbw",      "src/models/orders.py",     "src/api/wb/fbw"],
+    "08-promotion":       ["src/schemas/promotion","src/models/promotion.py",  "src/api/wb/promotion"],
+    "09-communications":  ["src/schemas/communications","src/models/communications.py","src/api/wb/communications"],
+    "10-tariffs":         ["src/schemas/tariffs",  "src/models/references.py", "src/api/wb/tariffs"],
+    "11-analytics":       ["src/schemas/analytics","src/api/wb/analytics"],
+    "12-reports":         ["src/schemas/reports",  "src/models/reports.py",    "src/api/wb/reports"],
+    "13-finances":        ["src/schemas/finances", "src/models/references.py", "src/api/wb/finances"],
+}
+
 
 # ─── Утилиты ─────────────────────────────────────────────────────────────────
 
@@ -207,6 +224,11 @@ def format_diff(name: str, label: str, diff: dict) -> str:
     if diff["version_changed"]:
         lines.append(f"  • Версия: {diff['old_version']} → {diff['new_version']}")
 
+    # Подсказка какие файлы нужно проверить
+    affected = CHAPTER_MAP.get(name, [])
+    if affected and has_changes(diff):
+        lines.append(f"  🗂  Проверьте: {', '.join(affected)}")
+
     if diff["endpoints_added"]:
         lines.append(f"  ✅ Новые эндпоинты ({len(diff['endpoints_added'])}):")
         for ep in diff["endpoints_added"][:5]:
@@ -336,7 +358,9 @@ def run() -> str:
     return (
         f"🔔 WB API docs [{now}] — обнаружены изменения!\n\n"
         f"{report_text}\n\n"
-        f"📦 Git: {git_result}{err_str}"
+        f"📦 Git: {git_result}\n"
+        f"⚙️  Не забудьте: обновить схемы → обновить ORM модели → "
+        f"сгенерировать миграцию → закоммитить файл миграции{err_str}"
     )
 
 

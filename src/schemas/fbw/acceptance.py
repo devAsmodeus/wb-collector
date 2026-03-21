@@ -23,6 +23,35 @@ class FBWAcceptanceOptionsRequest(BaseModel):
     )
 
 
+class FBWAcceptanceWarehouse(BaseModel):
+    """Склад в ответе опций приёмки."""
+    warehouseID: int | None = Field(None, description="ID склада WB")
+    canBox: bool | None = Field(None, description="Доступен тип упаковки Короб")
+    canMonopallet: bool | None = Field(None, description="Доступен тип упаковки Монопаллета")
+    canSupersafe: bool | None = Field(None, description="Доступен тип упаковки Суперсейф")
+    isBoxOnPallet: bool | None = Field(None, description="Доступен тип поставки Поштучная паллета")
+
+
+class FBWAcceptanceError(BaseModel):
+    """Ошибка в ответе опций приёмки."""
+    title: str | None = Field(None, description="ID ошибки")
+    detail: str | None = Field(None, description="Описание ошибки")
+
+
+class FBWAcceptanceResultItem(BaseModel):
+    """Элемент ответа опций приёмки (по баркоду)."""
+    barcode: str | None = Field(None, description="Баркод товара из карточки")
+    isError: bool | None = Field(None, description="Наличие ошибки: `true` — есть, поля нет — нет")
+    error: FBWAcceptanceError | None = Field(None, description="Данные ошибки (при наличии)")
+    warehouses: list[FBWAcceptanceWarehouse] | None = Field(None, description="Список складов с опциями приёмки. `null` при ошибке")
+
+
+class FBWAcceptanceOptionsResponse(BaseModel):
+    """Ответ метода опций приёмки FBW."""
+    result: list[FBWAcceptanceResultItem] = Field(default=[], description="Результаты по каждому баркоду")
+    requestId: str | None = Field(None, description="ID запроса при наличии ошибок")
+
+
 class FBWWarehouse(BaseModel):
     """Склад WB для FBW-поставок."""
     id: int | None = Field(None, description="ID склада WB")

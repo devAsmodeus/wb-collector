@@ -1,7 +1,9 @@
 """Коллектор: FBW — Информация для формирования поставок."""
 from src.collectors.base import WBApiClient
 from src.config import settings
-from src.schemas.fbw.acceptance import FBWWarehousesResponse, FBWTransitTariffsResponse
+from src.schemas.fbw.acceptance import (
+    FBWAcceptanceOptionsResponse, FBWWarehousesResponse, FBWTransitTariffsResponse,
+)
 
 
 class FBWAcceptanceCollector:
@@ -15,12 +17,17 @@ class FBWAcceptanceCollector:
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
 
-    async def get_acceptance_options(self, goods: list[dict], warehouse_id: int | None = None) -> dict:
+    async def get_acceptance_options(
+        self, goods: list[dict], warehouse_id: int | None = None
+    ) -> FBWAcceptanceOptionsResponse:
         """POST /api/v1/acceptance/options — опции приёмки для списка товаров."""
         params = {}
         if warehouse_id:
             params["warehouseID"] = warehouse_id
-        return await self._client.post("/api/v1/acceptance/options", json=goods, params=params)
+        data = await self._client.post("/api/v1/acceptance/options", json=goods, params=params)
+        return FBWAcceptanceOptionsResponse.model_validate(
+            data if isinstance(data, dict) else {"result": data or []}
+        )
 
     async def get_warehouses(self) -> FBWWarehousesResponse:
         """GET /api/v1/warehouses — список складов WB."""

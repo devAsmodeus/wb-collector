@@ -1,15 +1,15 @@
 {
-  "fetched_at": "2026-03-19T05:00:21Z",
+  "fetched_at": "2026-03-21T09:37:56Z",
   "files": [
     {
       "file": "01-general.yaml",
-      "sha256": "d7beb4673971fc94b6eaf388f703fbdcf0d86993b4c5307566f2286c9ed9953d",
-      "size": 50590
+      "sha256": "91123e2766c8e77430493b55cedfc0d53739816b544879c762980f84ddbe6124",
+      "size": 50720
     },
     {
       "file": "02-products.yaml",
-      "sha256": "c593e4de7b71eeb7b7cf9d6fc9d6edc8e3266d7c171182790d4e247a42f86831",
-      "size": 329709
+      "sha256": "cfcbf5704bd84a4240373b178cc8245b8e057ee1a9b72429ed1397c0b70a9c21",
+      "size": 336314
     },
     {
       "file": "03-orders-fbs.yaml",
@@ -38,18 +38,18 @@
     },
     {
       "file": "08-promotion.yaml",
-      "sha256": "e10027b8743d796bbd4dbcddee4e179a104691b66227e7596eeaa58986814a01",
-      "size": 227384
+      "sha256": "0a39780c80f861e526ad027643e7446d4482daad22a88fd4a3a989ce45fd7d57",
+      "size": 227408
     },
     {
       "file": "09-communications.yaml",
-      "sha256": "cb8dfa7c9962a30408005998d34068d91ef49f549d358026cbf01194aa641cca",
-      "size": 176457
+      "sha256": "663fa65b6e8a28f1f727308029c173a1d84b054aa7b9a9d2c8b8a4bf7d626ea9",
+      "size": 175692
     },
     {
       "file": "10-tariffs.yaml",
-      "sha256": "ac67a763f1eca6c44afe2fd48bd65e4fc80b183ba78bc24d7f7280729ee82093",
-      "size": 41964
+      "sha256": "c2502b8f1958edd53351a7f9b7925c951276ae3e8478bb3ef0aa6771c8e904d1",
+      "size": 42325
     },
     {
       "file": "11-analytics.yaml",

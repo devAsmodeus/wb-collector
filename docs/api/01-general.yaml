@@ -257,12 +257,16 @@ paths:
                     format: UUID
                     type: string
                     description: Уникальный ID продавца на Wildberries, [находящийся в публичном поле токена](./api-information#tag/Avtorizaciya/Kak-ustroen-token)
+                  tin:
+                    type: string
+                    description: ИНН
                   tradeMark:
                     type: string
                     description: Торговое наименование продавца
               example:
                 name: ИП Кружинин В. Р.
                 sid: e8923014-e233-47q8-898e-3cc86d67ea61
+                tin: '1234567890'
                 tradeMark: Flax Store
         '401':
           $ref: '#/components/responses/401'

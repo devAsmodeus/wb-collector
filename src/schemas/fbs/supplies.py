@@ -10,6 +10,7 @@ class Supply(BaseModel):
     scanDt: str | None = Field(None, description="Дата и время скана поставки на складе WB (ISO 8601)")
     createdAt: str | None = Field(None, description="Дата создания поставки (ISO 8601)")
     isLargeCargo: bool = Field(default=False, description="Является ли поставка крупногабаритной (КГТ)")
+    isB2b: bool | None = Field(None, description="Признак B2B-продажи: `true` — B2B, `false` — не B2B, `null` — нет заданий")
 
 
 class SuppliesResponse(BaseModel):

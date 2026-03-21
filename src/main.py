@@ -7,7 +7,8 @@ from litestar import Litestar, get
 from litestar.config.cors import CORSConfig
 from litestar.contrib.prometheus import PrometheusConfig, PrometheusController
 from litestar.openapi import OpenAPIConfig
-from litestar.openapi.spec import Tag
+from litestar.openapi.plugins import SwaggerRenderPlugin
+from litestar.openapi.spec import Components, SecurityScheme, Tag
 from litestar.di import Provide
 
 from src.dependencies import provide_db_session, provide_db_manager
@@ -104,8 +105,23 @@ app = Litestar(
         description=(
             "Сбор и аналитика данных Wildberries API.\n\n"
             "**WB API** — прямые прокси к WB API с сохранением в БД.\n"
-            "**Internal** — кастомная логика, агрегация, экспорт."
+            "**Sync** — синхронизация данных в БД.\n"
+            "**DB** — чтение данных из локальной БД.\n\n"
+            "**Авторизация:** нажмите кнопку **Authorize** и введите WB API токен."
         ),
+        components=Components(
+            security_schemes={
+                "BearerAuth": SecurityScheme(
+                    type="http",
+                    scheme="bearer",
+                    bearer_format="JWT",
+                    description="WB API токен. Формат: Bearer <token>",
+                )
+            }
+        ),
+        security=[{"BearerAuth": []}],
+        render_plugins=[SwaggerRenderPlugin(version="5.18.2", js_url=None, css_url=None)],
+        path="/docs",
         tags=[
             Tag(name="System", description="Служебные эндпоинты"),
             Tag(name="WB / General", description="Прокси к WB API / Общее (01)"),
@@ -169,7 +185,6 @@ app = Litestar(
             Tag(name="Документы", description="WB API / Финансы / Документы продавца"),
             Tag(name="Internal", description="Кастомные методы — агрегация, экспорт, аналитика"),
         ],
-        path="/docs",
     ),
     cors_config=CORSConfig(allow_origins=["*"]),
 )

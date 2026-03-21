@@ -1,70 +1,3597 @@
 {
-  "fetched_at": "2026-03-21T09:37:56Z",
+  "fetched_at": "2026-03-21T09:54:18Z",
   "files": [
     {
       "file": "01-general.yaml",
       "sha256": "91123e2766c8e77430493b55cedfc0d53739816b544879c762980f84ddbe6124",
-      "size": 50720
+      "size": 50720,
+      "semantics": {
+        "version": "general",
+        "endpoints": {
+          "/ping": [
+            "get"
+          ],
+          "/api/communications/v2/news": [
+            "get"
+          ],
+          "/api/v1/seller-info": [
+            "get"
+          ],
+          "/api/v1/invite": [
+            "post"
+          ],
+          "/api/v1/users": [
+            "get"
+          ],
+          "/api/v1/users/access": [
+            "put"
+          ],
+          "/api/v1/user": [
+            "delete"
+          ]
+        },
+        "schemas": {
+          "Access": [
+            "code",
+            "disabled"
+          ],
+          "getUsersResponse": [
+            "countInResponse",
+            "total",
+            "users"
+          ],
+          "createInviteRequest": [
+            "access",
+            "invite",
+            "phoneNumber",
+            "position"
+          ],
+          "createInviteResponse": [
+            "expiredAt",
+            "inviteID",
+            "inviteUrl",
+            "isSuccess"
+          ],
+          "updateUserAccessRequest": [
+            "usersAccesses"
+          ],
+          "UserAccess": [
+            "access",
+            "userId"
+          ],
+          "errorResponse": [
+            "detail",
+            "origin",
+            "requestId",
+            "status",
+            "title"
+          ]
+        }
+      }
     },
     {
       "file": "02-products.yaml",
       "sha256": "cfcbf5704bd84a4240373b178cc8245b8e057ee1a9b72429ed1397c0b70a9c21",
-      "size": 336314
+      "size": 336314,
+      "semantics": {
+        "version": "products",
+        "endpoints": {
+          "/content/v2/object/parent/all": [
+            "get"
+          ],
+          "/content/v2/object/all": [
+            "get"
+          ],
+          "/content/v2/object/charcs/{subjectId}": [
+            "get"
+          ],
+          "/content/v2/directory/colors": [
+            "get"
+          ],
+          "/content/v2/directory/kinds": [
+            "get"
+          ],
+          "/content/v2/directory/countries": [
+            "get"
+          ],
+          "/content/v2/directory/seasons": [
+            "get"
+          ],
+          "/content/v2/directory/vat": [
+            "get"
+          ],
+          "/content/v2/directory/tnved": [
+            "get"
+          ],
+          "/api/content/v1/brands": [
+            "get"
+          ],
+          "/content/v2/tags": [
+            "get"
+          ],
+          "/content/v2/tag": [
+            "post"
+          ],
+          "/content/v2/tag/{id}": [
+            "delete",
+            "patch"
+          ],
+          "/content/v2/tag/nomenclature/link": [
+            "post"
+          ],
+          "/content/v2/get/cards/list": [
+            "post"
+          ],
+          "/content/v2/cards/error/list": [
+            "post"
+          ],
+          "/content/v2/cards/update": [
+            "post"
+          ],
+          "/content/v2/cards/moveNm": [
+            "post"
+          ],
+          "/content/v2/cards/delete/trash": [
+            "post"
+          ],
+          "/content/v2/cards/recover": [
+            "post"
+          ],
+          "/content/v2/get/cards/trash": [
+            "post"
+          ],
+          "/content/v2/cards/limits": [
+            "get"
+          ],
+          "/content/v2/barcodes": [
+            "post"
+          ],
+          "/content/v2/cards/upload": [
+            "post"
+          ],
+          "/content/v2/cards/upload/add": [
+            "post"
+          ],
+          "/content/v3/media/file": [
+            "post"
+          ],
+          "/content/v3/media/save": [
+            "post"
+          ],
+          "/api/v2/upload/task": [
+            "post"
+          ],
+          "/api/v2/upload/task/size": [
+            "post"
+          ],
+          "/api/v2/upload/task/club-discount": [
+            "post"
+          ],
+          "/api/v2/history/tasks": [
+            "get"
+          ],
+          "/api/v2/history/goods/task": [
+            "get"
+          ],
+          "/api/v2/buffer/tasks": [
+            "get"
+          ],
+          "/api/v2/buffer/goods/task": [
+            "get"
+          ],
+          "/api/v2/list/goods/filter": [
+            "get",
+            "post"
+          ],
+          "/api/v2/list/goods/size/nm": [
+            "get"
+          ],
+          "/api/v2/quarantine/goods": [
+            "get"
+          ],
+          "/api/v3/stocks/{warehouseId}": [
+            "delete",
+            "post",
+            "put"
+          ],
+          "/api/v3/offices": [
+            "get"
+          ],
+          "/api/v3/warehouses": [
+            "get",
+            "post"
+          ],
+          "/api/v3/warehouses/{warehouseId}": [
+            "delete",
+            "put"
+          ],
+          "/api/v3/dbw/warehouses/{warehouseId}/contacts": [
+            "get",
+            "put"
+          ]
+        },
+        "schemas": {
+          "BrandsResponse": [
+            "brands",
+            "next",
+            "total"
+          ],
+          "BrandsResponseError": [
+            "detail",
+            "errors",
+            "origin",
+            "requestId",
+            "title"
+          ],
+          "StoreContactRequestBody": [
+            "contacts"
+          ],
+          "responseCardCreate": [
+            "additionalErrors",
+            "data",
+            "error",
+            "errorText"
+          ],
+          "requestMoveNmsImtConn": [
+            "nmIDs",
+            "targetIMT"
+          ],
+          "requestMoveNmsImtDisconn": [
+            "nmIDs"
+          ],
+          "responseIncorrectDate": [
+            "error"
+          ],
+          "responseBodyContentError400": [
+            "additionalErrors",
+            "data",
+            "error",
+            "errorText"
+          ],
+          "responseBodyContentError403": [
+            "additionalErrors",
+            "data",
+            "error",
+            "errorText"
+          ],
+          "responseContentError": [
+            "additionalErrors",
+            "data",
+            "error",
+            "errorText"
+          ],
+          "mediaErrors": [
+            "additionalErrors",
+            "data",
+            "error",
+            "errorText"
+          ],
+          "ResponseError": [
+            "data",
+            "error",
+            "errorText"
+          ],
+          "RequestAlreadyExistsError": [
+            "alreadyExists",
+            "data",
+            "error",
+            "errorText",
+            "id"
+          ],
+          "StocksWarehouseError": [
+            "code",
+            "data",
+            "message"
+          ],
+          "TaskCreated": [
+            "alreadyExists",
+            "data",
+            "error",
+            "errorText",
+            "id"
+          ],
+          "Goods": [],
+          "Good": [
+            "discount",
+            "nmID",
+            "price"
+          ],
+          "SizeGoodsBody": [],
+          "SizeGoodReq": [
+            "nmID",
+            "price",
+            "sizeID"
+          ],
+          "ClubDisc": [],
+          "ClubDiscReq": [
+            "clubDiscount",
+            "nmID"
+          ],
+          "GoodsList": [
+            "clubDiscount",
+            "currencyIsoCode4217",
+            "discount",
+            "editableSizePrice",
+            "isBadTurnover",
+            "nmID",
+            "sizes",
+            "vendorCode"
+          ],
+          "SizeGood": [
+            "clubDiscount",
+            "clubDiscountedPrice",
+            "currencyIsoCode4217",
+            "discount",
+            "discountedPrice",
+            "editableSizePrice",
+            "isBadTurnover",
+            "nmID",
+            "price",
+            "sizeID",
+            "techSizeName",
+            "vendorCode"
+          ],
+          "GoodBufferHistory": [
+            "clubDiscount",
+            "currencyIsoCode4217",
+            "discount",
+            "errorText",
+            "nmID",
+            "price",
+            "sizeID",
+            "status",
+            "techSizeName",
+            "vendorCode"
+          ],
+          "GoodHistory": [
+            "clubDiscount",
+            "currencyIsoCode4217",
+            "discount",
+            "errorText",
+            "nmID",
+            "price",
+            "sizeID",
+            "status",
+            "techSizeName",
+            "vendorCode"
+          ],
+          "SupplierTaskMetadata": [
+            "activationDate",
+            "overAllGoodsNumber",
+            "status",
+            "successGoodsNumber",
+            "uploadDate",
+            "uploadID"
+          ],
+          "SupplierTaskMetadataBuffer": [
+            "activationDate",
+            "overAllGoodsNumber",
+            "status",
+            "successGoodsNumber",
+            "uploadDate",
+            "uploadID"
+          ],
+          "Date": [],
+          "Date1": [],
+          "TaskStatus": [],
+          "TaskStatusBuffer": [],
+          "GoodStatus": [],
+          "GoodStatusBuffer": [],
+          "Error": [
+            "code",
+            "data",
+            "message"
+          ],
+          "QuarantineGoods": [
+            "currencyIsoCode4217",
+            "newDiscount",
+            "newPrice",
+            "nmID",
+            "oldDiscount",
+            "oldPrice",
+            "priceDiff",
+            "sizeID",
+            "techSizeName"
+          ],
+          "Office": [
+            "address",
+            "cargoType",
+            "city",
+            "deliveryType",
+            "federalDistrict",
+            "id",
+            "latitude",
+            "longitude",
+            "name",
+            "selected"
+          ],
+          "Warehouse": [
+            "cargoType",
+            "deliveryType",
+            "id",
+            "isDeleting",
+            "isProcessing",
+            "name",
+            "officeId"
+          ],
+          "responsePublicViewerPublicErrorsTableListV2": [
+            "additionalErrors",
+            "data",
+            "error",
+            "errorText"
+          ],
+          "models.ErrorTableListPublicRespV2": [
+            "cursor",
+            "items"
+          ],
+          "models.ErrorTableListPublicRespV2Item": [
+            "batchUUID",
+            "brands",
+            "errors",
+            "subjects",
+            "vendorCodes"
+          ],
+          "viewer_contract.PublicErrorsCursorOutput": [
+            "batchUUID",
+            "next",
+            "updatedAt"
+          ],
+          "models.ErrorSubject": [
+            "id",
+            "name"
+          ],
+          "models.ErrorBrand": [
+            "id",
+            "name"
+          ],
+          "requestPublicViewerPublicErrorsTableListV2": [
+            "cursor",
+            "order"
+          ],
+          "swagger.PublicErrorsCursorInput": [
+            "batchUUID",
+            "limit",
+            "updatedAt"
+          ],
+          "swagger.PublicErrorsOrderV2": [
+            "ascending"
+          ]
+        }
+      }
     },
     {
       "file": "03-orders-fbs.yaml",
       "sha256": "f03fb3417efde5ef61576ddbe952d164dca630955e2b60ecc3793f357b051d6c",
-      "size": 159196
+      "size": 159196,
+      "semantics": {
+        "version": "order",
+        "endpoints": {
+          "/api/v3/passes/offices": [
+            "get"
+          ],
+          "/api/v3/passes": [
+            "get",
+            "post"
+          ],
+          "/api/v3/passes/{passId}": [
+            "delete",
+            "put"
+          ],
+          "/api/v3/orders/new": [
+            "get"
+          ],
+          "/api/v3/orders": [
+            "get"
+          ],
+          "/api/v3/orders/status": [
+            "post"
+          ],
+          "/api/v3/supplies/orders/reshipment": [
+            "get"
+          ],
+          "/api/v3/orders/{orderId}/cancel": [
+            "patch"
+          ],
+          "/api/v3/orders/stickers": [
+            "post"
+          ],
+          "/api/marketplace/v3/orders/meta": [
+            "post"
+          ],
+          "/api/v3/orders/{orderId}/meta": [
+            "delete"
+          ],
+          "/api/v3/orders/{orderId}/meta/sgtin": [
+            "put"
+          ],
+          "/api/v3/orders/{orderId}/meta/uin": [
+            "put"
+          ],
+          "/api/v3/orders/{orderId}/meta/imei": [
+            "put"
+          ],
+          "/api/v3/orders/{orderId}/meta/gtin": [
+            "put"
+          ],
+          "/api/v3/orders/{orderId}/meta/expiration": [
+            "put"
+          ],
+          "/api/marketplace/v3/orders/{orderId}/meta/customs-declaration": [
+            "put"
+          ],
+          "/api/v3/orders/stickers/cross-border": [
+            "post"
+          ],
+          "/api/v3/orders/status/history": [
+            "post"
+          ],
+          "/api/v3/orders/client": [
+            "post"
+          ],
+          "/api/v3/supplies": [
+            "get",
+            "post"
+          ],
+          "/api/marketplace/v3/supplies/{supplyId}/orders": [
+            "patch"
+          ],
+          "/api/v3/supplies/{supplyId}": [
+            "delete",
+            "get"
+          ],
+          "/api/marketplace/v3/supplies/{supplyId}/order-ids": [
+            "get"
+          ],
+          "/api/v3/supplies/{supplyId}/deliver": [
+            "patch"
+          ],
+          "/api/v3/supplies/{supplyId}/barcode": [
+            "get"
+          ],
+          "/api/v3/supplies/{supplyId}/trbx": [
+            "delete",
+            "get",
+            "post"
+          ],
+          "/api/v3/supplies/{supplyId}/trbx/stickers": [
+            "post"
+          ]
+        },
+        "schemas": {
+          "v3.SupplyOrderIDsAPI": [
+            "orderIds"
+          ],
+          "PassOffice": [
+            "address",
+            "id",
+            "name"
+          ],
+          "Error": [
+            "code",
+            "data",
+            "message"
+          ],
+          "Next": [],
+          "Order": [
+            "address",
+            "article",
+            "cargoType",
+            "chrtId",
+            "colorCode",
+            "comment",
+            "convertedCurrencyCode",
+            "convertedPrice",
+            "createdAt",
+            "crossBorderType",
+            "currencyCode",
+            "deliveryType",
+            "fullAddress",
+            "id",
+            "isB2B",
+            "isZeroOrder",
+            "latitude",
+            "longitude",
+            "nmId",
+            "officeId",
+            "offices",
+            "options",
+            "orderUid",
+            "price",
+            "rid",
+            "scanPrice",
+            "skus",
+            "supplyId",
+            "warehouseId"
+          ],
+          "Supply": [
+            "cargoType",
+            "closedAt",
+            "createdAt",
+            "crossBorderType",
+            "destinationOfficeId",
+            "done",
+            "id",
+            "isB2b",
+            "name",
+            "scanDt"
+          ],
+          "OrderNew": [
+            "address",
+            "article",
+            "cargoType",
+            "chrtId",
+            "colorCode",
+            "comment",
+            "convertedCurrencyCode",
+            "convertedFinalPrice",
+            "convertedPrice",
+            "createdAt",
+            "crossBorderType",
+            "currencyCode",
+            "ddate",
+            "deliveryType",
+            "finalPrice",
+            "fullAddress",
+            "id",
+            "isB2B",
+            "isZeroOrder",
+            "latitude",
+            "longitude",
+            "nmId",
+            "officeId",
+            "offices",
+            "optionalMeta",
+            "options",
+            "orderUid",
+            "price",
+            "requiredMeta",
+            "rid",
+            "salePrice",
+            "scanPrice",
+            "sellerDate",
+            "skus",
+            "warehouseId"
+          ],
+          "SupplyTrbx": [
+            "id"
+          ],
+          "TrbxStickers": [
+            "barcode",
+            "file"
+          ],
+          "Meta": [
+            "customsDeclaration",
+            "expiration",
+            "gtin",
+            "imei",
+            "sgtin",
+            "uin",
+            "value"
+          ],
+          "v3.GetMetaMultiRequest": [
+            "orders"
+          ],
+          "v3.OrdersMetaAPI": [
+            "orders"
+          ],
+          "v3.OrderMetaAPI": [
+            "id",
+            "meta"
+          ],
+          "Pass": [
+            "carModel",
+            "carNumber",
+            "dateEnd",
+            "firstName",
+            "id",
+            "lastName",
+            "officeAddress",
+            "officeId",
+            "officeName"
+          ],
+          "CrossborderTurkeyClientInfo": [
+            "firstName",
+            "fullName",
+            "lastName",
+            "middleName",
+            "orderID",
+            "phone",
+            "phoneCode"
+          ],
+          "CrossborderTurkeyClientInfoResp": [
+            "orders"
+          ],
+          "OrdersRequestAPI": [
+            "orders"
+          ],
+          "v3.APIError": [
+            "code",
+            "data",
+            "message"
+          ]
+        }
+      }
     },
     {
       "file": "04-orders-dbw.yaml",
       "sha256": "df51e26acf78b804c5565b5858535f7405e9c3e0bc15038515dd66fdffa1786f",
-      "size": 86019
+      "size": 86019,
+      "semantics": {
+        "version": "ordersdbw",
+        "endpoints": {
+          "/api/v3/dbw/orders/new": [
+            "get"
+          ],
+          "/api/v3/dbw/orders": [
+            "get"
+          ],
+          "/api/v3/dbw/orders/delivery-date": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbw/orders/client": [
+            "post"
+          ],
+          "/api/v3/dbw/orders/status": [
+            "post"
+          ],
+          "/api/v3/dbw/orders/{orderId}/confirm": [
+            "patch"
+          ],
+          "/api/v3/dbw/orders/stickers": [
+            "post"
+          ],
+          "/api/v3/dbw/orders/{orderId}/assemble": [
+            "patch"
+          ],
+          "/api/v3/dbw/orders/courier": [
+            "post"
+          ],
+          "/api/v3/dbw/orders/{orderId}/cancel": [
+            "patch"
+          ],
+          "/api/v3/dbw/orders/{orderId}/meta": [
+            "delete",
+            "get"
+          ],
+          "/api/v3/dbw/orders/{orderId}/meta/sgtin": [
+            "put"
+          ],
+          "/api/v3/dbw/orders/{orderId}/meta/uin": [
+            "put"
+          ],
+          "/api/v3/dbw/orders/{orderId}/meta/imei": [
+            "put"
+          ],
+          "/api/v3/dbw/orders/{orderId}/meta/gtin": [
+            "put"
+          ]
+        },
+        "schemas": {
+          "ClientInfo": [
+            "additionalPhoneCodes",
+            "additionalPhones",
+            "firstName",
+            "fullName",
+            "orderId",
+            "phone",
+            "phoneCode",
+            "replacementPhone"
+          ],
+          "ClientInfoResp": [
+            "orders"
+          ],
+          "OrderCourierInfo": [
+            "courierInfo",
+            "orderID"
+          ],
+          "OrderCourierInfoResp": [
+            "orders"
+          ],
+          "CourierContactsResponse": [
+            "carNumber",
+            "fullName",
+            "pTimeFrom",
+            "pTimeTo",
+            "phone"
+          ],
+          "CourierInfo": [
+            "contacts",
+            "mustBeAssigned",
+            "updatedAt"
+          ],
+          "Error": [
+            "code",
+            "data",
+            "message"
+          ],
+          "OrdersRequestAPI": [
+            "orders"
+          ],
+          "DeliveryDatesRequest": [
+            "orders"
+          ],
+          "Next": [],
+          "OrderNewDBW": [
+            "address",
+            "article",
+            "cargoType",
+            "chrtId",
+            "colorCode",
+            "comment",
+            "convertedCurrencyCode",
+            "convertedPrice",
+            "createdAt",
+            "currencyCode",
+            "fullAddress",
+            "groupId",
+            "id",
+            "isB2b",
+            "isZeroOrder",
+            "latitude",
+            "longitude",
+            "nmId",
+            "options",
+            "orderUid",
+            "price",
+            "requiredMeta",
+            "rid",
+            "salePrice",
+            "skus",
+            "warehouseId"
+          ],
+          "Order": [
+            "address",
+            "article",
+            "cargoType",
+            "chrtId",
+            "colorCode",
+            "comment",
+            "convertedCurrencyCode",
+            "convertedPrice",
+            "createdAt",
+            "currencyCode",
+            "fullAddress",
+            "groupId",
+            "id",
+            "isB2b",
+            "isZeroOrder",
+            "latitude",
+            "longitude",
+            "nmId",
+            "options",
+            "orderUid",
+            "price",
+            "rid",
+            "skus",
+            "warehouseId"
+          ],
+          "DeliveryDatesInfoResp": [
+            "orders"
+          ],
+          "Meta": [
+            "gtin",
+            "imei",
+            "sgtin",
+            "uin",
+            "value"
+          ]
+        }
+      }
     },
     {
       "file": "05-orders-dbs.yaml",
       "sha256": "56bf4f2ff4c8664cf7f74efe834c938f2573fc0d97dfbd4b18fd94c6a2355162",
-      "size": 134201
+      "size": 134201,
+      "semantics": {
+        "version": "order",
+        "endpoints": {
+          "/api/v3/dbs/orders/new": [
+            "get"
+          ],
+          "/api/v3/dbs/orders": [
+            "get"
+          ],
+          "/api/v3/dbs/groups/info": [
+            "post"
+          ],
+          "/api/v3/dbs/orders/client": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbs/orders/b2b/info": [
+            "post"
+          ],
+          "/api/v3/dbs/orders/delivery-date": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbs/orders/status/info": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbs/orders/status/cancel": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbs/orders/status/confirm": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbs/orders/stickers": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbs/orders/status/deliver": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbs/orders/status/receive": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbs/orders/status/reject": [
+            "post"
+          ],
+          "/api/v3/dbs/orders/status": [
+            "post"
+          ],
+          "/api/v3/dbs/orders/{orderId}/cancel": [
+            "patch"
+          ],
+          "/api/v3/dbs/orders/{orderId}/confirm": [
+            "patch"
+          ],
+          "/api/v3/dbs/orders/{orderId}/deliver": [
+            "patch"
+          ],
+          "/api/v3/dbs/orders/{orderId}/receive": [
+            "patch"
+          ],
+          "/api/v3/dbs/orders/{orderId}/reject": [
+            "patch"
+          ],
+          "/api/marketplace/v3/dbs/orders/meta/info": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbs/orders/meta/delete": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbs/orders/meta/sgtin": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbs/orders/meta/uin": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbs/orders/meta/imei": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbs/orders/meta/gtin": [
+            "post"
+          ],
+          "/api/marketplace/v3/dbs/orders/meta/customs-declaration": [
+            "post"
+          ],
+          "/api/v3/dbs/orders/{orderId}/meta": [
+            "delete",
+            "get"
+          ],
+          "/api/v3/dbs/orders/{orderId}/meta/sgtin": [
+            "put"
+          ],
+          "/api/v3/dbs/orders/{orderId}/meta/uin": [
+            "put"
+          ],
+          "/api/v3/dbs/orders/{orderId}/meta/imei": [
+            "put"
+          ],
+          "/api/v3/dbs/orders/{orderId}/meta/gtin": [
+            "put"
+          ]
+        },
+        "schemas": {
+          "api.OrderGroupsRequest": [
+            "groups"
+          ],
+          "Error": [
+            "code",
+            "data",
+            "message"
+          ],
+          "OrdersRequestAPI": [
+            "orders"
+          ],
+          "api.OrderGroup": [
+            "convertedCurrencyCode",
+            "convertedDeliveryCost",
+            "currencyCode",
+            "deliveryCost",
+            "groupID"
+          ],
+          "DeliveryDatesRequest": [
+            "orders"
+          ],
+          "Code": [
+            "code"
+          ],
+          "Next": [],
+          "OrderNewDBS": [
+            "address",
+            "article",
+            "cargoType",
+            "chrtId",
+            "colorCode",
+            "comment",
+            "convertedCurrencyCode",
+            "convertedFinalPrice",
+            "convertedPrice",
+            "createdAt",
+            "currencyCode",
+            "deliveryType",
+            "finalPrice",
+            "fullAddress",
+            "groupId",
+            "id",
+            "isB2b",
+            "isZeroOrder",
+            "latitude",
+            "longitude",
+            "nmId",
+            "options",
+            "orderUid",
+            "price",
+            "requiredMeta",
+            "rid",
+            "salePrice",
+            "skus",
+            "warehouseId",
+            "wbStickerId"
+          ],
+          "OrderDBS": [
+            "address",
+            "article",
+            "cargoType",
+            "chrtId",
+            "colorCode",
+            "comment",
+            "convertedCurrencyCode",
+            "convertedFinalPrice",
+            "convertedPrice",
+            "createdAt",
+            "currencyCode",
+            "deliveryType",
+            "finalPrice",
+            "fullAddress",
+            "groupId",
+            "id",
+            "isB2b",
+            "isZeroOrder",
+            "latitude",
+            "longitude",
+            "nmId",
+            "options",
+            "orderUid",
+            "price",
+            "rid",
+            "scanPrice",
+            "skus",
+            "warehouseId",
+            "wbStickerId"
+          ],
+          "DbsOnlyClientInfo": [
+            "additionalPhoneCodes",
+            "firstName",
+            "fullName",
+            "orderID",
+            "phone",
+            "phoneCode",
+            "replacementPhone"
+          ],
+          "DbsOnlyClientInfoResp": [
+            "orders"
+          ],
+          "DeliveryDatesInfoResp": [
+            "orders"
+          ],
+          "Meta": [
+            "customsDeclaration",
+            "gtin",
+            "imei",
+            "sgtin",
+            "uin",
+            "value"
+          ],
+          "api.OrdersMetaDeleteRequest": [
+            "key",
+            "orderIds"
+          ],
+          "api.OrdersGTINSetRequest": [
+            "orders"
+          ],
+          "api.GTIN": [
+            "gtin",
+            "orderId"
+          ],
+          "api.OrdersIMEISetRequest": [
+            "orders"
+          ],
+          "api.IMEI": [
+            "imei",
+            "orderId"
+          ],
+          "api.OrdersSGTINsSetRequest": [
+            "orders"
+          ],
+          "api.SGTINs": [
+            "orderId",
+            "sgtins"
+          ],
+          "api.OrdersUINSetRequest": [
+            "orders"
+          ],
+          "api.UIN": [
+            "orderId",
+            "uin"
+          ],
+          "api.OrdersRequestV2": [
+            "ordersIds"
+          ],
+          "api.StatusSetResponses": [
+            "requestId",
+            "results"
+          ],
+          "api.StatusSetResponse": [
+            "errors",
+            "isError",
+            "orderId"
+          ],
+          "api.OrdersMetaResponse": [
+            "meta"
+          ],
+          "api.OrderMetaV2": [
+            "customsDeclaration",
+            "error",
+            "gtin",
+            "imei",
+            "orderId",
+            "sgtin",
+            "uin",
+            "value"
+          ],
+          "api.OrderStatusesV2": [
+            "orders"
+          ],
+          "api.OrderStatusV2": [
+            "errors",
+            "orderId",
+            "supplierStatus",
+            "wbStatus"
+          ],
+          "api.OrdersCodeRequest": [
+            "orders"
+          ],
+          "api.OrderCodeRequest": [
+            "code",
+            "orderId"
+          ],
+          "api.BatchError": [
+            "detail",
+            "origin",
+            "requestId",
+            "title"
+          ],
+          "api.BatchErrorResponse": [
+            "code",
+            "detail"
+          ],
+          "api.Error": [
+            "detail",
+            "origin",
+            "requestId",
+            "title"
+          ],
+          "api.B2bClientInfoResponses": [
+            "requestId",
+            "results"
+          ],
+          "api.B2bClientInfoResponse": [
+            "data",
+            "errors",
+            "isError",
+            "orderId"
+          ],
+          "api.B2bClientInfo": [
+            "inn",
+            "kpp",
+            "orgName"
+          ]
+        }
+      }
     },
     {
       "file": "06-in-store-pickup.yaml",
       "sha256": "fdc4912aea01a045b3fb96e4df1c7335abd93cbf9d8158489a5a6496326fece4",
-      "size": 97224
+      "size": 97224,
+      "semantics": {
+        "version": "instorepickup",
+        "endpoints": {
+          "/api/v3/click-collect/orders/new": [
+            "get"
+          ],
+          "/api/marketplace/v3/click-collect/orders/status/confirm": [
+            "post"
+          ],
+          "/api/marketplace/v3/click-collect/orders/status/prepare": [
+            "post"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/confirm": [
+            "patch"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/prepare": [
+            "patch"
+          ],
+          "/api/v3/click-collect/orders/client": [
+            "post"
+          ],
+          "/api/v3/click-collect/orders/client/identity": [
+            "post"
+          ],
+          "/api/marketplace/v3/click-collect/orders/status/receive": [
+            "post"
+          ],
+          "/api/marketplace/v3/click-collect/orders/status/reject": [
+            "post"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/receive": [
+            "patch"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/reject": [
+            "patch"
+          ],
+          "/api/marketplace/v3/click-collect/orders/status/info": [
+            "post"
+          ],
+          "/api/v3/click-collect/orders/status": [
+            "post"
+          ],
+          "/api/v3/click-collect/orders": [
+            "get"
+          ],
+          "/api/marketplace/v3/click-collect/orders/status/cancel": [
+            "post"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/cancel": [
+            "patch"
+          ],
+          "/api/marketplace/v3/click-collect/orders/meta/info": [
+            "post"
+          ],
+          "/api/marketplace/v3/click-collect/orders/meta/delete": [
+            "post"
+          ],
+          "/api/marketplace/v3/click-collect/orders/meta/sgtin": [
+            "post"
+          ],
+          "/api/marketplace/v3/click-collect/orders/meta/uin": [
+            "post"
+          ],
+          "/api/marketplace/v3/click-collect/orders/meta/imei": [
+            "post"
+          ],
+          "/api/marketplace/v3/click-collect/orders/meta/gtin": [
+            "post"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/meta": [
+            "delete",
+            "get"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/meta/sgtin": [
+            "put"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/meta/uin": [
+            "put"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/meta/imei": [
+            "put"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/meta/gtin": [
+            "put"
+          ]
+        },
+        "schemas": {
+          "api.CheckedIdentity": [
+            "ok"
+          ],
+          "Error": [
+            "code",
+            "data",
+            "message"
+          ],
+          "api.CheckIdentityRequest": [
+            "orderCode",
+            "passcode"
+          ],
+          "api.Error": [
+            "code",
+            "data",
+            "message"
+          ],
+          "api.GTINRequest": [
+            "gtin"
+          ],
+          "api.IMEIRequest": [
+            "imei"
+          ],
+          "api.NewOrder": [
+            "article",
+            "cargoType",
+            "chrtId",
+            "convertedCurrencyCode",
+            "convertedFinalPrice",
+            "convertedPrice",
+            "createdAt",
+            "currencyCode",
+            "ddate",
+            "finalPrice",
+            "id",
+            "isZeroOrder",
+            "nmId",
+            "orderCode",
+            "payMode",
+            "price",
+            "requiredMeta",
+            "rid",
+            "salePrice",
+            "skus",
+            "warehouseAddress",
+            "warehouseId"
+          ],
+          "api.NewOrders": [
+            "orders"
+          ],
+          "api.Order": [
+            "article",
+            "cargoType",
+            "chrtId",
+            "convertedCurrencyCode",
+            "convertedFinalPrice",
+            "convertedPrice",
+            "createdAt",
+            "currencyCode",
+            "finalPrice",
+            "id",
+            "isZeroOrder",
+            "nmId",
+            "orderCode",
+            "payMode",
+            "price",
+            "rid",
+            "skus",
+            "warehouseAddress",
+            "warehouseId"
+          ],
+          "api.OrderClientInfo": [
+            "firstName",
+            "orderID",
+            "phone",
+            "phoneCode"
+          ],
+          "api.OrderClientInfoResp": [
+            "orders"
+          ],
+          "api.OrderStatus": [
+            "id",
+            "supplierStatus",
+            "wbStatus"
+          ],
+          "api.OrderStatuses": [
+            "orders"
+          ],
+          "api.Orders": [
+            "next",
+            "orders"
+          ],
+          "api.OrdersMeta": [
+            "meta"
+          ],
+          "api.OrdersRequest": [
+            "orders"
+          ],
+          "api.OrdersSGTINsSetRequest": [
+            "orders"
+          ],
+          "api.SGTINs": [
+            "orderId",
+            "sgtins"
+          ],
+          "api.SGTINsRequest": [
+            "sgtins"
+          ],
+          "api.OrdersUINSetRequest": [
+            "orders"
+          ],
+          "api.UIN": [
+            "orderId",
+            "uin"
+          ],
+          "api.UINRequest": [
+            "uin"
+          ],
+          "api.OrdersIMEISetRequest": [
+            "orders"
+          ],
+          "api.IMEI": [
+            "imei",
+            "orderId"
+          ],
+          "api.OrdersGTINSetRequest": [
+            "orders"
+          ],
+          "api.GTIN": [
+            "gtin",
+            "orderId"
+          ],
+          "api.baseMeta": [
+            "gtin",
+            "imei",
+            "sgtin",
+            "uin",
+            "value"
+          ],
+          "api.BatchError": [
+            "detail",
+            "origin",
+            "requestId",
+            "title"
+          ],
+          "api.BatchErrorResponse": [
+            "code",
+            "detail"
+          ],
+          "api.MetaErrorResponse": [
+            "code",
+            "detail"
+          ],
+          "api.OrdersErrorResponse": [
+            "code",
+            "detail"
+          ],
+          "api.OrdersRequestV2": [
+            "ordersIds"
+          ],
+          "api.StatusSetResponses": [
+            "requestId",
+            "results"
+          ],
+          "api.StatusSetResponse": [
+            "errors",
+            "isError",
+            "orderId"
+          ],
+          "api.OrdersResponses": [
+            "requestId",
+            "results"
+          ],
+          "api.OrdersResponse": [
+            "errors",
+            "isError",
+            "orderId"
+          ],
+          "api.MetaSetResponses": [
+            "requestId",
+            "results"
+          ],
+          "api.MetaSetResponse": [
+            "errors",
+            "isError",
+            "orderId"
+          ],
+          "api.OrderStatusesV2": [
+            "orders"
+          ],
+          "api.OrderStatusV2": [
+            "errors",
+            "orderId",
+            "supplierStatus",
+            "wbStatus"
+          ],
+          "api.OrdersMetaResponse": [
+            "meta"
+          ],
+          "api.OrderMetaV2": [
+            "error",
+            "gtin",
+            "imei",
+            "orderId",
+            "sgtin",
+            "uin"
+          ],
+          "api.OrdersMetaDeleteRequest": [
+            "key",
+            "ordersIds"
+          ]
+        }
+      }
     },
     {
       "file": "07-orders-fbw.yaml",
       "sha256": "63c139db626e3c7723109f461d8672e9c288eafc6e62cd51863bb929b9068e4a",
-      "size": 47696
+      "size": 47696,
+      "semantics": {
+        "version": "ordersfbw",
+        "endpoints": {
+          "/api/v1/acceptance/options": [
+            "post"
+          ],
+          "/api/v1/warehouses": [
+            "get"
+          ],
+          "/api/v1/transit-tariffs": [
+            "get"
+          ],
+          "/api/v1/supplies": [
+            "post"
+          ],
+          "/api/v1/supplies/{ID}": [
+            "get"
+          ],
+          "/api/v1/supplies/{ID}/goods": [
+            "get"
+          ],
+          "/api/v1/supplies/{ID}/package": [
+            "get"
+          ]
+        },
+        "schemas": {
+          "models.TransitTariff": [
+            "activeFrom",
+            "boxTariff",
+            "destinationWarehouseName",
+            "palletTariff",
+            "transitWarehouseName"
+          ],
+          "models.VolumeTariff": [
+            "from",
+            "to",
+            "value"
+          ],
+          "models.Box": [
+            "barcodes",
+            "packageCode",
+            "quantity"
+          ],
+          "models.GoodInBox": [
+            "barcode",
+            "quantity"
+          ],
+          "models.SuppliesFiltersRequest": [
+            "dates",
+            "statusIDs"
+          ],
+          "models.GoodInSupply": [
+            "acceptedQuantity",
+            "barcode",
+            "color",
+            "needKiz",
+            "nmID",
+            "quantity",
+            "readyForSaleQuantity",
+            "supplierBoxAmount",
+            "techSize",
+            "tnved",
+            "unloadingQuantity",
+            "vendorCode"
+          ],
+          "models.DateFilterRequest": [
+            "from",
+            "till",
+            "type"
+          ],
+          "models.SupplyDetails": [
+            "acceptanceCost",
+            "acceptedQuantity",
+            "actualWarehouseID",
+            "actualWarehouseName",
+            "boxTypeID",
+            "createDate",
+            "deliveryCoef",
+            "depersonalizedQuantity",
+            "factDate",
+            "isBoxOnPallet",
+            "paidAcceptanceCoefficient",
+            "phone",
+            "quantity",
+            "readyForSaleQuantity",
+            "rejectReason",
+            "statusID",
+            "storageCoef",
+            "supplierAssignName",
+            "supplyDate",
+            "transitWarehouseID",
+            "transitWarehouseName",
+            "unloadingQuantity",
+            "updatedDate",
+            "virtualTypeID",
+            "warehouseID",
+            "warehouseName"
+          ],
+          "models.HandySupplyStatus": [],
+          "models.Supply": [
+            "boxTypeID",
+            "createDate",
+            "factDate",
+            "isBoxOnPallet",
+            "phone",
+            "preorderID",
+            "statusID",
+            "supplyDate",
+            "supplyID",
+            "updatedDate"
+          ],
+          "models.WarehousesResultItems": [
+            "ID",
+            "address",
+            "isActive",
+            "isTransitActive",
+            "name",
+            "workTime"
+          ],
+          "models.Good": [
+            "barcode",
+            "quantity"
+          ],
+          "models.ErrorModel": [
+            "detail",
+            "origin",
+            "requestId",
+            "status",
+            "title"
+          ],
+          "models.OptionsResultModel": [
+            "requestId",
+            "result"
+          ]
+        }
+      }
     },
     {
       "file": "08-promotion.yaml",
       "sha256": "0a39780c80f861e526ad027643e7446d4482daad22a88fd4a3a989ce45fd7d57",
-      "size": 227408
+      "size": 227408,
+      "semantics": {
+        "version": "promotion",
+        "endpoints": {
+          "/adv/v1/promotion/count": [
+            "get"
+          ],
+          "/api/advert/v2/adverts": [
+            "get"
+          ],
+          "/api/advert/v1/bids/min": [
+            "post"
+          ],
+          "/adv/v2/seacat/save-ad": [
+            "post"
+          ],
+          "/adv/v1/supplier/subjects": [
+            "get"
+          ],
+          "/adv/v2/supplier/nms": [
+            "post"
+          ],
+          "/adv/v0/delete": [
+            "get"
+          ],
+          "/adv/v0/rename": [
+            "post"
+          ],
+          "/adv/v0/start": [
+            "get"
+          ],
+          "/adv/v0/pause": [
+            "get"
+          ],
+          "/adv/v0/stop": [
+            "get"
+          ],
+          "/adv/v0/auction/placements": [
+            "put"
+          ],
+          "/api/advert/v1/bids": [
+            "patch"
+          ],
+          "/adv/v1/balance": [
+            "get"
+          ],
+          "/adv/v1/budget": [
+            "get"
+          ],
+          "/adv/v1/budget/deposit": [
+            "post"
+          ],
+          "/adv/v1/upd": [
+            "get"
+          ],
+          "/adv/v1/payments": [
+            "get"
+          ],
+          "/adv/v0/auction/nms": [
+            "patch"
+          ],
+          "/api/advert/v0/bids/recommendations": [
+            "get"
+          ],
+          "/adv/v0/normquery/stats": [
+            "post"
+          ],
+          "/adv/v0/normquery/get-bids": [
+            "post"
+          ],
+          "/adv/v0/normquery/bids": [
+            "delete",
+            "post"
+          ],
+          "/adv/v0/normquery/get-minus": [
+            "post"
+          ],
+          "/adv/v0/normquery/set-minus": [
+            "post"
+          ],
+          "/adv/v1/count": [
+            "get"
+          ],
+          "/adv/v1/adverts": [
+            "get"
+          ],
+          "/adv/v1/advert": [
+            "get"
+          ],
+          "/adv/v3/fullstats": [
+            "get"
+          ],
+          "/adv/v1/stats": [
+            "post"
+          ],
+          "/api/v1/calendar/promotions": [
+            "get"
+          ],
+          "/api/v1/calendar/promotions/details": [
+            "get"
+          ],
+          "/api/v1/calendar/promotions/nomenclatures": [
+            "get"
+          ],
+          "/api/v1/calendar/promotions/upload": [
+            "post"
+          ],
+          "/adv/v0/normquery/list": [
+            "post"
+          ],
+          "/adv/v1/normquery/stats": [
+            "post"
+          ]
+        },
+        "schemas": {
+          "V0BidsRecommendationsResponse": [
+            "advertId",
+            "base",
+            "nmId",
+            "normQueries"
+          ],
+          "V0BidRecommendationBase": [
+            "competitiveBid",
+            "leadersBid",
+            "top2"
+          ],
+          "V0BidRecommendationBaseBidTop2": [
+            "bidKopecks"
+          ],
+          "V0BidRecommendationBaseBidCompetitiveBid": [
+            "bidKopecks"
+          ],
+          "V0BidRecommendationBaseBidLeadersBid": [
+            "bidKopecks"
+          ],
+          "V0BidRecommendationNormQuery": [
+            "normQuery",
+            "reachMax",
+            "reachMedium",
+            "reachMin"
+          ],
+          "V0BidRecommendationReachMax": [
+            "bidKopecks",
+            "bidKopecksMin"
+          ],
+          "V0BidRecommendationReachMedium": [
+            "bidKopecks",
+            "bidKopecksMin"
+          ],
+          "V0BidRecommendationReachMin": [
+            "bidKopecks",
+            "bidKopecksMin"
+          ],
+          "V0GetNormQueryListRequest": [
+            "items"
+          ],
+          "V0GetNormQueryListRequestItem": [
+            "advertId",
+            "nmId"
+          ],
+          "V0GetNormQueryListResponse": [
+            "items"
+          ],
+          "V0GetNormQueryListResponseItem": [
+            "advertId",
+            "nmId",
+            "normQueries"
+          ],
+          "V0GetNormQueryListResponseItemNormQueries": [
+            "active",
+            "excluded"
+          ],
+          "V1GetNormQueryStatsRequest": [
+            "from",
+            "items",
+            "to"
+          ],
+          "V1GetNormQueryStatsResponse": [
+            "items"
+          ],
+          "V1GetNormQueryStatsResponseItem": [
+            "advertId",
+            "dailyStats",
+            "nmId"
+          ],
+          "V1GetNormQueryStatsResponseItemDailyStat": [
+            "date",
+            "stat"
+          ],
+          "V1GetNormQueryStatsResponseItemStat": [
+            "atbs",
+            "avgPos",
+            "clicks",
+            "cpc",
+            "cpm",
+            "ctr",
+            "normQuery",
+            "orders",
+            "shks",
+            "spend",
+            "views"
+          ],
+          "400Response": [
+            "error"
+          ],
+          "PlacementType": [],
+          "V0GetNormQueryStatsRequest": [
+            "from",
+            "items",
+            "to"
+          ],
+          "V0GetNormQueryStatsItem": [
+            "advert_id",
+            "nm_id",
+            "stats"
+          ],
+          "V0GetNormQueryStatsItemStat": [
+            "atbs",
+            "avg_pos",
+            "clicks",
+            "cpc",
+            "cpm",
+            "ctr",
+            "norm_query",
+            "orders",
+            "shks",
+            "spend",
+            "views"
+          ],
+          "V0GetNormQueryStatsResponse": [
+            "stats"
+          ],
+          "V0SetNormQueryBidsRequestItem": [
+            "advert_id",
+            "bid",
+            "nm_id",
+            "norm_query"
+          ],
+          "V0SetNormQueryBidsRequest": [
+            "bids"
+          ],
+          "V0SetMinusNormQueryRequest": [
+            "advert_id",
+            "nm_id",
+            "norm_queries"
+          ],
+          "V0GetNormQueryBidsRequestItem": [
+            "advert_id",
+            "nm_id"
+          ],
+          "V0GetNormQueryBidsRequest": [
+            "items"
+          ],
+          "V0GetNormQueryBidsItem": [
+            "advert_id",
+            "bid",
+            "nm_id",
+            "norm_query"
+          ],
+          "V0GetNormQueryBidsResponse": [
+            "bids"
+          ],
+          "V0GetNormQueryMinusRequestItem": [
+            "advert_id",
+            "nm_id"
+          ],
+          "V0GetNormQueryMinusRequest": [
+            "items"
+          ],
+          "V0GetNormQueryMinusResponseItem": [
+            "advert_id",
+            "nm_id",
+            "norm_queries"
+          ],
+          "V0GetNormQueryMinusResponse": [
+            "items"
+          ],
+          "StandardizedBatchError": [
+            "detail",
+            "origin",
+            "request_id",
+            "status",
+            "title"
+          ],
+          "ResponseWithReturn": [
+            "total"
+          ],
+          "responseAdvError1": [
+            "error"
+          ],
+          "PromotionsGoodsList": [
+            "currencyCode",
+            "discount",
+            "id",
+            "inAction",
+            "planDiscount",
+            "planPrice",
+            "price"
+          ],
+          "GetAdverts": [
+            "adverts"
+          ],
+          "AdvertNMsSettings": [
+            "bids_kopecks",
+            "nm_id",
+            "subject"
+          ],
+          "AdvertSubject": [
+            "id",
+            "name"
+          ],
+          "AdvertBidsKopecks": [
+            "recommendations",
+            "search"
+          ],
+          "AdvertSettings": [
+            "name",
+            "payment_type",
+            "placements",
+            "recommendations",
+            "search"
+          ],
+          "Timestamps": [
+            "created",
+            "deleted",
+            "started",
+            "updated"
+          ],
+          "response400": [
+            "detail",
+            "origin",
+            "request_id",
+            "status",
+            "title"
+          ],
+          "StatInterval": [
+            "begin",
+            "end",
+            "interval",
+            "stats"
+          ],
+          "StatDate": [
+            "dates",
+            "stats"
+          ],
+          "Stat": [
+            "stats"
+          ],
+          "StatsBlok1": [
+            "advert_type",
+            "atbs",
+            "category_name",
+            "clicks",
+            "cpc",
+            "cr",
+            "cr1",
+            "cr2",
+            "ctr",
+            "daily_stats",
+            "date_from",
+            "date_to",
+            "expenses",
+            "item_id",
+            "item_name",
+            "orders",
+            "place",
+            "price",
+            "status",
+            "subject_name",
+            "views"
+          ],
+          "DailyStats1": [
+            "app_type_stats",
+            "date"
+          ],
+          "Stats1": [
+            "atbs",
+            "clicks",
+            "ctr",
+            "views"
+          ],
+          "StatsBlok2": [
+            "advert_type",
+            "atbs",
+            "category_name",
+            "clicks",
+            "cpc",
+            "cr",
+            "cr1",
+            "cr2",
+            "ctr",
+            "daily_stats",
+            "date_from",
+            "date_to",
+            "expenses",
+            "item_id",
+            "item_name",
+            "orders",
+            "place",
+            "price",
+            "status",
+            "subject_name",
+            "views"
+          ],
+          "DailyStats2": [
+            "app_type_stats",
+            "date"
+          ],
+          "Stats2": [
+            "atbs",
+            "clicks",
+            "cr",
+            "ctr",
+            "orders",
+            "views"
+          ],
+          "RequestWithDate": [
+            "dates",
+            "id"
+          ],
+          "RequestWithCampaignID": [
+            "id"
+          ],
+          "RequestWithInterval": [
+            "begin",
+            "end",
+            "id",
+            "interval"
+          ],
+          "ResponseFullStats": [],
+          "FullStatsItem": [
+            "advertId",
+            "atbs",
+            "boosterStats",
+            "canceled",
+            "clicks",
+            "cpc",
+            "cr",
+            "ctr",
+            "days",
+            "orders",
+            "shks",
+            "sum",
+            "sum_price",
+            "views"
+          ],
+          "DaysV3": [
+            "apps",
+            "atbs",
+            "canceled",
+            "clicks",
+            "cpc",
+            "cr",
+            "ctr",
+            "date",
+            "orders",
+            "shks",
+            "sum",
+            "sum_price",
+            "views"
+          ],
+          "BoosterStatsV3": [
+            "avg_position",
+            "date",
+            "nm"
+          ],
+          "FullStatsError": [
+            "detail",
+            "origin",
+            "request_id",
+            "status",
+            "title"
+          ]
+        }
+      }
     },
     {
       "file": "09-communications.yaml",
       "sha256": "663fa65b6e8a28f1f727308029c173a1d84b054aa7b9a9d2c8b8a4bf7d626ea9",
-      "size": 175692
+      "size": 175692,
+      "semantics": {
+        "version": "communication",
+        "endpoints": {
+          "/api/v1/new-feedbacks-questions": [
+            "get"
+          ],
+          "/api/v1/questions/count-unanswered": [
+            "get"
+          ],
+          "/api/v1/questions/count": [
+            "get"
+          ],
+          "/api/v1/questions": [
+            "get",
+            "patch"
+          ],
+          "/api/v1/question": [
+            "get"
+          ],
+          "/api/v1/feedbacks/count-unanswered": [
+            "get"
+          ],
+          "/api/v1/feedbacks/count": [
+            "get"
+          ],
+          "/api/v1/feedbacks": [
+            "get"
+          ],
+          "/api/v1/feedbacks/answer": [
+            "patch",
+            "post"
+          ],
+          "/api/v1/feedbacks/order/return": [
+            "post"
+          ],
+          "/api/v1/feedback": [
+            "get"
+          ],
+          "/api/v1/feedbacks/archive": [
+            "get"
+          ],
+          "/api/feedbacks/v1/pins": [
+            "delete",
+            "get",
+            "post"
+          ],
+          "/api/feedbacks/v1/pins/count": [
+            "get"
+          ],
+          "/api/feedbacks/v1/pins/limits": [
+            "get"
+          ],
+          "/api/v1/seller/chats": [
+            "get"
+          ],
+          "/api/v1/seller/events": [
+            "get"
+          ],
+          "/api/v1/seller/message": [
+            "post"
+          ],
+          "/api/v1/seller/download/{id}": [
+            "get"
+          ],
+          "/api/v1/claims": [
+            "get"
+          ],
+          "/api/v1/claim": [
+            "patch"
+          ]
+        },
+        "schemas": {
+          "standardizedFQError": [
+            "detail",
+            "origin",
+            "requestId",
+            "title"
+          ],
+          "responsefeedbackErr": [
+            "additionalErrors",
+            "data",
+            "error",
+            "errorText",
+            "requestId"
+          ],
+          "responseFeedback": [
+            "answer",
+            "bables",
+            "childFeedbackId",
+            "color",
+            "cons",
+            "createdDate",
+            "id",
+            "isAbleReturnProductOrders",
+            "isAbleSupplierFeedbackValuation",
+            "isAbleSupplierProductValuation",
+            "lastOrderCreatedAt",
+            "lastOrderShkId",
+            "matchingSize",
+            "orderStatus",
+            "parentFeedbackId",
+            "photoLinks",
+            "productDetails",
+            "productValuation",
+            "pros",
+            "returnProductOrdersDate",
+            "state",
+            "subjectId",
+            "subjectName",
+            "supplierFeedbackValuation",
+            "supplierProductValuation",
+            "text",
+            "userName",
+            "video",
+            "wasViewed"
+          ],
+          "Chat": [
+            "chatID",
+            "clientName",
+            "goodCard",
+            "lastMessage",
+            "replySign"
+          ],
+          "ChatsResponse": [
+            "errors",
+            "result"
+          ],
+          "Event": [
+            "addTime",
+            "addTimestamp",
+            "attachments",
+            "chatID",
+            "clientName",
+            "eventID",
+            "eventType",
+            "isNewChat",
+            "message",
+            "replySign",
+            "sender",
+            "source",
+            "text"
+          ],
+          "EventAttachments": [
+            "files",
+            "goodCard",
+            "images"
+          ],
+          "EventType": [],
+          "File": [
+            "contentType",
+            "date",
+            "downloadID",
+            "name",
+            "size",
+            "url"
+          ],
+          "GoodCard": [
+            "date",
+            "nmID",
+            "price",
+            "priceCurrency",
+            "rid",
+            "size"
+          ],
+          "LastMessage": [
+            "addTimestamp",
+            "text"
+          ],
+          "Image": [
+            "date",
+            "downloadID",
+            "url"
+          ],
+          "MessageResponse": [
+            "addTime",
+            "chatID",
+            "errors",
+            "result",
+            "sign"
+          ],
+          "Sender": [],
+          "EventsResponse": [
+            "errors",
+            "result"
+          ],
+          "EventsResult": [
+            "events",
+            "newestEventTime",
+            "next",
+            "oldestEventTime",
+            "totalEvents"
+          ],
+          "domain.ReviewPinMethod": [],
+          "domain.ReviewPinOn": [],
+          "domain.ReviewState": [],
+          "openapi.PinReviewItem": [
+            "feedbackId",
+            "pinMethod",
+            "pinOn"
+          ],
+          "openapi.PinReviewItemResult": [
+            "data"
+          ],
+          "openapi.PinnedReviewItemResult": [
+            "changeStateAt",
+            "feedbackId",
+            "imtId",
+            "nmId",
+            "pinId",
+            "pinMethod",
+            "pinOn",
+            "state",
+            "unpinnedCause"
+          ],
+          "openapi.ResultErr": [
+            "detail",
+            "origin",
+            "requestId",
+            "status",
+            "title"
+          ],
+          "openapi.SellerLimit": [
+            "perUnitLimit",
+            "remaining",
+            "totalLimit",
+            "unlimited",
+            "used"
+          ],
+          "openapi.SellerLimitsResponse": [
+            "data",
+            "subscription",
+            "tariff"
+          ],
+          "respond.ResultErr": [
+            "detail",
+            "origin",
+            "requestId",
+            "status",
+            "title"
+          ],
+          "respond.SuccessResponse": [
+            "data"
+          ]
+        }
+      }
     },
     {
       "file": "10-tariffs.yaml",
       "sha256": "c2502b8f1958edd53351a7f9b7925c951276ae3e8478bb3ef0aa6771c8e904d1",
-      "size": 42325
+      "size": 42325,
+      "semantics": {
+        "version": "tariffs",
+        "endpoints": {
+          "/api/v1/tariffs/commission": [
+            "get"
+          ],
+          "/api/v1/tariffs/box": [
+            "get"
+          ],
+          "/api/v1/tariffs/pallet": [
+            "get"
+          ],
+          "/api/tariffs/v1/acceptance/coefficients": [
+            "get"
+          ],
+          "/api/v1/tariffs/return": [
+            "get"
+          ]
+        },
+        "schemas": {
+          "models.TariffsBoxResponse": [
+            "data"
+          ],
+          "models.WarehousesBoxRates": [
+            "dtNextBox",
+            "dtTillMax",
+            "warehouseList"
+          ],
+          "models.WarehouseBoxRates": [
+            "boxDeliveryBase",
+            "boxDeliveryCoefExpr",
+            "boxDeliveryLiter",
+            "boxDeliveryMarketplaceBase",
+            "boxDeliveryMarketplaceCoefExpr",
+            "boxDeliveryMarketplaceLiter",
+            "boxStorageBase",
+            "boxStorageCoefExpr",
+            "boxStorageLiter",
+            "geoName",
+            "warehouseName"
+          ],
+          "models.TariffsPalletResponse": [
+            "data"
+          ],
+          "models.WarehousesPalletRates": [
+            "dtNextPallet",
+            "dtTillMax",
+            "warehouseList"
+          ],
+          "models.WarehousePalletRates": [
+            "palletDeliveryExpr",
+            "palletDeliveryValueBase",
+            "palletDeliveryValueLiter",
+            "palletStorageExpr",
+            "palletStorageValueExpr",
+            "warehouseName"
+          ],
+          "models.ReturnTariffsResponse": [
+            "data"
+          ],
+          "models.WarehousesReturnRates": [
+            "dtNextDeliveryDumpKgt",
+            "dtNextDeliveryDumpSrg",
+            "dtNextDeliveryDumpSup",
+            "warehouseList"
+          ],
+          "models.WarehouseReturnRates": [
+            "deliveryDumpKgtOfficeBase",
+            "deliveryDumpKgtOfficeLiter",
+            "deliveryDumpKgtReturnExpr",
+            "deliveryDumpSrgOfficeExpr",
+            "deliveryDumpSrgReturnExpr",
+            "deliveryDumpSupCourierBase",
+            "deliveryDumpSupCourierLiter",
+            "deliveryDumpSupOfficeBase",
+            "deliveryDumpSupOfficeLiter",
+            "deliveryDumpSupReturnExpr",
+            "warehouseName"
+          ],
+          "models.ErrorModel": [
+            "detail",
+            "origin",
+            "requestId",
+            "status",
+            "title"
+          ],
+          "models.AcceptanceCoefficient": [
+            "allowUnload",
+            "boxTypeID",
+            "coefficient",
+            "date",
+            "deliveryAdditionalLiter",
+            "deliveryBaseLiter",
+            "deliveryCoef",
+            "isSortingCenter",
+            "storageAdditionalLiter",
+            "storageBaseLiter",
+            "storageCoef",
+            "warehouseID",
+            "warehouseName"
+          ],
+          "TariffsBoxResponse": [
+            "response"
+          ],
+          "TariffsPalletResponse": [
+            "response"
+          ],
+          "ReturnTariffsResponse": [
+            "response"
+          ],
+          "Commission": [
+            "report"
+          ],
+          "CommissionChina": [
+            "report"
+          ],
+          "CommissionTurkey": [
+            "report"
+          ],
+          "CommissionUzbekistan": [
+            "report"
+          ],
+          "CommissionUAE": [
+            "report"
+          ],
+          "BadRequest": [
+            "detail",
+            "origin",
+            "requestId",
+            "title"
+          ]
+        }
+      }
     },
     {
       "file": "11-analytics.yaml",
       "sha256": "ad08aeb4bad4220ac78390f33de7a1d9e8aa1d5dbcef2b829cdcf0282a1a134f",
-      "size": 238354
+      "size": 238354,
+      "semantics": {
+        "version": "analytics",
+        "endpoints": {
+          "/api/analytics/v3/sales-funnel/products": [
+            "post"
+          ],
+          "/api/analytics/v3/sales-funnel/products/history": [
+            "post"
+          ],
+          "/api/analytics/v3/sales-funnel/grouped/history": [
+            "post"
+          ],
+          "/api/v2/nm-report/downloads": [
+            "get",
+            "post"
+          ],
+          "/api/v2/nm-report/downloads/retry": [
+            "post"
+          ],
+          "/api/v2/nm-report/downloads/file/{downloadId}": [
+            "get"
+          ],
+          "/api/v2/search-report/report": [
+            "post"
+          ],
+          "/api/v2/search-report/table/groups": [
+            "post"
+          ],
+          "/api/v2/search-report/table/details": [
+            "post"
+          ],
+          "/api/v2/search-report/product/search-texts": [
+            "post"
+          ],
+          "/api/v2/search-report/product/orders": [
+            "post"
+          ],
+          "/api/v2/stocks-report/products/groups": [
+            "post"
+          ],
+          "/api/v2/stocks-report/products/products": [
+            "post"
+          ],
+          "/api/v2/stocks-report/products/sizes": [
+            "post"
+          ],
+          "/api/v2/stocks-report/offices": [
+            "post"
+          ]
+        },
+        "schemas": {
+          "MainRequest": [
+            "brandNames",
+            "currentPeriod",
+            "includeSearchTexts",
+            "includeSubstitutedSKUs",
+            "limit",
+            "nmIds",
+            "offset",
+            "orderBy",
+            "pastPeriod",
+            "positionCluster",
+            "subjectIds",
+            "tagIds"
+          ],
+          "MainResponse": [
+            "commonInfo",
+            "currency",
+            "groups",
+            "positionInfo",
+            "visibilityInfo"
+          ],
+          "CommonInfo": [
+            "advertisedProducts",
+            "current",
+            "dynamics",
+            "supplierRating",
+            "totalProducts"
+          ],
+          "PositionInfo": [
+            "average",
+            "chartItems",
+            "clusters",
+            "current",
+            "dynamics",
+            "median"
+          ],
+          "SearchReportPositionChartItem": [
+            "average",
+            "dt",
+            "median"
+          ],
+          "SearchReportPositionClusters": [
+            "below",
+            "current",
+            "dynamics",
+            "firstHundred",
+            "secondHundred"
+          ],
+          "VisibilityInfo": [
+            "byDay",
+            "byMonth",
+            "byWeek",
+            "current",
+            "dynamics",
+            "openCard",
+            "visibility"
+          ],
+          "TableGroupItem": [
+            "addToCart",
+            "avgPosition",
+            "brandName",
+            "cartToOrder",
+            "items",
+            "metrics",
+            "openCard",
+            "openToCart",
+            "orders",
+            "subjectId",
+            "subjectName",
+            "tagId",
+            "tagName",
+            "visibility"
+          ],
+          "TableProductItem": [],
+          "TableGroupRequest": [
+            "brandNames",
+            "currentPeriod",
+            "includeSearchTexts",
+            "includeSubstitutedSKUs",
+            "limit",
+            "nmIds",
+            "offset",
+            "orderBy",
+            "pastPeriod",
+            "positionCluster",
+            "subjectIds",
+            "tagIds"
+          ],
+          "TableGroupResponse": [
+            "currency",
+            "groups"
+          ],
+          "TableDetailsRequest": [
+            "brandName",
+            "currentPeriod",
+            "includeSearchTexts",
+            "includeSubstitutedSKUs",
+            "limit",
+            "nmIds",
+            "offset",
+            "orderBy",
+            "pastPeriod",
+            "positionCluster",
+            "subjectId",
+            "tagId"
+          ],
+          "TableDetailsResponse": [
+            "currency",
+            "products"
+          ],
+          "ProductSearchTextsRequest": [
+            "currentPeriod",
+            "includeSearchTexts",
+            "includeSubstitutedSKUs",
+            "limit",
+            "nmIds",
+            "orderBy",
+            "pastPeriod",
+            "topOrderBy"
+          ],
+          "ProductSearchTextsResponse": [
+            "currency",
+            "items"
+          ],
+          "TableSearchTextItem": [],
+          "ProductOrdersRequest": [
+            "nmId",
+            "period",
+            "searchTexts"
+          ],
+          "ProductOrdersResponse": [
+            "items",
+            "total"
+          ],
+          "ProductOrdersTextItem": [
+            "dateItems",
+            "frequency",
+            "text"
+          ],
+          "ProductOrdersMetrics": [
+            "avgPosition",
+            "dt",
+            "orders"
+          ],
+          "PositionCluster": [],
+          "OrderByGrTe": [
+            "field",
+            "mode"
+          ],
+          "OrderByMainAndDetails": [
+            "field",
+            "mode"
+          ],
+          "TextLimit": [],
+          "StandardTariff": [],
+          "AdvancedTariff": [],
+          "Date": [],
+          "PeriodOrdersRequest": [
+            "end",
+            "start"
+          ],
+          "Period": [
+            "end",
+            "start"
+          ],
+          "pastPeriod": [
+            "end",
+            "start"
+          ],
+          "CommonResponseProperties": [
+            "data"
+          ],
+          "ErrorObject400": [
+            "detail",
+            "origin",
+            "requestId",
+            "title"
+          ],
+          "ErrorObject403": [
+            "detail",
+            "origin",
+            "requestId",
+            "title"
+          ],
+          "SalesFunnelProductReq": [
+            "aggregationLevel",
+            "brandNames",
+            "endDate",
+            "id",
+            "nmIDs",
+            "params",
+            "reportType",
+            "skipDeletedNm",
+            "startDate",
+            "subjectIds",
+            "tagIds",
+            "timezone",
+            "userReportName"
+          ],
+          "SalesFunnelGroupReq": [
+            "aggregationLevel",
+            "brandNames",
+            "endDate",
+            "id",
+            "params",
+            "reportType",
+            "skipDeletedNm",
+            "startDate",
+            "subjectIds",
+            "tagIds",
+            "timezone",
+            "userReportName"
+          ],
+          "SearchReportGroupReq": [
+            "brandNames",
+            "currentPeriod",
+            "id",
+            "includeSearchTexts",
+            "includeSubstitutedSKUs",
+            "nmIds",
+            "orderBy",
+            "params",
+            "pastPeriod",
+            "positionCluster",
+            "reportType",
+            "subjectIds",
+            "tagIds",
+            "userReportName"
+          ],
+          "SearchReportProductReq": [
+            "brandName",
+            "currentPeriod",
+            "id",
+            "includeSearchTexts",
+            "includeSubstitutedSKUs",
+            "nmIds",
+            "orderBy",
+            "params",
+            "pastPeriod",
+            "positionCluster",
+            "reportType",
+            "subjectId",
+            "tagId",
+            "userReportName"
+          ],
+          "SearchReportTextReq": [
+            "brandNames",
+            "currentPeriod",
+            "id",
+            "includeSearchTexts",
+            "includeSubstitutedSKUs",
+            "limit",
+            "nmIds",
+            "orderBy",
+            "params",
+            "pastPeriod",
+            "reportType",
+            "subjectIds",
+            "tagIds",
+            "topOrderBy",
+            "userReportName"
+          ],
+          "InventoryMetricsReportReq": [
+            "id",
+            "params",
+            "reportType",
+            "userReportName"
+          ],
+          "InventoryHistoryReportReq": [
+            "brandNames",
+            "currentPeriod",
+            "id",
+            "nmIds",
+            "params",
+            "reportType",
+            "skipDeletedNm",
+            "stockType",
+            "subjectIds",
+            "tagIds",
+            "userReportName"
+          ],
+          "NmReportRetryReportRequest": [
+            "downloadId"
+          ],
+          "NmReportCreateReportResponse": [
+            "data"
+          ],
+          "NmReportGetReportsResponse": [
+            "data"
+          ],
+          "NmReportRetryReportResponse": [
+            "data"
+          ],
+          "response429Download": [
+            "code",
+            "detail",
+            "origin",
+            "requestId",
+            "status",
+            "statusText",
+            "timestamp",
+            "title"
+          ],
+          "response429DownloadDaily": [
+            "detail",
+            "origin",
+            "requestId",
+            "title"
+          ],
+          "TableGroupRequestSt": [],
+          "CommonReportFilters": [
+            "availabilityFilters",
+            "brandNames",
+            "currentPeriod",
+            "nmIDs",
+            "orderBy",
+            "skipDeletedNm",
+            "stockType",
+            "subjectIDs",
+            "tagIDs"
+          ],
+          "PeriodInv": [
+            "end",
+            "start"
+          ],
+          "StockType": [],
+          "availabilityFilters": [],
+          "TableOrderBy": [
+            "field",
+            "mode"
+          ],
+          "TableGroupField": [],
+          "OrderByMode": [],
+          "TableGroupResponseSt": [
+            "currency",
+            "groups"
+          ],
+          "TableGroups": [],
+          "TableGroupItemSt": [
+            "brandName",
+            "items",
+            "metrics",
+            "subjectID",
+            "subjectName",
+            "tagID",
+            "tagName"
+          ],
+          "TableCommonMetrics": [
+            "avgOrders",
+            "avgOrdersByMonth",
+            "avgStockTurnover",
+            "buyoutCount",
+            "buyoutPercent",
+            "buyoutSum",
+            "days",
+            "fromClientCount",
+            "hours",
+            "lostBuyoutsCount",
+            "lostBuyoutsSum",
+            "lostOrdersCount",
+            "lostOrdersSum",
+            "officeMissingTime",
+            "ordersCount",
+            "ordersSum",
+            "saleRate",
+            "stockCount",
+            "stockSum",
+            "toClientCount"
+          ],
+          "FloatGraphByPeriodItem": [
+            "end",
+            "start",
+            "value"
+          ],
+          "TableProductItemSt": [
+            "brandName",
+            "hasSizes",
+            "isDeleted",
+            "mainPhoto",
+            "metrics",
+            "name",
+            "nmID",
+            "subjectName",
+            "vendorCode"
+          ],
+          "TableProductRequest": [],
+          "CommonProductFilters": [
+            "availabilityFilters",
+            "brandName",
+            "currentPeriod",
+            "nmIDs",
+            "orderBy",
+            "skipDeletedNm",
+            "stockType",
+            "subjectID",
+            "tagID"
+          ],
+          "TableProductResponse": [
+            "currency",
+            "items"
+          ],
+          "TableSizeRequest": [],
+          "CommonSizeFilters": [
+            "currentPeriod",
+            "includeOffice",
+            "nmID",
+            "orderBy",
+            "stockType"
+          ],
+          "TableSizeResponse": [
+            "currency",
+            "offices",
+            "sizes"
+          ],
+          "TableOfficeItem": [
+            "metrics",
+            "officeID",
+            "officeName",
+            "regionName"
+          ],
+          "TableShippingOfficeRequest": [],
+          "CommonShippingOfficeFilters": [
+            "brandNames",
+            "currentPeriod",
+            "nmIDs",
+            "skipDeletedNm",
+            "stockType",
+            "subjectIDs",
+            "tagIDs"
+          ],
+          "TableShippingOfficeResponse": [
+            "currency",
+            "regions"
+          ],
+          "TableShippingOfficeItem": [
+            "metrics",
+            "offices",
+            "regionName"
+          ],
+          "TableShippingOfficeMetrics": [
+            "days",
+            "fromClientCount",
+            "hours",
+            "saleRate",
+            "stockCount",
+            "stockSum",
+            "toClientCount"
+          ],
+          "ProductsRequest": [
+            "brandNames",
+            "limit",
+            "nmIds",
+            "offset",
+            "orderBy",
+            "pastPeriod",
+            "selectedPeriod",
+            "skipDeletedNm",
+            "subjectIds",
+            "tagIds"
+          ],
+          "ProductHistoryRequest": [
+            "aggregationLevel",
+            "nmIds",
+            "selectedPeriod",
+            "skipDeletedNm"
+          ],
+          "GroupedHistoryRequest": [
+            "aggregationLevel",
+            "brandNames",
+            "selectedPeriod",
+            "skipDeletedNm",
+            "subjectIds",
+            "tagIds"
+          ],
+          "ProductsResponse": [
+            "currency",
+            "products"
+          ],
+          "ProductHistoryResponse": [
+            "currency",
+            "history",
+            "product"
+          ],
+          "GroupedHistoryResponse": [
+            "currency",
+            "history",
+            "product"
+          ],
+          "Product": [
+            "balanceSum",
+            "brandName",
+            "feedbackRating",
+            "mp",
+            "nmId",
+            "productRating",
+            "stocks",
+            "subjectId",
+            "subjectName",
+            "tags",
+            "title",
+            "vendorCode",
+            "wb"
+          ],
+          "HistoryProduct": [
+            "brandName",
+            "nmId",
+            "subjectId",
+            "subjectName",
+            "title",
+            "vendorCode"
+          ],
+          "Tag": [
+            "id",
+            "name"
+          ],
+          "Statistics": [
+            "comparison",
+            "past",
+            "selected"
+          ],
+          "Conversions": [
+            "addToCartPercent",
+            "buyoutPercent",
+            "cartToOrderPercent"
+          ],
+          "Statistic": [
+            "addToWishlist",
+            "avgOrdersCountPerDay",
+            "avgPrice",
+            "buyoutCount",
+            "buyoutSum",
+            "cancelCount",
+            "cancelSum",
+            "cartCount",
+            "conversions",
+            "localizationPercent",
+            "openCount",
+            "orderCount",
+            "orderSum",
+            "period",
+            "shareOrderPercent",
+            "timeToReady",
+            "wbClub"
+          ],
+          "Comparison": [
+            "addToWishlistDynamic",
+            "avgOrdersCountPerDayDynamic",
+            "avgPriceDynamic",
+            "buyoutCountDynamic",
+            "buyoutSumDynamic",
+            "cancelCountDynamic",
+            "cancelSumDynamic",
+            "cartCountDynamic",
+            "conversions",
+            "localizationPercentDynamic",
+            "openCountDynamic",
+            "orderCountDynamic",
+            "orderSumDynamic",
+            "shareOrderPercentDynamic",
+            "timeToReadyDynamic",
+            "wbClubDynamic"
+          ],
+          "WbClubMetrics": [
+            "avgOrderCountPerDay",
+            "avgPrice",
+            "buyoutCount",
+            "buyoutPercent",
+            "buyoutSum",
+            "cancelCount",
+            "cancelSum",
+            "orderCount",
+            "orderSum"
+          ],
+          "WbClubMetricsDynamic": [
+            "avgOrderCountPerDay",
+            "avgPrice",
+            "buyoutCount",
+            "buyoutPercent",
+            "buyoutSum",
+            "cancelCount",
+            "cancelSum",
+            "orderCount",
+            "orderSum"
+          ],
+          "TimeToReady": [
+            "days",
+            "hours",
+            "mins"
+          ],
+          "History": [
+            "addToCartConversion",
+            "addToWishlistCount",
+            "buyoutCount",
+            "buyoutPercent",
+            "buyoutSum",
+            "cartCount",
+            "cartToOrderConversion",
+            "date",
+            "openCount",
+            "orderCount",
+            "orderSum"
+          ],
+          "DatePeriod": [
+            "end",
+            "start"
+          ],
+          "Level": [],
+          "OrderBy": [
+            "field",
+            "mode"
+          ],
+          "ErrorObject": [
+            "detail",
+            "origin",
+            "requestId",
+            "title"
+          ],
+          "Currency": []
+        }
+      }
     },
     {
       "file": "12-reports.yaml",
       "sha256": "1c3750d416d50050565a0f3d5188d6b9ef7f75b07d380a1def5c7acc8ea4a903",
-      "size": 153922
+      "size": 153922,
+      "semantics": {
+        "version": "reports",
+        "endpoints": {
+          "/api/v1/supplier/stocks": [
+            "get"
+          ],
+          "/api/v1/supplier/orders": [
+            "get"
+          ],
+          "/api/v1/supplier/sales": [
+            "get"
+          ],
+          "/api/v1/analytics/excise-report": [
+            "post"
+          ],
+          "/api/v1/warehouse_remains": [
+            "get"
+          ],
+          "/api/v1/warehouse_remains/tasks/{task_id}/status": [
+            "get"
+          ],
+          "/api/v1/warehouse_remains/tasks/{task_id}/download": [
+            "get"
+          ],
+          "/api/analytics/v1/measurement-penalties": [
+            "get"
+          ],
+          "/api/analytics/v1/warehouse-measurements": [
+            "get"
+          ],
+          "/api/analytics/v1/deductions": [
+            "get"
+          ],
+          "/api/v1/analytics/antifraud-details": [
+            "get"
+          ],
+          "/api/v1/analytics/goods-labeling": [
+            "get"
+          ],
+          "/api/v1/acceptance_report": [
+            "get"
+          ],
+          "/api/v1/acceptance_report/tasks/{task_id}/status": [
+            "get"
+          ],
+          "/api/v1/acceptance_report/tasks/{task_id}/download": [
+            "get"
+          ],
+          "/api/v1/paid_storage": [
+            "get"
+          ],
+          "/api/v1/paid_storage/tasks/{task_id}/status": [
+            "get"
+          ],
+          "/api/v1/paid_storage/tasks/{task_id}/download": [
+            "get"
+          ],
+          "/api/v1/analytics/region-sale": [
+            "get"
+          ],
+          "/api/v1/analytics/brand-share/brands": [
+            "get"
+          ],
+          "/api/v1/analytics/brand-share/parent-subjects": [
+            "get"
+          ],
+          "/api/v1/analytics/brand-share": [
+            "get"
+          ],
+          "/api/v1/analytics/banned-products/blocked": [
+            "get"
+          ],
+          "/api/v1/analytics/banned-products/shadowed": [
+            "get"
+          ],
+          "/api/v1/analytics/goods-return": [
+            "get"
+          ]
+        },
+        "schemas": {
+          "StocksItem": [
+            "Discount",
+            "Price",
+            "SCCode",
+            "barcode",
+            "brand",
+            "category",
+            "inWayFromClient",
+            "inWayToClient",
+            "isRealization",
+            "isSupply",
+            "lastChangeDate",
+            "nmId",
+            "quantity",
+            "quantityFull",
+            "subject",
+            "supplierArticle",
+            "techSize",
+            "warehouseName"
+          ],
+          "OrdersItem": [
+            "barcode",
+            "brand",
+            "cancelDate",
+            "category",
+            "countryName",
+            "date",
+            "discountPercent",
+            "finishedPrice",
+            "gNumber",
+            "incomeID",
+            "isCancel",
+            "isRealization",
+            "isSupply",
+            "lastChangeDate",
+            "nmId",
+            "oblastOkrugName",
+            "priceWithDisc",
+            "regionName",
+            "spp",
+            "srid",
+            "sticker",
+            "subject",
+            "supplierArticle",
+            "techSize",
+            "totalPrice",
+            "warehouseName",
+            "warehouseType"
+          ],
+          "SalesItem": [
+            "barcode",
+            "brand",
+            "category",
+            "countryName",
+            "date",
+            "discountPercent",
+            "finishedPrice",
+            "forPay",
+            "gNumber",
+            "incomeID",
+            "isRealization",
+            "isSupply",
+            "lastChangeDate",
+            "nmId",
+            "oblastOkrugName",
+            "paymentSaleAmount",
+            "priceWithDisc",
+            "regionName",
+            "saleID",
+            "spp",
+            "srid",
+            "sticker",
+            "subject",
+            "supplierArticle",
+            "techSize",
+            "totalPrice",
+            "warehouseName",
+            "warehouseType"
+          ],
+          "responseErrorStatistics": [
+            "errors"
+          ],
+          "responseErrorStatistics2": [
+            "errors"
+          ],
+          "ExciseReportRequest": [
+            "countries"
+          ],
+          "ExciseReportResponse": [
+            "response"
+          ],
+          "models.ExciseReportResponse": [
+            "data"
+          ],
+          "models.ExciseReportResponseData": [
+            "barcode",
+            "currency_name_short",
+            "excise_short",
+            "fiscal_doc_number",
+            "fiscal_drive_number",
+            "fiscal_dt",
+            "name",
+            "nm_id",
+            "operation_type_id",
+            "price",
+            "rid",
+            "srid"
+          ],
+          "MeasurementPenalties": [
+            "data",
+            "reports",
+            "total"
+          ],
+          "WHM": [
+            "data",
+            "reports",
+            "total"
+          ],
+          "Response400Retentions": [
+            "detail",
+            "origin",
+            "requestId",
+            "status",
+            "title"
+          ],
+          "Response403Retentions": [
+            "detail",
+            "origin",
+            "requestId",
+            "status",
+            "title"
+          ],
+          "ResponsePaidStorage": [
+            "barcode",
+            "barcodesCount",
+            "brand",
+            "calcType",
+            "chrtId",
+            "date",
+            "giId",
+            "logWarehouseCoef",
+            "loyaltyDiscount",
+            "nmId",
+            "officeId",
+            "originalDate",
+            "palletCount",
+            "palletPlaceCode",
+            "size",
+            "subject",
+            "tariffFixDate",
+            "tariffLowerDate",
+            "vendorCode",
+            "volume",
+            "warehouse",
+            "warehouseCoef",
+            "warehousePrice"
+          ],
+          "GetTasksResponse": [
+            "data"
+          ],
+          "GetTasksResponseData": [
+            "id",
+            "status"
+          ],
+          "CreateTaskResponse": [
+            "data"
+          ],
+          "CreateTaskResponseData": [
+            "taskId"
+          ],
+          "4xxResponse": [
+            "detail",
+            "origin",
+            "requestId",
+            "title"
+          ]
+        }
+      }
     },
     {
       "file": "13-finances.yaml",
       "sha256": "cb6307b8247099e559550efcbb2a89dd93b4e7851199421a8fe38f96b7a0da4f",
-      "size": 46701
+      "size": 46701,
+      "semantics": {
+        "version": "finances",
+        "endpoints": {
+          "/api/v1/account/balance": [
+            "get"
+          ],
+          "/api/v5/supplier/reportDetailByPeriod": [
+            "get"
+          ],
+          "/api/v1/documents/categories": [
+            "get"
+          ],
+          "/api/v1/documents/list": [
+            "get"
+          ],
+          "/api/v1/documents/download": [
+            "get"
+          ],
+          "/api/v1/documents/download/all": [
+            "post"
+          ]
+        },
+        "schemas": {
+          "requestDownload": [
+            "params"
+          ],
+          "GetCategories": [
+            "categories",
+            "data"
+          ],
+          "GetList": [
+            "data",
+            "documents"
+          ],
+          "GetDoc": [
+            "data",
+            "document",
+            "extension",
+            "fileName"
+          ],
+          "GetDocs": [
+            "data",
+            "document",
+            "extension",
+            "fileName"
+          ],
+          "DetailReportItem": [
+            "acceptance",
+            "acquiring_bank",
+            "acquiring_fee",
+            "acquiring_percent",
+            "additional_payment",
+            "assembly_id",
+            "barcode",
+            "bonus_type_name",
+            "brand_name",
+            "cashback_amount",
+            "cashback_commission_change",
+            "cashback_discount",
+            "commission_percent",
+            "create_dt",
+            "currency_name",
+            "date_from",
+            "date_to",
+            "declaration_number",
+            "deduction",
+            "delivery_amount",
+            "delivery_method",
+            "delivery_rub",
+            "dlv_prc",
+            "doc_type_name",
+            "fix_tariff_date_from",
+            "fix_tariff_date_to",
+            "gi_box_type_name",
+            "gi_id",
+            "installment_cofinancing_amount",
+            "is_kgvp_v2",
+            "is_legal_entity",
+            "kiz",
+            "loyalty_discount",
+            "loyalty_id",
+            "nm_id",
+            "office_name",
+            "order_dt",
+            "order_uid",
+            "payment_processing",
+            "payment_schedule",
+            "penalty",
+            "ppvz_for_pay",
+            "ppvz_inn",
+            "ppvz_kvw_prc",
+            "ppvz_kvw_prc_base",
+            "ppvz_office_id",
+            "ppvz_office_name",
+            "ppvz_reward",
+            "ppvz_sales_commission",
+            "ppvz_spp_prc",
+            "ppvz_supplier_id",
+            "ppvz_supplier_name",
+            "ppvz_vw",
+            "ppvz_vw_nds",
+            "product_discount_for_report",
+            "quantity",
+            "realizationreport_id",
+            "rebill_logistic_cost",
+            "rebill_logistic_org",
+            "report_type",
+            "retail_amount",
+            "retail_price",
+            "retail_price_withdisc_rub",
+            "return_amount",
+            "rr_dt",
+            "rrd_id",
+            "sa_name",
+            "sale_dt",
+            "sale_percent",
+            "sale_price_promocode_discount_prc",
+            "seller_promo_discount",
+            "seller_promo_id",
+            "shk_id",
+            "site_country",
+            "srid",
+            "srv_dbs",
+            "sticker_id",
+            "storage_fee",
+            "subject_name",
+            "sup_rating_prc_up",
+            "supplier_oper_name",
+            "supplier_promo",
+            "suppliercontract_code",
+            "trbx_id",
+            "ts_name",
+            "uuid_promocode",
+            "wibes_wb_discount_percent"
+          ]
+        }
+      }
     }
   ]
 }

@@ -32,12 +32,18 @@ def extract_semantics(text: str) -> dict:
         return {}
 
     endpoints = {}
+    deprecated = {}
     for path, methods in (d.get("paths") or {}).items():
         if not isinstance(methods, dict):
             continue
         http = [m for m in methods if m in ("get", "post", "put", "patch", "delete")]
         if http:
             endpoints[path] = sorted(http)
+            # Считаем эндпоинт deprecated если хоть один метод помечен deprecated
+            for m in http:
+                if methods.get(m, {}).get("deprecated") is True:
+                    deprecated[path] = True
+                    break
 
     schemas = {}
     for name, schema in ((d.get("components") or {}).get("schemas", {}) or {}).items():
@@ -45,9 +51,10 @@ def extract_semantics(text: str) -> dict:
             schemas[name] = sorted(set(_extract_fields(schema)))
 
     return {
-        "version":   (d.get("info") or {}).get("version", ""),
-        "endpoints": endpoints,
-        "schemas":   schemas,
+        "version":    (d.get("info") or {}).get("version", ""),
+        "endpoints":  endpoints,
+        "deprecated": deprecated,
+        "schemas":    schemas,
     }
 
 
@@ -80,6 +87,11 @@ def diff(old: dict, new: dict) -> dict:
                 "fields_removed": removed,
             })
 
+    # Эндпоинты, которые стали deprecated (не были раньше)
+    old_dep = set(old.get("deprecated", {}).keys())
+    new_dep = set(new.get("deprecated", {}).keys())
+    newly_deprecated = sorted(new_dep - old_dep)
+
     return {
         "version_changed":   old.get("version") != new.get("version"),
         "old_version":       old.get("version"),
@@ -87,6 +99,7 @@ def diff(old: dict, new: dict) -> dict:
         "endpoints_added":   sorted(new_eps - old_eps),
         "endpoints_removed": sorted(old_eps - new_eps),
         "methods_changed":   changed_methods,
+        "newly_deprecated":  newly_deprecated,
         "schemas_added":     sorted(set(new_sch) - set(old_sch)),
         "schemas_removed":   sorted(set(old_sch) - set(new_sch)),
         "schemas_changed":   changed_schemas,
@@ -96,6 +109,6 @@ def diff(old: dict, new: dict) -> dict:
 def has_changes(d: dict) -> bool:
     return bool(
         d["version_changed"] or d["endpoints_added"] or d["endpoints_removed"] or
-        d["methods_changed"] or d["schemas_added"] or d["schemas_removed"] or
-        d["schemas_changed"]
+        d["methods_changed"] or d["newly_deprecated"] or
+        d["schemas_added"] or d["schemas_removed"] or d["schemas_changed"]
     )

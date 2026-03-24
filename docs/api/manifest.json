@@ -30,6 +30,7 @@
             "delete"
           ]
         },
+        "deprecated": {},
         "schemas": {
           "Access": [
             "code",
@@ -210,6 +211,7 @@
             "put"
           ]
         },
+        "deprecated": {},
         "schemas": {
           "BrandsResponse": [
             "brands",
@@ -557,6 +559,7 @@
             "post"
           ]
         },
+        "deprecated": {},
         "schemas": {
           "v3.SupplyOrderIDsAPI": [
             "orderIds"
@@ -766,6 +769,7 @@
             "put"
           ]
         },
+        "deprecated": {},
         "schemas": {
           "ClientInfo": [
             "additionalPhoneCodes",
@@ -979,6 +983,19 @@
           "/api/v3/dbs/orders/{orderId}/meta/gtin": [
             "put"
           ]
+        },
+        "deprecated": {
+          "/api/v3/dbs/orders/status": true,
+          "/api/v3/dbs/orders/{orderId}/cancel": true,
+          "/api/v3/dbs/orders/{orderId}/confirm": true,
+          "/api/v3/dbs/orders/{orderId}/deliver": true,
+          "/api/v3/dbs/orders/{orderId}/receive": true,
+          "/api/v3/dbs/orders/{orderId}/reject": true,
+          "/api/v3/dbs/orders/{orderId}/meta": true,
+          "/api/v3/dbs/orders/{orderId}/meta/sgtin": true,
+          "/api/v3/dbs/orders/{orderId}/meta/uin": true,
+          "/api/v3/dbs/orders/{orderId}/meta/imei": true,
+          "/api/v3/dbs/orders/{orderId}/meta/gtin": true
         },
         "schemas": {
           "api.OrderGroupsRequest": [
@@ -1289,6 +1306,19 @@
             "put"
           ]
         },
+        "deprecated": {
+          "/api/v3/click-collect/orders/{orderId}/confirm": true,
+          "/api/v3/click-collect/orders/{orderId}/prepare": true,
+          "/api/v3/click-collect/orders/{orderId}/receive": true,
+          "/api/v3/click-collect/orders/{orderId}/reject": true,
+          "/api/v3/click-collect/orders/status": true,
+          "/api/v3/click-collect/orders/{orderId}/cancel": true,
+          "/api/v3/click-collect/orders/{orderId}/meta": true,
+          "/api/v3/click-collect/orders/{orderId}/meta/sgtin": true,
+          "/api/v3/click-collect/orders/{orderId}/meta/uin": true,
+          "/api/v3/click-collect/orders/{orderId}/meta/imei": true,
+          "/api/v3/click-collect/orders/{orderId}/meta/gtin": true
+        },
         "schemas": {
           "api.CheckedIdentity": [
             "ok"
@@ -1533,6 +1563,7 @@
             "get"
           ]
         },
+        "deprecated": {},
         "schemas": {
           "models.TransitTariff": [
             "activeFrom",
@@ -1762,6 +1793,7 @@
             "post"
           ]
         },
+        "deprecated": {},
         "schemas": {
           "V0BidsRecommendationsResponse": [
             "advertId",
@@ -2199,6 +2231,7 @@
             "patch"
           ]
         },
+        "deprecated": {},
         "schemas": {
           "standardizedFQError": [
             "detail",
@@ -2397,6 +2430,7 @@
             "get"
           ]
         },
+        "deprecated": {},
         "schemas": {
           "models.TariffsBoxResponse": [
             "data"
@@ -2569,6 +2603,7 @@
             "post"
           ]
         },
+        "deprecated": {},
         "schemas": {
           "MainRequest": [
             "brandNames",
@@ -3283,6 +3318,9 @@
             "get"
           ]
         },
+        "deprecated": {
+          "/api/v1/supplier/stocks": true
+        },
         "schemas": {
           "StocksItem": [
             "Discount",
@@ -3489,6 +3527,7 @@
             "post"
           ]
         },
+        "deprecated": {},
         "schemas": {
           "requestDownload": [
             "params"

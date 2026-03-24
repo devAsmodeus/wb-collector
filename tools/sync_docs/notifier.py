@@ -21,6 +21,13 @@ def format_diff(name: str, label: str, d: dict) -> str:
         if len(d["endpoints_removed"]) > 5:
             lines.append(f"      ...ещё {len(d['endpoints_removed']) - 5}")
 
+    if d.get("newly_deprecated"):
+        lines.append(f"  ⚠️ Помечены устаревшими ({len(d['newly_deprecated'])}):")
+        for ep in d["newly_deprecated"][:5]:
+            lines.append(f"      ~ {ep}")
+        if len(d["newly_deprecated"]) > 5:
+            lines.append(f"      ...ещё {len(d['newly_deprecated']) - 5}")
+
     if d["methods_changed"]:
         lines.append(f"  🔄 Изменены HTTP-методы ({len(d['methods_changed'])}):")
         for m in d["methods_changed"][:3]:

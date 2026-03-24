@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-03-21T10:08:53Z",
+  "fetched_at": "2026-03-24T05:00:21Z",
   "files": [
     {
       "file": "01-general.yaml",
@@ -2514,8 +2514,8 @@
     },
     {
       "file": "11-analytics.yaml",
-      "sha256": "ad08aeb4bad4220ac78390f33de7a1d9e8aa1d5dbcef2b829cdcf0282a1a134f",
-      "size": 238354,
+      "sha256": "644cf0788b8796b02418d8a8c6980f15b2067bf20bc501090cf8aef692029a14",
+      "size": 244135,
       "semantics": {
         "version": "analytics",
         "endpoints": {
@@ -2551,6 +2551,9 @@
             "post"
           ],
           "/api/v2/search-report/product/orders": [
+            "post"
+          ],
+          "/api/analytics/v1/stocks-report/wb-warehouses": [
             "post"
           ],
           "/api/v2/stocks-report/products/groups": [
@@ -3178,6 +3181,15 @@
             "field",
             "mode"
           ],
+          "InventoryRequest": [
+            "chrtIds",
+            "limit",
+            "nmIds",
+            "offset"
+          ],
+          "InventoryWbResponse": [
+            "items"
+          ],
           "ErrorObject": [
             "detail",
             "origin",
@@ -3190,8 +3202,8 @@
     },
     {
       "file": "12-reports.yaml",
-      "sha256": "1c3750d416d50050565a0f3d5188d6b9ef7f75b07d380a1def5c7acc8ea4a903",
-      "size": 153922,
+      "sha256": "868c50c3c1716ca8eac0c1e5e1d81348b33ea210a0cac45a5e2c736a8f489671",
+      "size": 152418,
       "semantics": {
         "version": "reports",
         "endpoints": {

@@ -1185,6 +1185,69 @@ paths:
                 $ref: '#/components/schemas/ErrorObject403'
         '429':
           $ref: '#/components/responses/429'
+  /api/analytics/v1/stocks-report/wb-warehouses:
+    servers:
+      - url: https://seller-analytics-api.wildberries.ru
+    post:
+      x-readonly-method: true
+      x-category: contentanalytics
+      x-token-types:
+        - personal
+        - service
+      tags:
+        - История остатков
+      summary: Остатки на складах WB
+      operationId: postV1StocksReportWbWarehouses
+      description: |
+        <div class="description_token">Метод доступен по <a href="/openapi/api-information#tag/Avtorizaciya/Pravila-ispolzovaniya-tokenov-dostupa-k-API">типам токенов</a>:<strong> Персональный</strong>,<strong> Сервисный</strong> </div>
+
+        Метод возвращает текущие остатки товаров на складах WB.
+        <br><br>
+        Данные обновляются 1 раз в 30 минут.
+        <br><br>
+        1 строка ответа — данные об 1 размере товара на 1 складе WB.
+
+        <div class="description_limit">
+        <a href="/openapi/api-information#tag/Vvedenie/Limity-zaprosov">Лимит запросов</a> на один аккаунт продавца:
+
+        | Период | Лимит | Интервал | Всплеск |
+        | --- | --- | --- | --- |
+        | 1 мин | 3 запроса | 20 сек | 1 запрос |
+        </div>
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryRequest'
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/InventoryWbResponse'
+                required:
+                  - data
+        '400':
+          description: Неправильный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Доступ запрещён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject403'
+        '429':
+          $ref: '#/components/responses/429'
   /api/v2/stocks-report/products/groups:
     servers:
       - url: https://seller-analytics-api.wildberries.ru
@@ -4510,7 +4573,7 @@ components:
           format: uint32
           default: 0
           example: 10
-          description: Сколько элементов пропустить. Например, для значения `10` ответ начнется с 11 элемента
+          description: Сколько элементов пропустить. Например, для значения `10` ответ начнётся с 11 элемента
       required:
         - selectedPeriod
     ProductHistoryRequest:
@@ -5315,6 +5378,102 @@ components:
       required:
         - field
         - mode
+    InventoryRequest:
+      description: Параметры запроса текущих остатков на складах WB
+      type: object
+      properties:
+        nmIds:
+          type: array
+          description: Артикулы WB
+          minItems: 0
+          maxItems: 1000
+          example:
+            - 111222333
+            - 47254354
+          items:
+            type: integer
+            format: int64
+        chrtIds:
+          type: array
+          description: ID размеров. Используется только для указанных в массиве `nmIds` артикулов
+          example:
+            - 111222333
+            - 91663228
+          items:
+            type: integer
+            format: int64
+        limit:
+          example: 250000
+          description: Количество строк в ответе
+          type: integer
+          format: uint32
+          maximum: 250000
+          default: 250000
+        offset:
+          example: 500000
+          description: Сколько элементов пропустить. Например, для значения `10` ответ начнётся с 11 элемента
+          type: integer
+          format: uint32
+          default: 0
+    InventoryWbResponse:
+      description: Текущие остатки товаров на складах WB
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          description: Остатки товаров на складах WB по размерам
+          type: array
+          items:
+            type: object
+            properties:
+              nmId:
+                type: integer
+                description: Артикул WB
+                example: 47254354
+                format: int64
+              chrtId:
+                type: integer
+                description: ID размера
+                example: 91663228
+                format: int64
+              warehouseId:
+                type: integer
+                description: ID склада
+                example: 507
+                format: int64
+              warehouseName:
+                type: string
+                description: Название склада
+                example: Коледино
+              regionName:
+                type: string
+                description: Регион отгрузки
+                example: Центральный
+              quantity:
+                type: integer
+                description: Количество товара на складе, доступное клиентам для добавления в корзину
+                example: 43
+                format: uint64
+              inWayToClient:
+                type: integer
+                description: В пути к клиенту
+                example: 14
+                format: uint64
+              inWayFromClient:
+                type: integer
+                description: В пути от клиента
+                example: 11
+                format: uint64
+            required:
+              - nmId
+              - chrtId
+              - warehouseId
+              - warehouseName
+              - regionName
+              - quantity
+              - inWayToClient
+              - inWayFromClient
     ErrorObject:
       type: object
       properties:

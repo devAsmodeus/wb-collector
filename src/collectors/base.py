@@ -1,6 +1,7 @@
 """
 Базовый HTTP-клиент для WB API.
 - Авторизация через Bearer-токен
+- Rate limiting по документации WB API (src/rate_limits.py)
 - Автоматические ретраи (3 попытки)
 - Обработка 429 (rate limit) с паузой
 - Таймаут на запрос
@@ -19,6 +20,7 @@ from src.exceptions import (
     WBApiUnauthorizedException,
 )
 from src.metrics import WB_API_REQUESTS, WB_API_ERRORS, WB_API_RESPONSE_TIME, WB_RATE_LIMIT_HITS
+from src.rate_limits import rate_limiter
 
 logger = logging.getLogger(__name__)
 
@@ -67,12 +69,15 @@ class WBApiClient:
         json: Any = None,
         body: Any = None,
     ) -> Any:
-        """Выполняет запрос с ретраями."""
+        """Выполняет запрос с ретраями и rate limiting по документации WB."""
         last_exc = None
 
         host = self.base_url.replace("https://", "").replace("http://", "")
 
         for attempt in range(1, RETRY_COUNT + 1):
+            # Выдерживаем интервал из WB API документации перед запросом
+            await rate_limiter.wait_if_needed(host, path)
+
             t_start = time.monotonic()
             try:
                 response = await self._client.request(

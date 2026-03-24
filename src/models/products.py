@@ -1,6 +1,6 @@
 """ORM модели: Товары (Products)."""
 from datetime import datetime
-from sqlalchemy import BigInteger, Boolean, Float, Integer, Numeric, String, Text, DateTime, JSON
+from sqlalchemy import BigInteger, Boolean, Float, ForeignKey, Integer, Numeric, String, Text, DateTime, JSON
 from sqlalchemy.orm import Mapped, mapped_column
 from src.database import Base
 
@@ -38,7 +38,7 @@ class WbPrice(Base):
     __tablename__ = "wb_prices"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    nm_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True, comment="Артикул WB (nmID)")
+    nm_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False, index=True, comment="Артикул WB (nmID)")
     vendor_code: Mapped[str | None] = mapped_column(String(100), nullable=True, comment="Артикул продавца")
     price: Mapped[float | None] = mapped_column(Numeric(12, 2), nullable=True, comment="Цена до скидки, руб.")
     discount: Mapped[float | None] = mapped_column(Numeric(5, 2), nullable=True, comment="Скидка продавца, %")
@@ -70,4 +70,31 @@ class WbWarehouse(Base):
     address: Mapped[str | None] = mapped_column(String(500), nullable=True, comment="Адрес склада")
     work_time: Mapped[str | None] = mapped_column(String(100), nullable=True, comment="Режим работы")
     selected_coefficient: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="Коэффициент склада")
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")
+
+
+class WbCategory(Base):
+    """Категория товаров WB."""
+    __tablename__ = "wb_categories"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    category_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False, index=True, comment="ID категории WB")
+    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="Название категории")
+    parent_id: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="ID родительской категории")
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")
+
+
+class WbSubject(Base):
+    """Предмет (подкатегория) товаров WB."""
+    __tablename__ = "wb_subjects"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    subject_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False, index=True, comment="ID предмета WB")
+    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="Название предмета")
+    parent_id: Mapped[int | None] = mapped_column(
+        Integer,
+        ForeignKey("wb_categories.category_id"),
+        nullable=True,
+        comment="ID родительской категории (FK → wb_categories.category_id)",
+    )
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")

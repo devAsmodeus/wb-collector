@@ -15,6 +15,7 @@ from src.dependencies import provide_db_session, provide_db_manager
 from src.exceptions import EXCEPTION_HANDLERS
 from src.init import redis_manager
 from src.logging_config import setup_logging
+from src.middleware import RequestLoggingMiddleware
 
 setup_logging(level="INFO")
 logger = logging.getLogger(__name__)
@@ -46,9 +47,7 @@ async def health() -> dict:
 # Роутеры (подключаем по мере реализации)
 # ---------------------------------------------------------------------------
 
-from src.api.wb import wb_router
-from src.api.sync import sync_router
-from src.api.db import db_router
+from src.api.general import general_router
 from src.api.products import products_router
 from src.api.fbs import fbs_router
 from src.api.dbw import dbw_router
@@ -76,9 +75,7 @@ app = Litestar(
     route_handlers=[
         health,
         PrometheusController,  # GET /metrics
-        wb_router,
-        sync_router,
-        db_router,
+        general_router,
         products_router,
         fbs_router,
         dbw_router,
@@ -98,7 +95,7 @@ app = Litestar(
         "db": Provide(provide_db_manager),
     },
     exception_handlers=EXCEPTION_HANDLERS,
-    middleware=[prometheus_config.middleware],
+    middleware=[prometheus_config.middleware, RequestLoggingMiddleware],
     openapi_config=OpenAPIConfig(
         title="WB Collector",
         version="0.1.0",
@@ -183,6 +180,26 @@ app = Litestar(
             Tag(name="Баланс", description="WB API / Финансы / Баланс продавца"),
             Tag(name="Финансовые отчёты", description="WB API / Финансы / Детальный финансовый отчёт"),
             Tag(name="Документы", description="WB API / Финансы / Документы продавца"),
+            Tag(name="Sync / Products", description="Синхронизация в БД / Товары (02)"),
+            Tag(name="DB / Products", description="Данные из БД / Товары (02)"),
+            Tag(name="Sync / FBS", description="Синхронизация в БД / Заказы FBS (03)"),
+            Tag(name="DB / FBS", description="Данные из БД / Заказы FBS (03)"),
+            Tag(name="Sync / DBW", description="Синхронизация в БД / Заказы DBW (04)"),
+            Tag(name="DB / DBW", description="Данные из БД / Заказы DBW (04)"),
+            Tag(name="Sync / DBS", description="Синхронизация в БД / Заказы DBS (05)"),
+            Tag(name="DB / DBS", description="Данные из БД / Заказы DBS (05)"),
+            Tag(name="Sync / Pickup", description="Синхронизация в БД / Самовывоз (06)"),
+            Tag(name="DB / Pickup", description="Данные из БД / Самовывоз (06)"),
+            Tag(name="Sync / Promotion", description="Синхронизация в БД / Маркетинг (08)"),
+            Tag(name="DB / Promotion", description="Данные из БД / Маркетинг (08)"),
+            Tag(name="Sync / Communications", description="Синхронизация в БД / Коммуникации (09)"),
+            Tag(name="DB / Communications", description="Данные из БД / Коммуникации (09)"),
+            Tag(name="Sync / Tariffs", description="Синхронизация в БД / Тарифы (10)"),
+            Tag(name="DB / Tariffs", description="Данные из БД / Тарифы (10)"),
+            Tag(name="Sync / Reports", description="Синхронизация в БД / Отчёты (12)"),
+            Tag(name="DB / Reports", description="Данные из БД / Отчёты (12)"),
+            Tag(name="Sync / Finances", description="Синхронизация в БД / Финансы (13)"),
+            Tag(name="DB / Finances", description="Данные из БД / Финансы (13)"),
             Tag(name="Internal", description="Кастомные методы — агрегация, экспорт, аналитика"),
         ],
     ),

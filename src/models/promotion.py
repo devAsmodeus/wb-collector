@@ -1,6 +1,6 @@
 """ORM модели: Маркетинг (Promotion)."""
 from datetime import datetime
-from sqlalchemy import BigInteger, Boolean, Float, Integer, Numeric, String, DateTime, JSON, Text
+from sqlalchemy import BigInteger, Boolean, Float, Integer, Numeric, String, DateTime, JSON, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from src.database import Base
 
@@ -25,6 +25,9 @@ class WbCampaign(Base):
 class WbCampaignStat(Base):
     """Статистика рекламной кампании."""
     __tablename__ = "wb_campaign_stats"
+    __table_args__ = (
+        UniqueConstraint("advert_id", "date", name="uq_campaign_stats_advert_date"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     advert_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True, comment="ID кампании")

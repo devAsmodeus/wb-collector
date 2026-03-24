@@ -1,3 +1,3 @@
-from src.services.analytics.analytics import AnalyticsService
+from src.services.analytics.wb import AnalyticsWbService
 
-__all__ = ["AnalyticsService"]
+__all__ = ["AnalyticsWbService"]

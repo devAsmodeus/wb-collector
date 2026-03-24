@@ -48,6 +48,10 @@ class Settings(BaseSettings):
         )
 
     @property
+    def test_db_url(self) -> str:
+        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/wb_collector_test"
+
+    @property
     def redis_url(self) -> str:
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}"
 

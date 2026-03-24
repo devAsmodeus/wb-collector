@@ -1,7 +1,17 @@
-from src.services.communications.questions import QuestionsService
-from src.services.communications.feedbacks import FeedbacksService
-from src.services.communications.pins import PinsService
-from src.services.communications.chat import ChatService
-from src.services.communications.new_items import NewItemsService
+from src.services.communications.wb import (
+    QuestionsService, FeedbacksService, PinsService,
+    ChatService, NewItemsService, ClaimsService,
+)
+from src.services.communications.sync import (
+    FeedbacksSyncService, QuestionsSyncService, ClaimsSyncService,
+)
+from src.services.communications.db import (
+    FeedbacksDbService, QuestionsDbService, ClaimsDbService,
+)
 
-__all__ = ["QuestionsService", "FeedbacksService", "PinsService", "ChatService", "NewItemsService"]
+__all__ = [
+    "QuestionsService", "FeedbacksService", "PinsService",
+    "ChatService", "NewItemsService", "ClaimsService",
+    "FeedbacksSyncService", "QuestionsSyncService", "ClaimsSyncService",
+    "FeedbacksDbService", "QuestionsDbService", "ClaimsDbService",
+]

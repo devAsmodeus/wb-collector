@@ -6,8 +6,13 @@
 
 ## Документация
 
-- [README.md](README.md) — этот файл: архитектура, модули, установка
-- [docs/MONITORING.md](docs/MONITORING.md) — мониторинг: Grafana, Loki, Prometheus, Promtail
+| Документ | Описание |
+|----------|----------|
+| [API_METHODS.md](docs/API_METHODS.md) | Справочник 268 методов WB API |
+| [MONITORING.md](docs/MONITORING.md) | Мониторинг: Grafana, Prometheus, Loki |
+| [SCHEDULE.md](docs/SCHEDULE.md) | Расписание 25 Celery-задач |
+| [BACKUP.md](docs/BACKUP.md) | Бэкапы PostgreSQL |
+| [TESTING.md](docs/TESTING.md) | Тестирование (pytest + PostgreSQL) |
 
 ---
 

@@ -94,6 +94,28 @@ services:
       disable: true
     restart: unless-stopped
 
+  # ─── Бэкап ──────────────────────────────────────────────────────────────────
+
+  backup:
+    image: postgres:16-alpine
+    container_name: wb_backup
+    entrypoint: /bin/sh
+    command: >
+      -c "while true; do
+        /scripts/backup.sh;
+        sleep 86400;
+      done"
+    env_file: .env
+    environment:
+      - DB_HOST=postgres
+    volumes:
+      - ./scripts:/scripts:ro
+      - ./backups:/backups
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
   # ─── Nginx ───────────────────────────────────────────────────────────────────
 
   nginx:

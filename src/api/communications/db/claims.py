@@ -7,7 +7,7 @@ from src.utils.db_manager import DBManager
 
 class DbClaimsController(Controller):
     path = "/claims"
-    tags = ["DB / Communications"]
+    tags = ["09. База данных"]
 
     @get(
         "/",

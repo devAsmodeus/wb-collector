@@ -18,6 +18,7 @@ class ClaimsDbService(BaseService):
     ) -> dict:
         """Возвращает претензии из БД с фильтрацией."""
         repo = ClaimsRepository(session)
+        total = await repo.count()
         items = await repo.get_filtered(
             date_from=date_from,
             date_to=date_to,
@@ -37,5 +38,7 @@ class ClaimsDbService(BaseService):
                 }
                 for c in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }

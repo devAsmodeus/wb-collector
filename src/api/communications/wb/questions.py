@@ -12,7 +12,7 @@ from src.services.communications.wb.questions import QuestionsService
 
 class QuestionsController(Controller):
     path = "/questions"
-    tags = ["Вопросы"]
+    tags = ["09. API Wildberries"]
 
     @get(
         "/count-unanswered",

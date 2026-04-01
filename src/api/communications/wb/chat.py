@@ -12,7 +12,7 @@ from src.services.communications.wb.chat import ChatService
 
 class ChatController(Controller):
     path = "/chat"
-    tags = ["Чат с покупателями"]
+    tags = ["09. API Wildberries"]
 
     @get(
         "/chats",

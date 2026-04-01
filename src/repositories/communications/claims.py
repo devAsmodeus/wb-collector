@@ -1,7 +1,7 @@
 """Репозиторий: Претензии покупателей."""
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -45,6 +45,11 @@ class ClaimsRepository:
         await self._session.execute(stmt)
         await self._session.commit()
         return len(rows)
+
+    async def count(self) -> int:
+        """Возвращает общее количество претензий в БД."""
+        result = await self._session.execute(select(func.count()).select_from(WbClaim))
+        return result.scalar_one()
 
     async def get_all(self, limit: int = 100, offset: int = 0) -> list[WbClaim]:
         """Возвращает претензии из БД (последние сначала)."""

@@ -6,7 +6,7 @@ from src.utils.db_manager import DBManager
 
 class SyncClaimsController(Controller):
     path = "/claims"
-    tags = ["Sync / Communications"]
+    tags = ["09. Синхронизация"]
 
     @post(
         "/full",
@@ -19,3 +19,17 @@ class SyncClaimsController(Controller):
     async def sync_claims_full(self) -> dict:
         async with DBManager() as db:
             return await ClaimsSyncService().sync_claims(db.session)
+
+    @post(
+        "/incremental",
+        summary="Инкрементальная выгрузка претензий в БД",
+        description=(
+            "Claims API возвращает только последние 14 дней. Инкрементальная = полная синхронизация.\n\n"
+            "**WB:** `GET feedbacks-api.wildberries.ru/api/v1/claims`"
+        ),
+    )
+    async def sync_claims_incremental(self) -> dict:
+        async with DBManager() as db:
+            result = await ClaimsSyncService().sync_claims(db.session)
+            result["source"] = "incremental"
+            return result

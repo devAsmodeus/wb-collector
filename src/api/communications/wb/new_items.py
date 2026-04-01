@@ -10,7 +10,7 @@ from src.services.communications.wb.new_items import NewItemsService
 
 class NewItemsController(Controller):
     path = "/"
-    tags = ["Отзывы"]
+    tags = ["09. API Wildberries"]
 
     @get(
         "/new-feedbacks-questions",

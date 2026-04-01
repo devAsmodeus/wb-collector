@@ -13,7 +13,7 @@ from src.services.communications.wb.feedbacks import FeedbacksService
 
 class FeedbacksController(Controller):
     path = "/feedbacks"
-    tags = ["Отзывы"]
+    tags = ["09. API Wildberries"]
 
     @get(
         "/count-unanswered",
@@ -84,7 +84,7 @@ class FeedbacksController(Controller):
 
     @post(
         "/return",
-        tags=["Возвраты покупателями"],
+        tags=["09. API Wildberries"],
         summary="Запрос возврата по отзыву",
         description=(
             "Создаёт запрос на возврат товара покупателю на основании отзыва.\n\n"
@@ -110,7 +110,7 @@ class FeedbacksController(Controller):
 
     @get(
         "/archive",
-        tags=["Возвраты покупателями"],
+        tags=["09. API Wildberries"],
         summary="Архив отзывов",
         description=(
             "Возвращает архив отзывов с фильтрацией по артикулу и дате.\n\n"

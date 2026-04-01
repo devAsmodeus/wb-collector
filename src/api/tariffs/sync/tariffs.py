@@ -6,7 +6,7 @@ from src.utils.db_manager import DBManager
 
 class SyncCommissionsController(Controller):
     path = "/commissions"
-    tags = ["Sync / Tariffs"]
+    tags = ["10. Синхронизация"]
 
     @post(
         "/",
@@ -20,10 +20,24 @@ class SyncCommissionsController(Controller):
         async with DBManager() as db:
             return await TariffsSyncService().sync_commissions(db.session)
 
+    @post(
+        "/incremental",
+        summary="Инкрементальная синхронизация комиссий",
+        description=(
+            "Комиссии — справочные данные, инкрементальная = полная синхронизация (upsert обновит данные).\n\n"
+            "**WB:** `GET common-api.wildberries.ru/api/v1/tariffs/commission`"
+        ),
+    )
+    async def sync_commissions_incremental(self) -> dict:
+        async with DBManager() as db:
+            result = await TariffsSyncService().sync_commissions(db.session)
+            result["source"] = "incremental"
+            return result
+
 
 class SyncBoxController(Controller):
     path = "/box"
-    tags = ["Sync / Tariffs"]
+    tags = ["10. Синхронизация"]
 
     @post(
         "/",
@@ -37,10 +51,24 @@ class SyncBoxController(Controller):
         async with DBManager() as db:
             return await TariffsSyncService().sync_box_tariffs(db.session)
 
+    @post(
+        "/incremental",
+        summary="Инкрементальная синхронизация тарифов коробами",
+        description=(
+            "Тарифы коробами — справочные данные, инкрементальная = полная синхронизация.\n\n"
+            "**WB:** `GET common-api.wildberries.ru/api/v1/tariffs/box`"
+        ),
+    )
+    async def sync_box_tariffs_incremental(self) -> dict:
+        async with DBManager() as db:
+            result = await TariffsSyncService().sync_box_tariffs(db.session)
+            result["source"] = "incremental"
+            return result
+
 
 class SyncPalletController(Controller):
     path = "/pallet"
-    tags = ["Sync / Tariffs"]
+    tags = ["10. Синхронизация"]
 
     @post(
         "/",
@@ -54,10 +82,24 @@ class SyncPalletController(Controller):
         async with DBManager() as db:
             return await TariffsSyncService().sync_pallet_tariffs(db.session)
 
+    @post(
+        "/incremental",
+        summary="Инкрементальная синхронизация тарифов паллетами",
+        description=(
+            "Тарифы паллетами — справочные данные, инкрементальная = полная синхронизация.\n\n"
+            "**WB:** `GET common-api.wildberries.ru/api/v1/tariffs/pallet`"
+        ),
+    )
+    async def sync_pallet_tariffs_incremental(self) -> dict:
+        async with DBManager() as db:
+            result = await TariffsSyncService().sync_pallet_tariffs(db.session)
+            result["source"] = "incremental"
+            return result
+
 
 class SyncSupplyController(Controller):
     path = "/supply"
-    tags = ["Sync / Tariffs"]
+    tags = ["10. Синхронизация"]
 
     @post(
         "/",
@@ -70,3 +112,17 @@ class SyncSupplyController(Controller):
     async def sync_supply_tariffs(self) -> dict:
         async with DBManager() as db:
             return await TariffsSyncService().sync_supply_tariffs(db.session)
+
+    @post(
+        "/incremental",
+        summary="Инкрементальная синхронизация коэффициентов поставок",
+        description=(
+            "Коэффициенты поставок — справочные данные, инкрементальная = полная синхронизация.\n\n"
+            "**WB:** `GET common-api.wildberries.ru/api/v1/tariffs/warehouseCoeff`"
+        ),
+    )
+    async def sync_supply_tariffs_incremental(self) -> dict:
+        async with DBManager() as db:
+            result = await TariffsSyncService().sync_supply_tariffs(db.session)
+            result["source"] = "incremental"
+            return result

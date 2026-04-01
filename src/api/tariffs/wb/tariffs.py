@@ -11,11 +11,11 @@ from src.services.tariffs.wb.tariffs import TariffsWbService
 
 class TariffsWbController(Controller):
     path = "/tariffs"
-    tags = ["WB / Тарифы"]
+    tags = ["10. API Wildberries"]
 
     @get(
         "/commission",
-        tags=["Комиссии"],
+        tags=["10. API Wildberries"],
         summary="Комиссии по категориям товаров",
         description=(
             "Возвращает список комиссий WB по категориям товаров для всех схем работы.\n\n"
@@ -27,7 +27,7 @@ class TariffsWbController(Controller):
 
     @get(
         "/seller",
-        tags=["Стоимость возврата продавцу"],
+        tags=["10. API Wildberries"],
         summary="Стоимость возврата товаров продавцу",
         description=(
             "Возвращает тарифы стоимости возврата товаров продавцу со складов WB.\n\n"
@@ -42,7 +42,7 @@ class TariffsWbController(Controller):
 
     @get(
         "/box",
-        tags=["Тарифы на остаток"],
+        tags=["10. API Wildberries"],
         summary="Тарифы на доставку и хранение коробами",
         description=(
             "Возвращает тарифы на доставку и хранение товаров в коробах по складам WB.\n\n"
@@ -57,7 +57,7 @@ class TariffsWbController(Controller):
 
     @get(
         "/pallet",
-        tags=["Тарифы на остаток"],
+        tags=["10. API Wildberries"],
         summary="Тарифы на доставку и хранение паллетами",
         description=(
             "Возвращает тарифы на доставку и хранение товаров на паллетах по складам WB.\n\n"
@@ -72,7 +72,7 @@ class TariffsWbController(Controller):
 
     @get(
         "/supply",
-        tags=["Тарифы на поставку"],
+        tags=["10. API Wildberries"],
         summary="Коэффициенты складов для поставок",
         description=(
             "Возвращает коэффициенты складов WB для расчёта стоимости поставок.\n\n"

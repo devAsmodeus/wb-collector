@@ -6,7 +6,7 @@ from src.utils.db_manager import DBManager
 
 class SyncFbsOrdersController(Controller):
     path = "/orders"
-    tags = ["Sync / FBS"]
+    tags = ["03. Синхронизация"]
 
     @post(
         "/full",
@@ -19,3 +19,16 @@ class SyncFbsOrdersController(Controller):
     async def sync_orders_full(self) -> dict:
         async with DBManager() as db:
             return await FbsOrdersSyncService().sync_orders(db.session)
+
+    @post(
+        "/incremental",
+        summary="Инкрементальная синхронизация заказов FBS",
+        description=(
+            "Загружает только новые заказы FBS (начиная с последней даты в БД).\n\n"
+            "Если БД пуста — автоматически делает полную выгрузку.\n\n"
+            "**WB:** `GET marketplace-api.wildberries.ru/api/v3/orders`"
+        ),
+    )
+    async def sync_orders_incremental(self) -> dict:
+        async with DBManager() as db:
+            return await FbsOrdersSyncService().sync_incremental(db.session)

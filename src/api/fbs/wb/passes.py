@@ -17,7 +17,7 @@ from src.services.fbs.wb.passes import PassesService
 
 class PassesController(Controller):
     path = "/passes"
-    tags = ["Пропуска FBS"]
+    tags = ["03. API Wildberries"]
 
     @get(
         "/offices",

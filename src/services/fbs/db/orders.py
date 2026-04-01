@@ -18,6 +18,7 @@ class FbsOrdersDbService(BaseService):
     ) -> dict:
         """Возвращает сборочные задания FBS из БД с фильтрацией."""
         repo = FbsOrdersRepository(session)
+        total = await repo.count()
         items = await repo.get_filtered(
             date_from=date_from,
             date_to=date_to,
@@ -52,5 +53,7 @@ class FbsOrdersDbService(BaseService):
                 }
                 for o in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }

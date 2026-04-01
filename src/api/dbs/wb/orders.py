@@ -20,7 +20,7 @@ from src.services.dbs.wb.orders import DBSOrdersService
 
 class DBSOrdersController(Controller):
     path = "/orders"
-    tags = ["Сборочные задания DBS"]
+    tags = ["05. API Wildberries"]
 
     @get(
         "/new",

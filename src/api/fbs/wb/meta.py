@@ -17,7 +17,7 @@ from src.services.fbs.wb.orders import OrdersService
 
 class MetaController(Controller):
     path = "/orders"
-    tags = ["Метаданные FBS"]
+    tags = ["03. API Wildberries"]
 
     @post(
         "/meta",

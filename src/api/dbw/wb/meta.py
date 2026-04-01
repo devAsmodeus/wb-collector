@@ -16,7 +16,7 @@ from src.services.dbw.wb.meta import DBWMetaService
 
 class DBWMetaController(Controller):
     path = "/orders"
-    tags = ["Метаданные DBW"]
+    tags = ["04. API Wildberries"]
 
     @get(
         "/{order_id:int}/meta",

@@ -7,7 +7,7 @@ from src.utils.db_manager import DBManager
 
 class DbDBSOrdersController(Controller):
     path = "/orders"
-    tags = ["DB / DBS"]
+    tags = ["05. База данных"]
 
     @get(
         "/",

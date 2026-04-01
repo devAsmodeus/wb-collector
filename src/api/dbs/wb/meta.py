@@ -20,7 +20,7 @@ from src.services.dbs.wb.meta import DBSMetaService
 
 class DBSMetaController(Controller):
     path = "/orders"
-    tags = ["Метаданные DBS"]
+    tags = ["05. API Wildberries"]
 
     @post(
         "/meta/info",

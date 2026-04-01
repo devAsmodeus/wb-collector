@@ -1,7 +1,7 @@
 """Репозиторий: Заказы DBW."""
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -80,12 +80,24 @@ class DbwOrdersRepository:
         await self._session.commit()
         return len(rows)
 
+    async def count(self) -> int:
+        """Возвращает общее количество заказов DBW в БД."""
+        result = await self._session.execute(select(func.count()).select_from(DbwOrder))
+        return result.scalar_one()
+
     async def get_all(self, limit: int = 100, offset: int = 0) -> list[DbwOrder]:
         """Возвращает заказы DBW из БД (последние сначала)."""
         result = await self._session.execute(
             select(DbwOrder).order_by(DbwOrder.date.desc()).limit(limit).offset(offset)
         )
         return list(result.scalars().all())
+
+    async def get_max_date(self) -> datetime | None:
+        """Возвращает максимальную дату заказа DBW в БД (для инкрементального обновления)."""
+        result = await self._session.execute(
+            select(func.max(DbwOrder.date))
+        )
+        return result.scalar_one_or_none()
 
     async def get_filtered(
         self,

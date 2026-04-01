@@ -18,7 +18,7 @@ from src.services.fbs.wb.orders import OrdersService
 
 class OrdersController(Controller):
     path = "/orders"
-    tags = ["Сборочные задания FBS"]
+    tags = ["03. API Wildberries"]
 
     @get(
         "/new",

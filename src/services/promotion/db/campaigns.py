@@ -17,6 +17,7 @@ class CampaignsDbService(BaseService):
     ) -> dict:
         """Возвращает кампании из БД с фильтрацией."""
         repo = CampaignsRepository(session)
+        total = await repo.count()
         if status is not None or type_ is not None:
             items = await repo.get_filtered(status=status, type_=type_, limit=limit, offset=offset)
         else:
@@ -37,5 +38,7 @@ class CampaignsDbService(BaseService):
                 }
                 for c in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }

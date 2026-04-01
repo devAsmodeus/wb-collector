@@ -1,7 +1,7 @@
 """Репозиторий: Рекламные кампании WB."""
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -30,7 +30,10 @@ class CampaignsRepository:
                 "fetched_at": datetime.utcnow(),
             }
             for c in campaigns
+            if c.get("advertId") or c.get("advert_id")  # WB может вернуть кампанию без ID
         ]
+        if not rows:
+            return 0
         stmt = insert(WbCampaign).values(rows)
         stmt = stmt.on_conflict_do_update(
             index_elements=["advert_id"],
@@ -49,6 +52,16 @@ class CampaignsRepository:
         await self._session.execute(stmt)
         await self._session.commit()
         return len(rows)
+
+    async def get_max_change_time(self) -> datetime | None:
+        """Возвращает максимальную дату изменения кампании из БД."""
+        result = await self._session.execute(select(func.max(WbCampaign.change_time)))
+        return result.scalar_one_or_none()
+
+    async def count(self) -> int:
+        """Возвращает общее количество кампаний в БД."""
+        result = await self._session.execute(select(func.count()).select_from(WbCampaign))
+        return result.scalar_one()
 
     async def get_all(self, limit: int = 100, offset: int = 0) -> list[WbCampaign]:
         """Возвращает кампании с пагинацией."""

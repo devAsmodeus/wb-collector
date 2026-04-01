@@ -12,7 +12,7 @@ from src.services.promotion.wb.stats import StatsService
 
 class StatsController(Controller):
     path = "/"
-    tags = ["Статистика"]
+    tags = ["08. API Wildberries"]
 
     @get(
         "/fullstats",
@@ -44,7 +44,7 @@ class StatsController(Controller):
 
     @get(
         "/media/count",
-        tags=["Медиа"],
+        tags=["08. API Wildberries"],
         summary="Количество медиакампаний",
         description=(
             "Возвращает количество медиакампаний продавца по статусам и типам.\n\n"
@@ -56,7 +56,7 @@ class StatsController(Controller):
 
     @get(
         "/media/adverts",
-        tags=["Медиа"],
+        tags=["08. API Wildberries"],
         summary="Список медиакампаний",
         description=(
             "Возвращает список медиакампаний с фильтрацией по статусу и типу.\n\n"
@@ -77,7 +77,7 @@ class StatsController(Controller):
 
     @get(
         "/media/advert",
-        tags=["Медиа"],
+        tags=["08. API Wildberries"],
         summary="Информация о медиакампании",
         description=(
             "Возвращает детальную информацию о медиакампании.\n\n"

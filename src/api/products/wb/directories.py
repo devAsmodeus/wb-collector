@@ -20,7 +20,7 @@ from src.services.products.wb.directories import DirectoriesService
 
 class DirectoriesController(Controller):
     path = "/directories"
-    tags = ["Products — Справочники"]
+    tags = ["02. API Wildberries"]
 
     @get(
         "/categories",

@@ -7,7 +7,7 @@ from src.utils.db_manager import DBManager
 
 class DbStatsController(Controller):
     path = "/stats"
-    tags = ["DB / Promotion"]
+    tags = ["08. База данных"]
 
     @get(
         "/",

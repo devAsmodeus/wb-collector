@@ -18,11 +18,11 @@ class GoodsSize(BaseModel):
         None,
         description="Цена до скидки в копейках × 100 (напр. 300000 = 3000 ₽)",
     )
-    discountedPrice: int | None = Field(
+    discountedPrice: float | None = Field(
         None,
         description="Цена после скидки продавца в копейках × 100",
     )
-    clubDiscountedPrice: int | None = Field(
+    clubDiscountedPrice: float | None = Field(
         None,
         description="Цена для участников WB Клуба в копейках × 100",
     )

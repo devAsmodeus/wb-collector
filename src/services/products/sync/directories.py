@@ -47,3 +47,21 @@ class DirectoriesSyncService(BaseService):
         saved = await repo.upsert_many(subjects)
         logger.info(f"Subjects synced: {saved} subjects saved")
         return {"synced": saved, "source": "full"}
+
+    async def sync_categories_incremental(self, session: AsyncSession) -> dict:
+        """
+        Инкрементальная синхронизация категорий.
+        Категории — справочные данные, incremental = full sync.
+        """
+        result = await self.sync_categories(session)
+        result["source"] = "incremental"
+        return result
+
+    async def sync_subjects_incremental(self, session: AsyncSession) -> dict:
+        """
+        Инкрементальная синхронизация предметов.
+        Предметы — справочные данные, incremental = full sync.
+        """
+        result = await self.sync_subjects(session)
+        result["source"] = "incremental"
+        return result

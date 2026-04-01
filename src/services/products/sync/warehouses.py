@@ -23,3 +23,12 @@ class WarehousesSyncService(BaseService):
         saved = await repo.upsert_many(warehouses)
         logger.info(f"Warehouses synced: {saved} warehouses saved")
         return {"synced": saved, "source": "full"}
+
+    async def sync_warehouses_incremental(self, session: AsyncSession) -> dict:
+        """
+        Инкрементальная синхронизация складов.
+        Склады — справочные данные, incremental = full sync.
+        """
+        result = await self.sync_warehouses(session)
+        result["source"] = "incremental"
+        return result

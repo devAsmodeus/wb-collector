@@ -1,7 +1,7 @@
 """Репозиторий: Новости портала продавцов."""
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -42,6 +42,11 @@ class NewsRepository:
         await self._session.execute(stmt)
         await self._session.commit()
         return len(rows)
+
+    async def count(self) -> int:
+        """Возвращает общее количество новостей в БД."""
+        result = await self._session.execute(select(func.count()).select_from(WbNews))
+        return result.scalar_one()
 
     async def get_all(self, limit: int = 100, offset: int = 0) -> list[WbNews]:
         """Возвращает новости из БД (последние сначала)."""

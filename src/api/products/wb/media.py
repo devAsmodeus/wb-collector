@@ -13,7 +13,7 @@ from src.services.products.wb.media import MediaService
 
 class MediaController(Controller):
     path = "/media"
-    tags = ["Products — Карточки"]
+    tags = ["02. API Wildberries"]
 
     @post(
         "/upload-by-url",

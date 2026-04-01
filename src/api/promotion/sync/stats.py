@@ -6,7 +6,7 @@ from src.utils.db_manager import DBManager
 
 class SyncStatsController(Controller):
     path = "/stats"
-    tags = ["Sync / Promotion"]
+    tags = ["08. Синхронизация"]
 
     @post(
         "/full",
@@ -19,3 +19,15 @@ class SyncStatsController(Controller):
     async def sync_stats_full(self) -> dict:
         async with DBManager() as db:
             return await StatsSyncService().sync_stats(db.session)
+
+    @post(
+        "/incremental",
+        summary="Инкрементальная выгрузка статистики кампаний в БД",
+        description=(
+            "Статистика обновляется ежедневно — инкрементальная = полная синхронизация (upsert обновит данные).\n\n"
+            "**WB:** `GET advert-api.wildberries.ru/adv/v3/fullstats`"
+        ),
+    )
+    async def sync_stats_incremental(self) -> dict:
+        async with DBManager() as db:
+            return await StatsSyncService().sync_stats_incremental(db.session)

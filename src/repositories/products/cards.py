@@ -1,7 +1,7 @@
 """Репозиторий: Карточки товаров."""
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -70,6 +70,16 @@ class CardsRepository:
         await self._session.execute(stmt)
         await self._session.commit()
         return len(rows)
+
+    async def get_max_updated_at(self) -> datetime | None:
+        """Возвращает максимальную дату обновления карточки из БД для инкрементальной синхронизации."""
+        result = await self._session.execute(select(func.max(WbCard.updated_at)))
+        return result.scalar_one_or_none()
+
+    async def count(self) -> int:
+        """Возвращает общее количество карточек товаров в БД."""
+        result = await self._session.execute(select(func.count()).select_from(WbCard))
+        return result.scalar_one()
 
     async def get_all(self, limit: int = 100, offset: int = 0) -> list[WbCard]:
         """Возвращает карточки товаров с пагинацией."""

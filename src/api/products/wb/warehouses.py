@@ -18,7 +18,7 @@ from src.services.products.wb.warehouses import WarehousesService
 
 class WarehousesController(Controller):
     path = "/warehouses"
-    tags = ["Products — Склады"]
+    tags = ["02. API Wildberries"]
 
     @get(
         "/wb",

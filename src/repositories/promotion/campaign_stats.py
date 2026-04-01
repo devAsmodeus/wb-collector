@@ -1,7 +1,7 @@
 """Репозиторий: Статистика рекламных кампаний WB."""
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -56,6 +56,16 @@ class CampaignStatsRepository:
         await self._session.execute(stmt)
         await self._session.commit()
         return len(rows)
+
+    async def get_max_date(self) -> datetime | None:
+        """Возвращает максимальную дату статистики кампании из БД."""
+        result = await self._session.execute(select(func.max(WbCampaignStat.date)))
+        return result.scalar_one_or_none()
+
+    async def count(self) -> int:
+        """Возвращает общее количество записей статистики кампаний в БД."""
+        result = await self._session.execute(select(func.count()).select_from(WbCampaignStat))
+        return result.scalar_one()
 
     async def get_all(self, limit: int = 100, offset: int = 0) -> list[WbCampaignStat]:
         """Возвращает статистику с пагинацией."""

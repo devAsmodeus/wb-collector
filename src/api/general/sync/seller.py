@@ -7,7 +7,7 @@ from src.utils.db_manager import DBManager
 
 class SyncSellerController(Controller):
     path = "/seller"
-    tags = ["Sync / General"]
+    tags = ["01. Синхронизация"]
 
     @post(
         "/full",

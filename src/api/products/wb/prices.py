@@ -19,7 +19,7 @@ from src.services.products.wb.prices import PricesService
 
 class PricesController(Controller):
     path = "/prices"
-    tags = ["Products — Цены"]
+    tags = ["02. API Wildberries"]
 
     @get(
         "/goods",

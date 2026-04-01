@@ -16,6 +16,7 @@ class StatsDbService(BaseService):
     ) -> dict:
         """Возвращает статистику кампаний из БД."""
         repo = CampaignStatsRepository(session)
+        total = await repo.count()
         if advert_id is not None:
             items = await repo.get_by_campaign(advert_id, limit=limit, offset=offset)
         else:
@@ -39,5 +40,7 @@ class StatsDbService(BaseService):
                 }
                 for s in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }

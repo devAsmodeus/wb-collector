@@ -10,6 +10,7 @@ class NewsDbService(BaseService):
     async def get_from_db(self, session: AsyncSession, limit: int = 100, offset: int = 0) -> dict:
         """Возвращает новости из БД."""
         repo = NewsRepository(session)
+        total = await repo.count()
         items = await repo.get_all(limit=limit, offset=offset)
         return {
             "data": [
@@ -22,5 +23,7 @@ class NewsDbService(BaseService):
                 }
                 for n in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }

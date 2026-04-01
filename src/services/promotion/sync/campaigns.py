@@ -33,3 +33,12 @@ class CampaignsSyncService(BaseService):
         saved = await repo.upsert_many(campaigns)
         logger.info(f"Campaigns synced: {saved} campaigns saved")
         return {"synced": saved, "source": "full"}
+
+    async def sync_campaigns_incremental(self, session: AsyncSession) -> dict:
+        """
+        Инкрементальная синхронизация кампаний.
+        Кампании могут изменяться в любой момент, поэтому incremental = full sync.
+        """
+        result = await self.sync_campaigns(session)
+        result["source"] = "incremental"
+        return result

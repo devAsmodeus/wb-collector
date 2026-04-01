@@ -10,6 +10,7 @@ class TagsDbService(BaseService):
     async def get_tags(self, session: AsyncSession) -> dict:
         """Возвращает все теги из БД."""
         repo = TagsRepository(session)
+        total = await repo.count()
         items = await repo.get_all()
         return {
             "data": [
@@ -21,5 +22,7 @@ class TagsDbService(BaseService):
                 }
                 for t in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": total,
+            "offset": 0,
         }

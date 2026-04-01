@@ -104,3 +104,12 @@ class StatsSyncService(BaseService):
 
         logger.info(f"Campaign stats synced: {total_saved} stats saved")
         return {"synced": total_saved, "campaigns": len(campaign_ids), "source": "full"}
+
+    async def sync_stats_incremental(self, session: AsyncSession) -> dict:
+        """
+        Инкрементальная синхронизация статистики кампаний.
+        Статистика обновляется ежедневно — incremental = full sync (upsert обновит данные).
+        """
+        result = await self.sync_stats(session)
+        result["source"] = "incremental"
+        return result

@@ -1,10 +1,10 @@
 {
-  "fetched_at": "2026-03-24T05:00:21Z",
+  "fetched_at": "2026-04-01T05:00:19Z",
   "files": [
     {
       "file": "01-general.yaml",
-      "sha256": "91123e2766c8e77430493b55cedfc0d53739816b544879c762980f84ddbe6124",
-      "size": 50720,
+      "sha256": "188a29e552198b4136ca8fe3c82508ca4ddc9f3d5a9420d9d1a3ba256111fb4e",
+      "size": 51645,
       "semantics": {
         "version": "general",
         "endpoints": {
@@ -463,8 +463,8 @@
     },
     {
       "file": "03-orders-fbs.yaml",
-      "sha256": "f03fb3417efde5ef61576ddbe952d164dca630955e2b60ecc3793f357b051d6c",
-      "size": 159196,
+      "sha256": "97cb34b4c0ea34279be6e883b7ac47c745216995ec2e3cddb0a671b4ca690db3",
+      "size": 172806,
       "semantics": {
         "version": "order",
         "endpoints": {
@@ -574,6 +574,12 @@
             "data",
             "message"
           ],
+          "409SupplyDeliverError": [
+            "code",
+            "data",
+            "message",
+            "orders"
+          ],
           "Next": [],
           "Order": [
             "address",
@@ -671,6 +677,11 @@
             "uin",
             "value"
           ],
+          "MetaDetails": [
+            "decision",
+            "key",
+            "value"
+          ],
           "v3.GetMetaMultiRequest": [
             "orders"
           ],
@@ -679,7 +690,8 @@
           ],
           "v3.OrderMetaAPI": [
             "id",
-            "meta"
+            "meta",
+            "metaDetails"
           ],
           "Pass": [
             "carModel",

@@ -33,3 +33,12 @@ class CalendarSyncService(BaseService):
         saved = await repo.upsert_many(promotions)
         logger.info(f"Promotions synced: {saved} promotions saved")
         return {"synced": saved, "source": "full"}
+
+    async def sync_promotions_incremental(self, session: AsyncSession) -> dict:
+        """
+        Инкрементальная синхронизация акций.
+        Акции — справочные данные, incremental = full sync (upsert обновит данные).
+        """
+        result = await self.sync_promotions(session)
+        result["source"] = "incremental"
+        return result

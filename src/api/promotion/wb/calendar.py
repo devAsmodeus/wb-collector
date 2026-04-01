@@ -11,7 +11,7 @@ from src.services.promotion.wb.calendar import CalendarService
 
 class CalendarController(Controller):
     path = "/promotions"
-    tags = ["Календарь акций"]
+    tags = ["08. API Wildberries"]
 
     @get(
         "/",

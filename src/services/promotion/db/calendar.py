@@ -15,6 +15,7 @@ class CalendarDbService(BaseService):
     ) -> dict:
         """Возвращает акции из БД."""
         repo = PromotionsRepository(session)
+        total = await repo.count()
         items = await repo.get_all(limit=limit, offset=offset)
         return {
             "data": [
@@ -29,5 +30,7 @@ class CalendarDbService(BaseService):
                 }
                 for p in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }

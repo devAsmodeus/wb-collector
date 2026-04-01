@@ -9,6 +9,7 @@ class TariffsDbService(BaseService):
 
     async def get_commissions(self, session: AsyncSession, limit: int = 500, offset: int = 0) -> dict:
         repo = TariffsRepository(session)
+        total = await repo.count_commissions()
         items = await repo.get_all_commissions(limit=limit, offset=offset)
         return {
             "data": [
@@ -24,18 +25,19 @@ class TariffsDbService(BaseService):
                 }
                 for t in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }
 
     async def get_box_tariffs(self, session: AsyncSession, limit: int = 500, offset: int = 0) -> dict:
         repo = TariffsRepository(session)
+        total = await repo.count_box_tariffs()
         items = await repo.get_all_box_tariffs(limit=limit, offset=offset)
         return {
             "data": [
                 {
-                    "warehouse_id": t.warehouse_id,
                     "warehouse_name": t.warehouse_name,
-                    "dt_next_box": t.dt_next_box.isoformat() if t.dt_next_box else None,
                     "box_delivery_base": float(t.box_delivery_base) if t.box_delivery_base else None,
                     "box_delivery_liter": float(t.box_delivery_liter) if t.box_delivery_liter else None,
                     "box_storage_base": float(t.box_storage_base) if t.box_storage_base else None,
@@ -44,16 +46,18 @@ class TariffsDbService(BaseService):
                 }
                 for t in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }
 
     async def get_pallet_tariffs(self, session: AsyncSession, limit: int = 500, offset: int = 0) -> dict:
         repo = TariffsRepository(session)
+        total = await repo.count_pallet_tariffs()
         items = await repo.get_all_pallet_tariffs(limit=limit, offset=offset)
         return {
             "data": [
                 {
-                    "warehouse_id": t.warehouse_id,
                     "warehouse_name": t.warehouse_name,
                     "is_super_safe": t.is_super_safe,
                     "pallet_delivery_value_base": float(t.pallet_delivery_value_base) if t.pallet_delivery_value_base else None,
@@ -63,11 +67,14 @@ class TariffsDbService(BaseService):
                 }
                 for t in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }
 
     async def get_supply_tariffs(self, session: AsyncSession, limit: int = 500, offset: int = 0) -> dict:
         repo = TariffsRepository(session)
+        total = await repo.count_supply_tariffs()
         items = await repo.get_all_supply_tariffs(limit=limit, offset=offset)
         return {
             "data": [
@@ -79,5 +86,7 @@ class TariffsDbService(BaseService):
                 }
                 for t in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }

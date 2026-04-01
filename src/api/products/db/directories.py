@@ -6,7 +6,7 @@ from src.utils.db_manager import DBManager
 
 class DbDirectoriesController(Controller):
     path = "/directories"
-    tags = ["DB / Products"]
+    tags = ["02. База данных"]
 
     @get(
         "/categories",

@@ -13,11 +13,11 @@ from src.services.finances.wb.finances import FinancesWbService
 
 class FinancesWbController(Controller):
     path = "/finances"
-    tags = ["WB / Финансы"]
+    tags = ["13. API Wildberries"]
 
     @get(
         "/balance",
-        tags=["Баланс"],
+        tags=["13. API Wildberries"],
         summary="Баланс продавца",
         description=(
             "Возвращает текущий баланс продавца на счёте WB.\n\n"
@@ -29,7 +29,7 @@ class FinancesWbController(Controller):
 
     @get(
         "/report",
-        tags=["Финансовые отчёты"],
+        tags=["13. API Wildberries"],
         summary="Детальный финансовый отчёт",
         description=(
             "Возвращает детальный отчёт о реализации товаров за период (аналог отчёта продавца в ЛК WB).\n\n"
@@ -49,7 +49,7 @@ class FinancesWbController(Controller):
 
     @get(
         "/documents/categories",
-        tags=["Документы"],
+        tags=["13. API Wildberries"],
         summary="Категории документов",
         description=(
             "Возвращает список доступных категорий документов продавца.\n\n"
@@ -61,7 +61,7 @@ class FinancesWbController(Controller):
 
     @get(
         "/documents",
-        tags=["Документы"],
+        tags=["13. API Wildberries"],
         summary="Список документов",
         description=(
             "Возвращает список документов продавца с фильтрацией по дате, категории и сервису.\n\n"
@@ -83,7 +83,7 @@ class FinancesWbController(Controller):
 
     @get(
         "/documents/download",
-        tags=["Документы"],
+        tags=["13. API Wildberries"],
         summary="Скачать документ",
         description=(
             "Скачивает конкретный документ по названию сервиса и формату.\n\n"
@@ -99,7 +99,7 @@ class FinancesWbController(Controller):
 
     @post(
         "/documents/download/all",
-        tags=["Документы"],
+        tags=["13. API Wildberries"],
         summary="Скачать все документы",
         description=(
             "Скачивает все документы по указанным сервисам и формату.\n\n"

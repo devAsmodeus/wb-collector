@@ -15,13 +15,13 @@ from src.services.reports.wb.reports import ReportsWbService
 
 class ReportsWbController(Controller):
     path = "/reports"
-    tags = ["WB / Отчёты"]
+    tags = ["12. API Wildberries"]
 
     # ── Основные отчёты ────────────────────────────────────────────────────────
 
     @get(
         "/stocks",
-        tags=["Основные отчёты"],
+        tags=["12. API Wildberries"],
         summary="Остатки на складах",
         description=(
             "Возвращает остатки товаров продавца на складах WB.\n\n"
@@ -37,7 +37,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/orders",
-        tags=["Основные отчёты"],
+        tags=["12. API Wildberries"],
         summary="Заказы",
         description=(
             "Возвращает заказы за период. Данные обновляются каждые 30 минут.\n\n"
@@ -52,7 +52,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/sales",
-        tags=["Основные отчёты"],
+        tags=["12. API Wildberries"],
         summary="Продажи и возвраты",
         description=(
             "Возвращает продажи и возвраты за период. Данные обновляются каждые 30 минут.\n\n"
@@ -67,7 +67,7 @@ class ReportsWbController(Controller):
 
     @post(
         "/excise",
-        tags=["Отчёт о товарах c обязательной маркировкой"],
+        tags=["12. API Wildberries"],
         summary="Отчёт по маркированным товарам",
         description=(
             "Возвращает отчёт о товарах с обязательной маркировкой за период.\n\n"
@@ -81,7 +81,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/warehouse-remains",
-        tags=["Отчёт об остатках на складах"],
+        tags=["12. API Wildberries"],
         summary="Создать задачу отчёта об остатках",
         description=(
             "Инициирует формирование отчёта об остатках на складах WB.\n\n"
@@ -109,7 +109,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/warehouse-remains/tasks/{task_id:str}/status",
-        tags=["Отчёт об остатках на складах"],
+        tags=["12. API Wildberries"],
         summary="Статус задачи отчёта об остатках",
         description=(
             "Возвращает статус задачи формирования отчёта об остатках.\n\n"
@@ -124,7 +124,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/warehouse-remains/tasks/{task_id:str}/download",
-        tags=["Отчёт об остатках на складах"],
+        tags=["12. API Wildberries"],
         summary="Скачать отчёт об остатках",
         description=(
             "Скачивает готовый отчёт об остатках на складах.\n\n"
@@ -141,7 +141,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/penalties/measurements",
-        tags=["Отчёты об удержаниях"],
+        tags=["12. API Wildberries"],
         summary="Штрафы за некорректные замеры",
         description=(
             "Возвращает список штрафов за некорректные замеры товаров на складе.\n\n"
@@ -159,7 +159,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/measurements/warehouse",
-        tags=["Отчёты об удержаниях"],
+        tags=["12. API Wildberries"],
         summary="Данные обмеров на складе",
         description=(
             "Возвращает данные обмеров товаров на складе (измеренный vs. заявленный объём).\n\n"
@@ -177,7 +177,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/deductions",
-        tags=["Отчёты об удержаниях"],
+        tags=["12. API Wildberries"],
         summary="Список удержаний",
         description=(
             "Возвращает список удержаний по рекламным и другим операциям.\n\n"
@@ -197,7 +197,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/antifraud",
-        tags=["Отчёты об удержаниях"],
+        tags=["12. API Wildberries"],
         summary="Детализация антифрод-удержаний",
         description=(
             "Возвращает детализацию удержаний по антифроду.\n\n"
@@ -209,7 +209,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/labeling",
-        tags=["Отчёт о товарах c обязательной маркировкой"],
+        tags=["12. API Wildberries"],
         summary="Товары с обязательной маркировкой",
         description=(
             "Возвращает список товаров продавца с обязательной маркировкой.\n\n"
@@ -223,7 +223,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/acceptance",
-        tags=["Операции при приёмке"],
+        tags=["12. API Wildberries"],
         summary="Создать задачу отчёта о приёмке",
         description=(
             "Инициирует формирование отчёта об операциях при приёмке товаров.\n\n"
@@ -235,7 +235,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/acceptance/tasks/{task_id:str}/status",
-        tags=["Операции при приёмке"],
+        tags=["12. API Wildberries"],
         summary="Статус задачи отчёта о приёмке",
         description=(
             "Возвращает статус задачи отчёта об операциях при приёмке.\n\n"
@@ -250,7 +250,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/acceptance/tasks/{task_id:str}/download",
-        tags=["Операции при приёмке"],
+        tags=["12. API Wildberries"],
         summary="Скачать отчёт о приёмке",
         description=(
             "Скачивает готовый отчёт об операциях при приёмке товаров.\n\n"
@@ -267,7 +267,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/paid-storage",
-        tags=["Платное хранение"],
+        tags=["12. API Wildberries"],
         summary="Создать задачу отчёта о платном хранении",
         description=(
             "Инициирует формирование отчёта о стоимости платного хранения на складах WB.\n\n"
@@ -283,7 +283,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/paid-storage/tasks/{task_id:str}/status",
-        tags=["Платное хранение"],
+        tags=["12. API Wildberries"],
         summary="Статус задачи платного хранения",
         description=(
             "Возвращает статус задачи отчёта о платном хранении.\n\n"
@@ -298,7 +298,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/paid-storage/tasks/{task_id:str}/download",
-        tags=["Платное хранение"],
+        tags=["12. API Wildberries"],
         summary="Скачать отчёт о платном хранении",
         description=(
             "Скачивает готовый отчёт о стоимости платного хранения.\n\n"
@@ -315,7 +315,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/region-sale",
-        tags=["Продажи по регионам"],
+        tags=["12. API Wildberries"],
         summary="Продажи по регионам",
         description=(
             "Возвращает статистику продаж в разбивке по регионам России.\n\n"
@@ -329,7 +329,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/brand/brands",
-        tags=["Доля бренда в продажах"],
+        tags=["12. API Wildberries"],
         summary="Бренды продавца",
         description=(
             "Возвращает список брендов продавца для анализа доли в продажах.\n\n"
@@ -341,7 +341,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/brand/parent-subjects",
-        tags=["Доля бренда в продажах"],
+        tags=["12. API Wildberries"],
         summary="Родительские категории для доли бренда",
         description=(
             "Возвращает список родительских категорий для анализа доли бренда.\n\n"
@@ -357,7 +357,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/brand/share",
-        tags=["Доля бренда в продажах"],
+        tags=["12. API Wildberries"],
         summary="Доля бренда в категории",
         description=(
             "Возвращает долю бренда в продажах по выбранной категории.\n\n"
@@ -375,7 +375,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/hidden/blocked",
-        tags=["Скрытые товары"],
+        tags=["12. API Wildberries"],
         summary="Заблокированные товары",
         description=(
             "Возвращает список заблокированных (полностью скрытых) товаров продавца.\n\n"
@@ -391,7 +391,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/hidden/shadowed",
-        tags=["Скрытые товары"],
+        tags=["12. API Wildberries"],
         summary="Частично скрытые товары",
         description=(
             "Возвращает список товаров, скрытых в некоторых категориях или регионах.\n\n"
@@ -409,7 +409,7 @@ class ReportsWbController(Controller):
 
     @get(
         "/returns",
-        tags=["Отчёт о возвратах и перемещении товаров"],
+        tags=["12. API Wildberries"],
         summary="Отчёт о возвратах товаров",
         description=(
             "Возвращает отчёт о возвратах и перемещении товаров за период.\n\n"

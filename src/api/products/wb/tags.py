@@ -20,7 +20,7 @@ from src.services.products.wb.tags import TagsService
 
 class TagsController(Controller):
     path = "/tags"
-    tags = ["Products — Теги"]
+    tags = ["02. API Wildberries"]
 
     @get(
         "/",

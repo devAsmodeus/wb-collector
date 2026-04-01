@@ -6,7 +6,7 @@ from src.utils.db_manager import DBManager
 
 class SyncDirectoriesController(Controller):
     path = "/directories"
-    tags = ["Sync / Products"]
+    tags = ["02. Синхронизация"]
 
     @post(
         "/categories",
@@ -31,3 +31,27 @@ class SyncDirectoriesController(Controller):
     async def sync_subjects(self) -> dict:
         async with DBManager() as db:
             return await DirectoriesSyncService().sync_subjects(db.session)
+
+    @post(
+        "/categories/incremental",
+        summary="Инкрементальная синхронизация категорий",
+        description=(
+            "Категории — справочные данные, инкрементальная = полная синхронизация.\n\n"
+            "**WB:** `GET content-api.wildberries.ru/content/v2/object/parent/all`"
+        ),
+    )
+    async def sync_categories_incremental(self) -> dict:
+        async with DBManager() as db:
+            return await DirectoriesSyncService().sync_categories_incremental(db.session)
+
+    @post(
+        "/subjects/incremental",
+        summary="Инкрементальная синхронизация предметов",
+        description=(
+            "Предметы — справочные данные, инкрементальная = полная синхронизация.\n\n"
+            "**WB:** `GET content-api.wildberries.ru/content/v2/object/all`"
+        ),
+    )
+    async def sync_subjects_incremental(self) -> dict:
+        async with DBManager() as db:
+            return await DirectoriesSyncService().sync_subjects_incremental(db.session)

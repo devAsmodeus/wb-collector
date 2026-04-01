@@ -34,4 +34,4 @@ class NewsCollector:
             from datetime import datetime, timedelta
             params["from"] = (datetime.utcnow() - timedelta(days=90)).strftime("%Y-%m-%d")
         data = await self._client.get("/api/communications/v2/news", params=params)
-        return NewsResponse.model_validate(data)
+        return NewsResponse.model_validate(data if isinstance(data, dict) else {})

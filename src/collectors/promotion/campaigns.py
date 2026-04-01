@@ -1,6 +1,7 @@
 """Коллектор: Маркетинг — Кампании."""
 from src.collectors.base import WBApiClient
 from src.config import settings
+from src.schemas.promotion.campaigns import AdvertCountResponse, AdvertsResponse
 
 
 class CampaignsCollector:
@@ -14,15 +15,17 @@ class CampaignsCollector:
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
 
-    async def get_count(self) -> dict:
-        return await self._client.get("/adv/v1/promotion/count")
+    async def get_count(self) -> AdvertCountResponse:
+        data = await self._client.get("/adv/v1/promotion/count")
+        return AdvertCountResponse.model_validate(data if isinstance(data, dict) else {})
 
-    async def get_adverts(self, ids: str | None = None, statuses: str | None = None, payment_type: str | None = None) -> dict:
+    async def get_adverts(self, ids: str | None = None, statuses: str | None = None, payment_type: str | None = None) -> AdvertsResponse:
         params: dict = {}
         if ids: params["ids"] = ids
         if statuses: params["statuses"] = statuses
         if payment_type: params["payment_type"] = payment_type
-        return await self._client.get("/api/advert/v2/adverts", params=params)
+        data = await self._client.get("/api/advert/v2/adverts", params=params)
+        return AdvertsResponse.model_validate({"adverts": data} if isinstance(data, list) else data if isinstance(data, dict) else {})
 
     async def get_min_bids(self, payload: dict) -> dict:
         return await self._client.post("/api/advert/v1/bids/min", json=payload)

@@ -7,7 +7,7 @@ from src.utils.db_manager import DBManager
 
 class DbCalendarController(Controller):
     path = "/calendar"
-    tags = ["DB / Promotion"]
+    tags = ["08. База данных"]
 
     @get(
         "/",

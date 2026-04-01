@@ -9,6 +9,7 @@ class FinancesDbService(BaseService):
 
     async def get_financial_report(self, session: AsyncSession, date_from=None, date_to=None, limit=500, offset=0) -> dict:
         repo = FinancialReportsRepository(session)
+        total = await repo.count()
         if date_from or date_to:
             items = await repo.get_filtered(date_from=date_from, date_to=date_to, limit=limit, offset=offset)
         else:
@@ -38,5 +39,7 @@ class FinancesDbService(BaseService):
                 }
                 for r in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }

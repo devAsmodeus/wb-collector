@@ -18,7 +18,7 @@ from src.services.pickup.wb.orders import PickupOrdersService
 
 class PickupOrdersController(Controller):
     path = "/orders"
-    tags = ["Сборочные задания Самовывоз"]
+    tags = ["06. API Wildberries"]
 
     @get(
         "/new",

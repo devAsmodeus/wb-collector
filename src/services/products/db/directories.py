@@ -11,6 +11,7 @@ class DirectoriesDbService(BaseService):
     async def get_categories(self, session: AsyncSession) -> dict:
         """Возвращает все категории из БД."""
         repo = CategoriesRepository(session)
+        total = await repo.count()
         items = await repo.get_all()
         return {
             "data": [
@@ -22,12 +23,15 @@ class DirectoriesDbService(BaseService):
                 }
                 for c in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": total,
+            "offset": 0,
         }
 
     async def get_subjects(self, session: AsyncSession) -> dict:
         """Возвращает все предметы из БД."""
         repo = SubjectsRepository(session)
+        total = await repo.count()
         items = await repo.get_all()
         return {
             "data": [
@@ -39,5 +43,7 @@ class DirectoriesDbService(BaseService):
                 }
                 for s in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": total,
+            "offset": 0,
         }

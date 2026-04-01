@@ -7,7 +7,7 @@ from src.utils.db_manager import DBManager
 
 class DbCommissionsController(Controller):
     path = "/commissions"
-    tags = ["DB / Tariffs"]
+    tags = ["10. База данных"]
 
     @get(
         "/",
@@ -28,7 +28,7 @@ class DbCommissionsController(Controller):
 
 class DbBoxController(Controller):
     path = "/box"
-    tags = ["DB / Tariffs"]
+    tags = ["10. База данных"]
 
     @get(
         "/",
@@ -49,7 +49,7 @@ class DbBoxController(Controller):
 
 class DbPalletController(Controller):
     path = "/pallet"
-    tags = ["DB / Tariffs"]
+    tags = ["10. База данных"]
 
     @get(
         "/",
@@ -70,7 +70,7 @@ class DbPalletController(Controller):
 
 class DbSupplyController(Controller):
     path = "/supply"
-    tags = ["DB / Tariffs"]
+    tags = ["10. База данных"]
 
     @get(
         "/",

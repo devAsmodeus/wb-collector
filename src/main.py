@@ -7,8 +7,9 @@ from litestar import Litestar, get
 from litestar.config.cors import CORSConfig
 from litestar.contrib.prometheus import PrometheusConfig, PrometheusController
 from litestar.openapi import OpenAPIConfig
-from litestar.openapi.plugins import SwaggerRenderPlugin
 from litestar.openapi.spec import Components, SecurityScheme, Tag
+
+from src.plugins.scalar import ScalarRenderPlugin
 from litestar.di import Provide
 
 from src.dependencies import provide_db_session, provide_db_manager
@@ -101,10 +102,10 @@ app = Litestar(
         version="0.1.0",
         description=(
             "Сбор и аналитика данных Wildberries API.\n\n"
-            "**WB API** — прямые прокси к WB API с сохранением в БД.\n"
-            "**Sync** — синхронизация данных в БД.\n"
+            "**WB** — прямые прокси-запросы к WB API.\n"
+            "**Sync** — синхронизация данных WB API → PostgreSQL.\n"
             "**DB** — чтение данных из локальной БД.\n\n"
-            "**Авторизация:** нажмите кнопку **Authorize** и введите WB API токен."
+            "Авторизация: нажмите **Authorize** и введите WB API токен."
         ),
         components=Components(
             security_schemes={
@@ -117,90 +118,59 @@ app = Litestar(
             }
         ),
         security=[{"BearerAuth": []}],
-        render_plugins=[SwaggerRenderPlugin(version="5.18.2", js_url=None, css_url=None)],
+        render_plugins=[ScalarRenderPlugin()],
         path="/docs",
         tags=[
-            Tag(name="System", description="Служебные эндпоинты"),
-            Tag(name="WB / General", description="Прокси к WB API / Общее (01)"),
-            Tag(name="Sync / General", description="Синхронизация в БД / Общее (01)"),
-            Tag(name="DB / General", description="Данные из БД / Общее (01)"),
-            Tag(name="General — Пользователи", description="WB API / Общее / Управление пользователями"),
-            Tag(name="Products — Справочники", description="WB API / Товары / Справочники"),
-            Tag(name="Products — Теги", description="WB API / Товары / Теги"),
-            Tag(name="Products — Карточки", description="WB API / Товары / Карточки"),
-            Tag(name="Products — Цены", description="WB API / Товары / Цены и скидки"),
-            Tag(name="Products — Склады", description="WB API / Товары / Остатки и склады"),
-            Tag(name="Пропуска FBS", description="WB API / Заказы FBS / Пропуска на склады WB"),
-            Tag(name="Сборочные задания FBS", description="WB API / Заказы FBS / Сборочные задания"),
-            Tag(name="Метаданные FBS", description="WB API / Заказы FBS / Метаданные сборочных заданий"),
-            Tag(name="Поставки FBS", description="WB API / Заказы FBS / Поставки и короба"),
-            Tag(name="Сборочные задания DBW", description="WB API / Заказы DBW / Сборочные задания"),
-            Tag(name="Метаданные DBW", description="WB API / Заказы DBW / Метаданные сборочных заданий"),
-            Tag(name="Сборочные задания DBS", description="WB API / Заказы DBS / Сборочные задания"),
-            Tag(name="Метаданные DBS", description="WB API / Заказы DBS / Метаданные сборочных заданий"),
-            Tag(name="Сборочные задания Самовывоз", description="WB API / Самовывоз / Сборочные задания"),
-            Tag(name="Метаданные Самовывоз", description="WB API / Самовывоз / Метаданные сборочных заданий"),
-            Tag(name="Информация для формирования поставок", description="WB API / Поставки FBW / Опции приёмки, склады, тарифы"),
-            Tag(name="Информация о поставках", description="WB API / Поставки FBW / Список и детали поставок"),
-            Tag(name="Кампании", description="WB API / Маркетинг / Рекламные кампании"),
-            Tag(name="Управление кампаниями", description="WB API / Маркетинг / Управление кампаниями"),
-            Tag(name="Создание кампаний", description="WB API / Маркетинг / Создание кампаний"),
-            Tag(name="Финансы", description="WB API / Маркетинг / Финансы и бюджет"),
-            Tag(name="Поисковые кластеры", description="WB API / Маркетинг / Поисковые кластеры"),
-            Tag(name="Статистика", description="WB API / Маркетинг / Статистика кампаний"),
-            Tag(name="Медиа", description="WB API / Маркетинг / Медиакампании"),
-            Tag(name="Календарь акций", description="WB API / Маркетинг / Календарь промоакций WB"),
-            Tag(name="Вопросы", description="WB API / Коммуникации / Вопросы покупателей"),
-            Tag(name="Отзывы", description="WB API / Коммуникации / Отзывы покупателей"),
-            Tag(name="Закреплённые отзывы", description="WB API / Коммуникации / Закреплённые отзывы"),
-            Tag(name="Чат с покупателями", description="WB API / Коммуникации / Чат с покупателями"),
-            Tag(name="Возвраты покупателями", description="WB API / Коммуникации / Возвраты по отзывам"),
-            Tag(name="Тарифы", description="WB API / Тарифы WB / Общие тарифы"),
-            Tag(name="Комиссии", description="WB API / Тарифы WB / Комиссии по категориям"),
-            Tag(name="Стоимость возврата продавцу", description="WB API / Тарифы WB / Возврат со складов WB"),
-            Tag(name="Тарифы на остаток", description="WB API / Тарифы WB / Хранение и доставка"),
-            Tag(name="Тарифы на поставку", description="WB API / Тарифы WB / Коэффициенты складов"),
-            Tag(name="Аналитика", description="WB API / Аналитика / Общая аналитика продавца"),
-            Tag(name="Воронка продаж", description="WB API / Аналитика / Воронка продаж"),
-            Tag(name="Аналитика продавца CSV", description="WB API / Аналитика / CSV-отчёты"),
-            Tag(name="Поисковые запросы по вашим товарам", description="WB API / Аналитика / Поисковые запросы"),
-            Tag(name="История остатков", description="WB API / Аналитика / История остатков"),
-            Tag(name="Отчёты", description="WB API / Отчёты / Общие отчёты"),
-            Tag(name="Основные отчёты", description="WB API / Отчёты / Остатки, заказы, продажи"),
-            Tag(name="Отчёт об остатках на складах", description="WB API / Отчёты / Остатки на складах WB"),
-            Tag(name="Отчёты об удержаниях", description="WB API / Отчёты / Удержания, штрафы, обмеры"),
-            Tag(name="Операции при приёмке", description="WB API / Отчёты / Приёмка товаров"),
-            Tag(name="Платное хранение", description="WB API / Отчёты / Платное хранение на складах WB"),
-            Tag(name="Продажи по регионам", description="WB API / Отчёты / Региональные продажи"),
-            Tag(name="Доля бренда в продажах", description="WB API / Отчёты / Доля бренда"),
-            Tag(name="Скрытые товары", description="WB API / Отчёты / Заблокированные и скрытые товары"),
-            Tag(name="Отчёт о возвратах и перемещении товаров", description="WB API / Отчёты / Возвраты"),
-            Tag(name="Отчёт о товарах c обязательной маркировкой", description="WB API / Отчёты / Маркировка"),
-            Tag(name="Финансы WB", description="WB API / Финансы / Баланс, отчёты, документы"),
-            Tag(name="Баланс", description="WB API / Финансы / Баланс продавца"),
-            Tag(name="Финансовые отчёты", description="WB API / Финансы / Детальный финансовый отчёт"),
-            Tag(name="Документы", description="WB API / Финансы / Документы продавца"),
-            Tag(name="Sync / Products", description="Синхронизация в БД / Товары (02)"),
-            Tag(name="DB / Products", description="Данные из БД / Товары (02)"),
-            Tag(name="Sync / FBS", description="Синхронизация в БД / Заказы FBS (03)"),
-            Tag(name="DB / FBS", description="Данные из БД / Заказы FBS (03)"),
-            Tag(name="Sync / DBW", description="Синхронизация в БД / Заказы DBW (04)"),
-            Tag(name="DB / DBW", description="Данные из БД / Заказы DBW (04)"),
-            Tag(name="Sync / DBS", description="Синхронизация в БД / Заказы DBS (05)"),
-            Tag(name="DB / DBS", description="Данные из БД / Заказы DBS (05)"),
-            Tag(name="Sync / Pickup", description="Синхронизация в БД / Самовывоз (06)"),
-            Tag(name="DB / Pickup", description="Данные из БД / Самовывоз (06)"),
-            Tag(name="Sync / Promotion", description="Синхронизация в БД / Маркетинг (08)"),
-            Tag(name="DB / Promotion", description="Данные из БД / Маркетинг (08)"),
-            Tag(name="Sync / Communications", description="Синхронизация в БД / Коммуникации (09)"),
-            Tag(name="DB / Communications", description="Данные из БД / Коммуникации (09)"),
-            Tag(name="Sync / Tariffs", description="Синхронизация в БД / Тарифы (10)"),
-            Tag(name="DB / Tariffs", description="Данные из БД / Тарифы (10)"),
-            Tag(name="Sync / Reports", description="Синхронизация в БД / Отчёты (12)"),
-            Tag(name="DB / Reports", description="Данные из БД / Отчёты (12)"),
-            Tag(name="Sync / Finances", description="Синхронизация в БД / Финансы (13)"),
-            Tag(name="DB / Finances", description="Данные из БД / Финансы (13)"),
-            Tag(name="Internal", description="Кастомные методы — агрегация, экспорт, аналитика"),
+            # Система
+            Tag(name="System", description="Проверка работоспособности сервиса"),
+            # 01. Общие
+            Tag(name="01. API Wildberries", description="Прямые запросы к WB API: проверка связи, информация о продавце, новости"),
+            Tag(name="01. Синхронизация", description="Загрузка общих данных (продавец, новости) из WB API в PostgreSQL"),
+            Tag(name="01. База данных", description="Получение общих данных (продавец, новости) из локальной БД"),
+            # 02. Товары
+            Tag(name="02. API Wildberries", description="Прямые запросы к WB API: карточки, цены, справочники, склады, теги, медиа"),
+            Tag(name="02. Синхронизация", description="Загрузка товаров, цен, справочников и складов из WB API в PostgreSQL"),
+            Tag(name="02. База данных", description="Получение товаров, цен, справочников и складов из локальной БД"),
+            # 03. FBS
+            Tag(name="03. API Wildberries", description="Прямые запросы к WB API: заказы, поставки, пропуска, мета-данные FBS"),
+            Tag(name="03. Синхронизация", description="Загрузка заказов FBS из WB API в PostgreSQL"),
+            Tag(name="03. База данных", description="Получение заказов FBS из локальной БД"),
+            # 04. DBW (Доставка на склад WB)
+            Tag(name="04. API Wildberries", description="Прямые запросы к WB API: заказы и мета-данные DBW"),
+            Tag(name="04. Синхронизация", description="Загрузка заказов DBW из WB API в PostgreSQL"),
+            Tag(name="04. База данных", description="Получение заказов DBW из локальной БД"),
+            # 05. DBS (Доставка силами продавца)
+            Tag(name="05. API Wildberries", description="Прямые запросы к WB API: заказы и мета-данные DBS"),
+            Tag(name="05. Синхронизация", description="Загрузка заказов DBS из WB API в PostgreSQL"),
+            Tag(name="05. База данных", description="Получение заказов DBS из локальной БД"),
+            # 06. Самовывоз
+            Tag(name="06. API Wildberries", description="Прямые запросы к WB API: заказы самовывоза, мета-данные ПВЗ"),
+            Tag(name="06. Синхронизация", description="Загрузка заказов самовывоза из WB API в PostgreSQL"),
+            Tag(name="06. База данных", description="Получение заказов самовывоза из локальной БД"),
+            # 07. FBW (Склады WB)
+            Tag(name="07. API Wildberries", description="Прямые запросы к WB API: поставки и приёмка на склады FBW"),
+            # 08. Продвижение
+            Tag(name="08. API Wildberries", description="Прямые запросы к WB API: рекламные кампании, ставки, статистика, акции, финансы продвижения"),
+            Tag(name="08. Синхронизация", description="Загрузка рекламных кампаний и акций из WB API в PostgreSQL"),
+            Tag(name="08. База данных", description="Получение рекламных кампаний и акций из локальной БД"),
+            # 09. Коммуникации
+            Tag(name="09. API Wildberries", description="Прямые запросы к WB API: чаты, отзывы, вопросы, претензии, закрепы"),
+            Tag(name="09. Синхронизация", description="Загрузка отзывов, вопросов и претензий из WB API в PostgreSQL"),
+            Tag(name="09. База данных", description="Получение отзывов, вопросов и претензий из локальной БД"),
+            # 10. Тарифы
+            Tag(name="10. API Wildberries", description="Прямые запросы к WB API: комиссии, тарифы коробов, паллетов, поставок"),
+            Tag(name="10. Синхронизация", description="Загрузка тарифов и комиссий из WB API в PostgreSQL"),
+            Tag(name="10. База данных", description="Получение тарифов и комиссий из локальной БД"),
+            # 11. Аналитика
+            Tag(name="11. API Wildberries", description="Прямые запросы к WB API: воронка продаж, отчёты по артикулам, аналитика поиска, остатки"),
+            # 12. Отчёты
+            Tag(name="12. API Wildberries", description="Прямые запросы к WB API: остатки, заказы, продажи, акцизы, хранение, штрафы, возвраты, антифрод"),
+            Tag(name="12. Синхронизация", description="Загрузка отчётов (остатки, заказы, продажи) из WB API в PostgreSQL"),
+            Tag(name="12. База данных", description="Получение отчётов (остатки, заказы, продажи) из локальной БД"),
+            # 13. Финансы
+            Tag(name="13. API Wildberries", description="Прямые запросы к WB API: баланс, финансовый отчёт, документы"),
+            Tag(name="13. Синхронизация", description="Загрузка финансовых отчётов из WB API в PostgreSQL"),
+            Tag(name="13. База данных", description="Получение финансовых отчётов из локальной БД"),
         ],
     ),
     cors_config=CORSConfig(allow_origins=["*"]),

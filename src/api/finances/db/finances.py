@@ -7,7 +7,7 @@ from src.utils.db_manager import DBManager
 
 class DbFinancialReportController(Controller):
     path = "/"
-    tags = ["DB / Finances"]
+    tags = ["13. База данных"]
 
     @get(
         "/",

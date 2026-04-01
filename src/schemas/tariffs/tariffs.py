@@ -1,5 +1,14 @@
 """Схемы: Тарифы WB."""
-from pydantic import BaseModel, Field
+from decimal import Decimal
+
+from pydantic import BaseModel, Field, field_validator
+
+
+def _parse_wb_decimal(v) -> Decimal | None:
+    """WB возвращает числа как строки: '0,07', '48', '-', ''."""
+    if v is None or v == "-" or v == "":
+        return None
+    return Decimal(str(v).replace(",", "."))
 
 
 class CommissionCategory(BaseModel):
@@ -24,9 +33,14 @@ class ReturnCostItem(BaseModel):
     """Стоимость возврата продавцу."""
     warehouseId: int | None = Field(None, description="ID склада WB")
     warehouseName: str | None = Field(None, description="Название склада WB")
-    backDeliveryBase: float | None = Field(None, description="Базовая стоимость возврата, руб.")
-    backDeliveryLiter: float | None = Field(None, description="Стоимость возврата за литр, руб.")
-    backDeliveryAdditionalLiter: float | None = Field(None, description="Дополнительная стоимость за каждый следующий литр, руб.")
+    backDeliveryBase: Decimal | None = Field(None, description="Базовая стоимость возврата, руб.")
+    backDeliveryLiter: Decimal | None = Field(None, description="Стоимость возврата за литр, руб.")
+    backDeliveryAdditionalLiter: Decimal | None = Field(None, description="Дополнительная стоимость за каждый следующий литр, руб.")
+
+    @field_validator("backDeliveryBase", "backDeliveryLiter", "backDeliveryAdditionalLiter", mode="before")
+    @classmethod
+    def parse_decimal(cls, v):
+        return _parse_wb_decimal(v)
 
 
 class ReturnCostResponse(BaseModel):
@@ -37,16 +51,30 @@ class ReturnCostResponse(BaseModel):
 
 
 class BoxTariffItem(BaseModel):
-    """Тариф на поставку коробами."""
+    """Тариф на поставку коробами. WB возвращает числа как строки!"""
     warehouseId: int | None = Field(None, description="ID склада WB")
     warehouseName: str | None = Field(None, description="Название склада")
     boxDeliveryAndStorageExpr: str | None = Field(None, description="Выражение для расчёта тарифа")
-    boxDeliveryBase: float | None = Field(None, description="Базовый тариф доставки, руб.")
-    boxDeliveryLiter: float | None = Field(None, description="Тариф доставки за литр, руб.")
-    boxDeliveryAdditionalLiter: float | None = Field(None, description="Тариф доставки за каждый дополнительный литр, руб.")
-    boxStorageBase: float | None = Field(None, description="Базовый тариф хранения, руб./день")
-    boxStorageLiter: float | None = Field(None, description="Тариф хранения за литр, руб./день")
-    boxStorageAdditionalLiter: float | None = Field(None, description="Тариф хранения за каждый доп. литр, руб./день")
+    boxDeliveryBase: Decimal | None = Field(None, description="Логистика, первый литр, руб.")
+    boxDeliveryLiter: Decimal | None = Field(None, description="Логистика, дополнительный литр, руб.")
+    boxDeliveryCoefExpr: str | None = Field(None, description="Коэффициент логистики, %")
+    boxDeliveryMarketplaceBase: Decimal | None = Field(None, description="Логистика FBS, первый литр, руб.")
+    boxDeliveryMarketplaceLiter: Decimal | None = Field(None, description="Логистика FBS, дополнительный литр, руб.")
+    boxDeliveryMarketplaceCoefExpr: str | None = Field(None, description="Коэффициент FBS, %")
+    boxStorageBase: Decimal | None = Field(None, description="Хранение в день, первый литр, руб.")
+    boxStorageLiter: Decimal | None = Field(None, description="Хранение в день, дополнительный литр, руб.")
+    boxStorageCoefExpr: str | None = Field(None, description="Коэффициент хранения, %")
+
+    _decimal_fields = [
+        "boxDeliveryBase", "boxDeliveryLiter",
+        "boxDeliveryMarketplaceBase", "boxDeliveryMarketplaceLiter",
+        "boxStorageBase", "boxStorageLiter",
+    ]
+
+    @field_validator(*_decimal_fields, mode="before")
+    @classmethod
+    def parse_decimal(cls, v):
+        return _parse_wb_decimal(v)
 
 
 class BoxTariffsResponse(BaseModel):
@@ -57,15 +85,20 @@ class BoxTariffsResponse(BaseModel):
 
 
 class PalletTariffItem(BaseModel):
-    """Тариф на поставку паллетами."""
+    """Тариф на поставку паллетами. WB возвращает числа как строки!"""
     warehouseId: int | None = Field(None, description="ID склада WB")
     warehouseName: str | None = Field(None, description="Название склада")
     isSuperSafe: bool | None = Field(None, description="Склад с повышенной безопасностью хранения")
     palletDeliveryExpr: str | None = Field(None, description="Выражение для расчёта тарифа паллетной поставки")
-    palletDeliveryValueBase: float | None = Field(None, description="Базовый тариф доставки паллеты, руб.")
-    palletDeliveryValueLiter: float | None = Field(None, description="Тариф доставки паллеты за литр, руб.")
+    palletDeliveryValueBase: Decimal | None = Field(None, description="Базовый тариф доставки паллеты, руб.")
+    palletDeliveryValueLiter: Decimal | None = Field(None, description="Тариф доставки паллеты за литр, руб.")
     palletStorageExpr: str | None = Field(None, description="Выражение расчёта хранения паллеты")
-    palletStorageValueExpr: float | None = Field(None, description="Тариф хранения паллеты, руб./день")
+    palletStorageValueExpr: Decimal | None = Field(None, description="Тариф хранения паллеты, руб./день")
+
+    @field_validator("palletDeliveryValueBase", "palletDeliveryValueLiter", "palletStorageValueExpr", mode="before")
+    @classmethod
+    def parse_decimal(cls, v):
+        return _parse_wb_decimal(v)
 
 
 class PalletTariffsResponse(BaseModel):
@@ -76,14 +109,31 @@ class PalletTariffsResponse(BaseModel):
 
 
 class SupplyTariffItem(BaseModel):
-    """Тариф на поставку."""
-    warehouseId: int | None = Field(None, description="ID склада WB")
+    """Коэффициент приёмки на складе WB (acceptance coefficient).
+
+    YAML: /api/tariffs/v1/acceptance/coefficients
+    Response: массив объектов AcceptanceCoefficient.
+    """
+    date: str | None = Field(None, description="Дата начала действия коэффициента")
+    coefficient: int | None = Field(None, description="Коэффициент приёмки: -1=недоступна, 0=бесплатно, >=1=множитель")
+    warehouseID: int | None = Field(None, description="ID склада WB")
     warehouseName: str | None = Field(None, description="Название склада")
-    coefficient: int | None = Field(None, description="Коэффициент склада (0 — бесплатно, -1 — склад закрыт)")
+    allowUnload: bool | None = Field(None, description="Доступность приёмки для данного типа поставки")
+    boxTypeID: int | None = Field(None, description="ID типа поставки: 2=Короба, 5=Паллеты, 6=Суперсейф")
+    storageCoef: Decimal | None = Field(None, description="Коэффициент хранения")
+    deliveryCoef: Decimal | None = Field(None, description="Коэффициент доставки")
+    deliveryBaseLiter: Decimal | None = Field(None, description="Доставка, первый литр")
+    deliveryAdditionalLiter: Decimal | None = Field(None, description="Доставка, дополнительный литр")
+    storageBaseLiter: Decimal | None = Field(None, description="Хранение, первый литр")
+    storageAdditionalLiter: Decimal | None = Field(None, description="Хранение, дополнительный литр")
+    isSortingCenter: bool | None = Field(None, description="Является сортировочным центром")
 
-
-class SupplyTariffsResponse(BaseModel):
-    """Тарифы на поставку (коэффициенты складов)."""
-    dtNextBox: str | None = Field(None, description="Дата следующего пересчёта тарифов (ISO 8601)")
-    dtTillMax: str | None = Field(None, description="Дата окончания действия тарифа (ISO 8601)")
-    warehouseList: list[SupplyTariffItem] | None = Field(None, description="Коэффициенты складов")
+    @field_validator(
+        "storageCoef", "deliveryCoef",
+        "deliveryBaseLiter", "deliveryAdditionalLiter",
+        "storageBaseLiter", "storageAdditionalLiter",
+        mode="before",
+    )
+    @classmethod
+    def parse_decimal(cls, v):
+        return _parse_wb_decimal(v)

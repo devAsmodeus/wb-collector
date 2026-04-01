@@ -7,7 +7,7 @@ from src.services.general.wb.news import NewsWbService
 
 class WbNewsController(Controller):
     path = "/news"
-    tags = ["WB / General"]
+    tags = ["01. API Wildberries"]
 
     @get(
         "/",

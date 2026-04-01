@@ -39,9 +39,10 @@ class WBApiClient:
             data = await client.get("/api/v2/list/goods/filter", params={"limit": 100})
     """
 
-    def __init__(self, base_url: str, token: str | None = None):
+    def __init__(self, base_url: str, token: str | None = None, timeout: float | None = None):
         self.base_url = base_url.rstrip("/")
         self.token = token or settings.WB_API_TOKEN
+        self._timeout = timeout or REQUEST_TIMEOUT
         self._client: httpx.AsyncClient | None = None
 
     async def __aenter__(self):
@@ -52,7 +53,7 @@ class WBApiClient:
                 "Content-Type": "application/json",
                 "Accept": "application/json",
             },
-            timeout=REQUEST_TIMEOUT,
+            timeout=self._timeout,
         )
         return self
 
@@ -104,11 +105,11 @@ class WBApiClient:
                     last_exc = WBApiRateLimitException(429, "Rate limit exceeded")
                     continue
 
-                # Другие ошибки
-                body = response.text[:200]
+                # Другие ошибки — передаём полное тело для парсинга в handler
+                body = response.text
                 WB_API_REQUESTS.labels(host=host, method=method, status=str(response.status_code)).inc()
                 WB_API_ERRORS.labels(host=host, error_type="server_error").inc()
-                logger.error(f"WB API {response.status_code}: {path} — {body}",
+                logger.error(f"WB API {response.status_code}: {path} — {body[:300]}",
                              extra={"host": host, "status": response.status_code})
                 raise WBApiException(response.status_code, body)
 

@@ -19,6 +19,7 @@ class CardsDbService(BaseService):
     ) -> dict:
         """Возвращает карточки товаров из БД с фильтрацией."""
         repo = CardsRepository(session)
+        total = await repo.count()
         items = await repo.get_filtered(
             nm_ids=nm_ids,
             subject_id=subject_id,
@@ -42,7 +43,9 @@ class CardsDbService(BaseService):
                 }
                 for c in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }
 
     async def get_card(self, session: AsyncSession, nm_id: int) -> dict | None:

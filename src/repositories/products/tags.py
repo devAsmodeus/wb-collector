@@ -1,7 +1,7 @@
 """Репозиторий: Теги карточек товаров."""
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -38,6 +38,11 @@ class TagsRepository:
         await self._session.execute(stmt)
         await self._session.commit()
         return len(rows)
+
+    async def count(self) -> int:
+        """Возвращает общее количество тегов в БД."""
+        result = await self._session.execute(select(func.count()).select_from(WbTag))
+        return result.scalar_one()
 
     async def get_all(self) -> list[WbTag]:
         """Возвращает все теги."""

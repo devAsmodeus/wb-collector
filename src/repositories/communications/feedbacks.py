@@ -1,7 +1,7 @@
 """Репозиторий: Отзывы покупателей."""
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -61,6 +61,16 @@ class FeedbacksRepository:
         await self._session.execute(stmt)
         await self._session.commit()
         return len(rows)
+
+    async def get_max_date(self) -> datetime | None:
+        """Возвращает максимальную дату создания отзыва из БД для инкрементальной синхронизации."""
+        result = await self._session.execute(select(func.max(WbFeedback.created_date)))
+        return result.scalar_one_or_none()
+
+    async def count(self) -> int:
+        """Возвращает общее количество отзывов в БД."""
+        result = await self._session.execute(select(func.count()).select_from(WbFeedback))
+        return result.scalar_one()
 
     async def get_all(self, limit: int = 100, offset: int = 0) -> list[WbFeedback]:
         """Возвращает отзывы из БД (последние сначала)."""

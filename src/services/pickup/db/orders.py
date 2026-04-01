@@ -18,6 +18,7 @@ class PickupOrdersDbService(BaseService):
     ) -> dict:
         """Возвращает заказы Самовывоз из БД с фильтрацией."""
         repo = PickupOrdersRepository(session)
+        total = await repo.count()
         items = await repo.get_filtered(
             date_from=date_from,
             date_to=date_to,
@@ -46,5 +47,7 @@ class PickupOrdersDbService(BaseService):
                 }
                 for o in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }

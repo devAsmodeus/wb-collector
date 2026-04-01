@@ -1,39 +1,70 @@
 """Репозиторий: Тарифы WB — комиссии, короба, паллеты, поставки."""
 from datetime import datetime
+from typing import Any
 
-from sqlalchemy import select
+from pydantic import BaseModel
+from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.references import WbTariffCommission, WbTariffBox, WbTariffPallet, WbTariffSupply
+from src.schemas.tariffs.tariffs import (
+    CommissionCategory, BoxTariffItem, PalletTariffItem, SupplyTariffItem,
+)
+
+# asyncpg допускает не более 32767 параметров в одном запросе.
+_MAX_PG_PARAMS = 32_000
 
 
 class TariffsRepository:
     def __init__(self, session: AsyncSession):
         self._session = session
 
+    async def _batched_upsert(
+        self,
+        model: Any,
+        rows: list[dict],
+        index_elements: list[str],
+        update_set: dict,
+    ) -> int:
+        """Выполняет upsert батчами, чтобы не превысить лимит параметров PostgreSQL."""
+        if not rows:
+            return 0
+        cols = len(rows[0])
+        batch_size = max(1, _MAX_PG_PARAMS // max(cols, 1))
+        total = 0
+        for i in range(0, len(rows), batch_size):
+            batch = rows[i: i + batch_size]
+            stmt = insert(model).values(batch)
+            stmt = stmt.on_conflict_do_update(index_elements=index_elements, set_=update_set(stmt))
+            await self._session.execute(stmt)
+            total += len(batch)
+        await self._session.commit()
+        return total
+
     # ── Комиссии ────────────────────────────────────────────────────────────────
 
-    async def upsert_commissions(self, items: list[dict]) -> int:
+    async def upsert_commissions(self, items: list[CommissionCategory]) -> int:
         if not items:
             return 0
         rows = [
             {
-                "subject_id": item.get("subjectID"),
-                "subject_name": item.get("subjectName"),
-                "parent_name": item.get("parentName"),
-                "kgvp_marketplace": item.get("kgvpMarketplace"),
-                "kgvp_supplier": item.get("kgvpSupplier"),
-                "kgvp_supplier_express": item.get("kgvpSupplierExpress"),
-                "return_cost": item.get("returnCost"),
+                "subject_id": item.subjectId,
+                "subject_name": item.subjectName,
+                "parent_name": item.parentName,
+                "kgvp_marketplace": item.kgvpMarketplace,
+                "kgvp_supplier": item.kgvpSupplier,
+                "kgvp_supplier_express": item.kgvpSupplierExpress,
+                "return_cost": item.returnCost,
                 "fetched_at": datetime.utcnow(),
             }
             for item in items
         ]
-        stmt = insert(WbTariffCommission).values(rows)
-        stmt = stmt.on_conflict_do_update(
+        return await self._batched_upsert(
+            model=WbTariffCommission,
+            rows=rows,
             index_elements=["subject_id"],
-            set_={
+            update_set=lambda stmt: {
                 "subject_name": stmt.excluded.subject_name,
                 "parent_name": stmt.excluded.parent_name,
                 "kgvp_marketplace": stmt.excluded.kgvp_marketplace,
@@ -43,9 +74,10 @@ class TariffsRepository:
                 "fetched_at": stmt.excluded.fetched_at,
             },
         )
-        await self._session.execute(stmt)
-        await self._session.commit()
-        return len(rows)
+
+    async def count_commissions(self) -> int:
+        result = await self._session.execute(select(func.count()).select_from(WbTariffCommission))
+        return result.scalar_one()
 
     async def get_all_commissions(self, limit: int = 500, offset: int = 0) -> list[WbTariffCommission]:
         result = await self._session.execute(
@@ -55,42 +87,37 @@ class TariffsRepository:
 
     # ── Тарифы коробами ─────────────────────────────────────────────────────────
 
-    async def upsert_box_tariffs(self, items: list[dict]) -> int:
+    async def upsert_box_tariffs(self, items: list[BoxTariffItem]) -> int:
         if not items:
             return 0
         rows = [
             {
-                "warehouse_id": item.get("warehouseID") or item.get("warehouse_id"),
-                "warehouse_name": item.get("warehouseName") or item.get("warehouse_name"),
-                "dt_next_box": item.get("dtNextBox"),
-                "box_delivery_base": item.get("boxDeliveryBase"),
-                "box_delivery_liter": item.get("boxDeliveryLiter"),
-                "box_delivery_additional_liter": item.get("boxDeliveryAdditionalLiter"),
-                "box_storage_base": item.get("boxStorageBase"),
-                "box_storage_liter": item.get("boxStorageLiter"),
-                "box_storage_additional_liter": item.get("boxStorageAdditionalLiter"),
+                "warehouse_name": item.warehouseName,
+                "box_delivery_base": float(item.boxDeliveryBase) if item.boxDeliveryBase is not None else None,
+                "box_delivery_liter": float(item.boxDeliveryLiter) if item.boxDeliveryLiter is not None else None,
+                "box_storage_base": float(item.boxStorageBase) if item.boxStorageBase is not None else None,
+                "box_storage_liter": float(item.boxStorageLiter) if item.boxStorageLiter is not None else None,
                 "fetched_at": datetime.utcnow(),
             }
             for item in items
+            if item.warehouseName  # skip items without name
         ]
-        stmt = insert(WbTariffBox).values(rows)
-        stmt = stmt.on_conflict_do_update(
-            index_elements=["warehouse_id"],
-            set_={
-                "warehouse_name": stmt.excluded.warehouse_name,
-                "dt_next_box": stmt.excluded.dt_next_box,
+        return await self._batched_upsert(
+            model=WbTariffBox,
+            rows=rows,
+            index_elements=["warehouse_name"],
+            update_set=lambda stmt: {
                 "box_delivery_base": stmt.excluded.box_delivery_base,
                 "box_delivery_liter": stmt.excluded.box_delivery_liter,
-                "box_delivery_additional_liter": stmt.excluded.box_delivery_additional_liter,
                 "box_storage_base": stmt.excluded.box_storage_base,
                 "box_storage_liter": stmt.excluded.box_storage_liter,
-                "box_storage_additional_liter": stmt.excluded.box_storage_additional_liter,
                 "fetched_at": stmt.excluded.fetched_at,
             },
         )
-        await self._session.execute(stmt)
-        await self._session.commit()
-        return len(rows)
+
+    async def count_box_tariffs(self) -> int:
+        result = await self._session.execute(select(func.count()).select_from(WbTariffBox))
+        return result.scalar_one()
 
     async def get_all_box_tariffs(self, limit: int = 500, offset: int = 0) -> list[WbTariffBox]:
         result = await self._session.execute(
@@ -100,26 +127,26 @@ class TariffsRepository:
 
     # ── Тарифы паллетами ─────────────────────────────────────────────────────────
 
-    async def upsert_pallet_tariffs(self, items: list[dict]) -> int:
+    async def upsert_pallet_tariffs(self, items: list[PalletTariffItem]) -> int:
         if not items:
             return 0
         rows = [
             {
-                "warehouse_id": item.get("warehouseID") or item.get("warehouse_id"),
-                "warehouse_name": item.get("warehouseName") or item.get("warehouse_name"),
-                "is_super_safe": item.get("isSuperSafe"),
-                "pallet_delivery_value_base": item.get("palletDeliveryValueBase"),
-                "pallet_delivery_value_liter": item.get("palletDeliveryValueLiter"),
-                "pallet_storage_value": item.get("palletStorageValue"),
+                "warehouse_name": item.warehouseName,
+                "is_super_safe": item.isSuperSafe,
+                "pallet_delivery_value_base": float(item.palletDeliveryValueBase) if item.palletDeliveryValueBase is not None else None,
+                "pallet_delivery_value_liter": float(item.palletDeliveryValueLiter) if item.palletDeliveryValueLiter is not None else None,
+                "pallet_storage_value": float(item.palletStorageValueExpr) if item.palletStorageValueExpr is not None else None,
                 "fetched_at": datetime.utcnow(),
             }
             for item in items
+            if item.warehouseName  # skip items without name
         ]
-        stmt = insert(WbTariffPallet).values(rows)
-        stmt = stmt.on_conflict_do_update(
-            index_elements=["warehouse_id"],
-            set_={
-                "warehouse_name": stmt.excluded.warehouse_name,
+        return await self._batched_upsert(
+            model=WbTariffPallet,
+            rows=rows,
+            index_elements=["warehouse_name"],
+            update_set=lambda stmt: {
                 "is_super_safe": stmt.excluded.is_super_safe,
                 "pallet_delivery_value_base": stmt.excluded.pallet_delivery_value_base,
                 "pallet_delivery_value_liter": stmt.excluded.pallet_delivery_value_liter,
@@ -127,9 +154,10 @@ class TariffsRepository:
                 "fetched_at": stmt.excluded.fetched_at,
             },
         )
-        await self._session.execute(stmt)
-        await self._session.commit()
-        return len(rows)
+
+    async def count_pallet_tariffs(self) -> int:
+        result = await self._session.execute(select(func.count()).select_from(WbTariffPallet))
+        return result.scalar_one()
 
     async def get_all_pallet_tariffs(self, limit: int = 500, offset: int = 0) -> list[WbTariffPallet]:
         result = await self._session.execute(
@@ -137,32 +165,38 @@ class TariffsRepository:
         )
         return list(result.scalars().all())
 
-    # ── Тарифы на поставку ───────────────────────────────────────────────────────
+    # ── Тарифы на поставку (коэффициенты приёмки) ────────────────────────────────
 
-    async def upsert_supply_tariffs(self, items: list[dict]) -> int:
+    async def upsert_supply_tariffs(self, items: list[SupplyTariffItem]) -> int:
+        """Upsert коэффициентов приёмки. Truncate + insert (нет уникального ключа для ON CONFLICT)."""
         if not items:
             return 0
+        # Truncate old data and insert fresh (supply tariffs are a full snapshot)
+        await self._session.execute(WbTariffSupply.__table__.delete())
         rows = [
             {
-                "warehouse_id": item.get("warehouseID") or item.get("warehouse_id"),
-                "warehouse_name": item.get("warehouseName") or item.get("warehouse_name"),
-                "coefficient": item.get("coefficient"),
+                "warehouse_id": item.warehouseID,
+                "warehouse_name": item.warehouseName,
+                "date": item.date,
+                "coefficient": item.coefficient,
+                "allow_unload": item.allowUnload,
+                "box_type_id": item.boxTypeID,
                 "fetched_at": datetime.utcnow(),
             }
             for item in items
+            if item.warehouseID is not None
         ]
-        stmt = insert(WbTariffSupply).values(rows)
-        stmt = stmt.on_conflict_do_update(
-            index_elements=["warehouse_id"],
-            set_={
-                "warehouse_name": stmt.excluded.warehouse_name,
-                "coefficient": stmt.excluded.coefficient,
-                "fetched_at": stmt.excluded.fetched_at,
-            },
-        )
-        await self._session.execute(stmt)
+        # Batch insert
+        batch_size = max(1, _MAX_PG_PARAMS // max(len(rows[0]), 1)) if rows else 0
+        for i in range(0, len(rows), batch_size or 1):
+            batch = rows[i: i + (batch_size or len(rows))]
+            await self._session.execute(WbTariffSupply.__table__.insert(), batch)
         await self._session.commit()
         return len(rows)
+
+    async def count_supply_tariffs(self) -> int:
+        result = await self._session.execute(select(func.count()).select_from(WbTariffSupply))
+        return result.scalar_one()
 
     async def get_all_supply_tariffs(self, limit: int = 500, offset: int = 0) -> list[WbTariffSupply]:
         result = await self._session.execute(

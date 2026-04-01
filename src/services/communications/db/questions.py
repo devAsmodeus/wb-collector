@@ -18,6 +18,7 @@ class QuestionsDbService(BaseService):
     ) -> dict:
         """Возвращает вопросы из БД с фильтрацией."""
         repo = QuestionsRepository(session)
+        total = await repo.count()
         items = await repo.get_filtered(
             date_from=date_from,
             date_to=date_to,
@@ -38,5 +39,7 @@ class QuestionsDbService(BaseService):
                 }
                 for q in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }

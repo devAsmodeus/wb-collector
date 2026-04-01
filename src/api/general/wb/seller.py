@@ -6,7 +6,7 @@ from src.services.general.wb.seller import SellerWbService
 
 class WbSellerController(Controller):
     path = "/seller"
-    tags = ["WB / General"]
+    tags = ["01. API Wildberries"]
 
     @get(
         "/info",

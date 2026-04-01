@@ -15,7 +15,7 @@ from src.services.promotion.wb.campaigns import CampaignsService
 
 class CampaignsController(Controller):
     path = "/"
-    tags = ["Кампании"]
+    tags = ["08. API Wildberries"]
 
     @get(
         "/promotion/count",
@@ -30,7 +30,7 @@ class CampaignsController(Controller):
 
     @get(
         "/adverts",
-        tags=["Кампании"],
+        tags=["08. API Wildberries"],
         summary="Список кампаний",
         description=(
             "Возвращает список рекламных кампаний с фильтрацией по ID, статусу и типу оплаты.\n\n"
@@ -48,7 +48,7 @@ class CampaignsController(Controller):
 
     @post(
         "/bids/min",
-        tags=["Кампании"],
+        tags=["08. API Wildberries"],
         summary="Минимальные ставки",
         description=(
             "Возвращает минимальные ставки для артикулов в кампании.\n\n"
@@ -60,7 +60,7 @@ class CampaignsController(Controller):
 
     @get(
         "/bids/recommendations",
-        tags=["Кампании"],
+        tags=["08. API Wildberries"],
         summary="Рекомендации по ставкам",
         description=(
             "Возвращает рекомендуемые ставки для артикула или кампании.\n\n"
@@ -76,7 +76,7 @@ class CampaignsController(Controller):
 
     @get(
         "/subjects",
-        tags=["Создание кампаний"],
+        tags=["08. API Wildberries"],
         summary="Предметы для кампаний",
         description=(
             "Возвращает список доступных предметов для создания рекламных кампаний.\n\n"
@@ -91,7 +91,7 @@ class CampaignsController(Controller):
 
     @post(
         "/nms",
-        tags=["Создание кампаний"],
+        tags=["08. API Wildberries"],
         summary="Доступные артикулы для кампаний",
         description=(
             "Возвращает артикулы продавца, доступные для добавления в рекламные кампании.\n\n"
@@ -103,7 +103,7 @@ class CampaignsController(Controller):
 
     @post(
         "/campaign",
-        tags=["Создание кампаний"],
+        tags=["08. API Wildberries"],
         summary="Создать кампанию",
         description=(
             "Создаёт новую рекламную кампанию типа «Поиск + Рекомендации».\n\n"
@@ -115,7 +115,7 @@ class CampaignsController(Controller):
 
     @get(
         "/campaign/delete",
-        tags=["Управление кампаниями"],
+        tags=["08. API Wildberries"],
         summary="Удалить кампанию",
         description=(
             "Удаляет рекламную кампанию по её ID.\n\n"
@@ -130,7 +130,7 @@ class CampaignsController(Controller):
 
     @post(
         "/campaign/rename",
-        tags=["Управление кампаниями"],
+        tags=["08. API Wildberries"],
         summary="Переименовать кампанию",
         description=(
             "Изменяет название рекламной кампании (максимум 100 символов).\n\n"
@@ -142,7 +142,7 @@ class CampaignsController(Controller):
 
     @get(
         "/campaign/start",
-        tags=["Управление кампаниями"],
+        tags=["08. API Wildberries"],
         summary="Запустить кампанию",
         description=(
             "Запускает рекламную кампанию в статусе «Готова к запуску».\n\n"
@@ -157,7 +157,7 @@ class CampaignsController(Controller):
 
     @get(
         "/campaign/pause",
-        tags=["Управление кампаниями"],
+        tags=["08. API Wildberries"],
         summary="Поставить кампанию на паузу",
         description=(
             "Приостанавливает активную кампанию.\n\n"
@@ -172,7 +172,7 @@ class CampaignsController(Controller):
 
     @get(
         "/campaign/stop",
-        tags=["Управление кампаниями"],
+        tags=["08. API Wildberries"],
         summary="Завершить кампанию",
         description=(
             "Завершает рекламную кампанию.\n\n"
@@ -187,7 +187,7 @@ class CampaignsController(Controller):
 
     @put(
         "/auction/placements",
-        tags=["Управление кампаниями"],
+        tags=["08. API Wildberries"],
         summary="Обновить места размещения",
         description=(
             "Обновляет места размещения в рекламных кампаниях.\n\n"
@@ -199,7 +199,7 @@ class CampaignsController(Controller):
 
     @patch(
         "/bids",
-        tags=["Управление кампаниями"],
+        tags=["08. API Wildberries"],
         summary="Обновить ставки",
         description=(
             "Обновляет ставки в рекламных кампаниях.\n\n"
@@ -211,7 +211,7 @@ class CampaignsController(Controller):
 
     @patch(
         "/auction/nms",
-        tags=["Управление кампаниями"],
+        tags=["08. API Wildberries"],
         summary="Обновить артикулы в кампаниях",
         description=(
             "Обновляет список артикулов в рекламных кампаниях.\n\n"

@@ -1,11 +1,23 @@
 """Репозиторий: Сборочные задания FBS."""
 from datetime import datetime
 
-from sqlalchemy import select
+from dateutil.parser import isoparse
+from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.orders import FbsOrder
+
+
+def _parse_dt(val) -> datetime | None:
+    if not val:
+        return None
+    if isinstance(val, datetime):
+        return val
+    try:
+        return isoparse(str(val))
+    except (ValueError, TypeError):
+        return None
 
 
 class FbsOrdersRepository:
@@ -18,11 +30,11 @@ class FbsOrdersRepository:
             return 0
         rows = [
             {
-                "order_id": o.get("orderId") or o.get("id") or o.get("order_id"),
-                "order_uid": o.get("orderUID") or o.get("orderUid") or o.get("order_uid"),
+                "order_id": o.get("id") or o.get("orderId") or o.get("order_id"),
+                "order_uid": o.get("orderUid") or o.get("orderUID") or o.get("order_uid"),
                 "rid": o.get("rid"),
-                "date": o.get("date") or o.get("createdAt"),
-                "last_change_date": o.get("lastChangeDate") or o.get("last_change_date"),
+                "date": _parse_dt(o.get("createdAt") or o.get("date")),
+                "last_change_date": _parse_dt(o.get("lastChangeDate") or o.get("last_change_date")),
                 "warehouse_name": o.get("warehouseName") or o.get("warehouse_name"),
                 "country_name": o.get("countryName") or o.get("country_name"),
                 "oblast_okrug_name": o.get("oblastOkrugName") or o.get("oblast_okrug_name"),
@@ -42,7 +54,7 @@ class FbsOrdersRepository:
                 "finished_price": o.get("finishedPrice") or o.get("finished_price"),
                 "price_with_disc": o.get("priceWithDisc") or o.get("price_with_disc"),
                 "is_cancel": o.get("isCancel", False) or o.get("is_cancel", False),
-                "cancel_date": o.get("cancelDate") or o.get("cancel_date"),
+                "cancel_date": _parse_dt(o.get("cancelDate") or o.get("cancel_date")),
                 "order_type": o.get("orderType") or o.get("order_type"),
                 "supplier_status": o.get("supplierStatus") or o.get("supplier_status"),
                 "wb_status": o.get("wbStatus") or o.get("wb_status"),
@@ -52,10 +64,20 @@ class FbsOrdersRepository:
             }
             for o in orders
         ]
-        stmt = insert(FbsOrder).values(rows)
-        stmt = stmt.on_conflict_do_update(
-            index_elements=["order_id"],
-            set_={
+        # Filter out rows without order_id
+        rows = [r for r in rows if r["order_id"] is not None]
+        if not rows:
+            return 0
+
+        # Batch upsert to avoid 32k parameter limit
+        batch_size = max(1, 32000 // len(rows[0]))
+        total = 0
+        for i in range(0, len(rows), batch_size):
+            batch = rows[i: i + batch_size]
+            stmt = insert(FbsOrder).values(batch)
+            stmt = stmt.on_conflict_do_update(
+                index_elements=["order_id"],
+                set_={
                 "order_uid": stmt.excluded.order_uid,
                 "rid": stmt.excluded.rid,
                 "date": stmt.excluded.date,
@@ -87,10 +109,16 @@ class FbsOrdersRepository:
                 "is_zero_order": stmt.excluded.is_zero_order,
                 "fetched_at": stmt.excluded.fetched_at,
             },
-        )
-        await self._session.execute(stmt)
+            )
+            await self._session.execute(stmt)
+            total += len(batch)
         await self._session.commit()
-        return len(rows)
+        return total
+
+    async def count(self) -> int:
+        """Возвращает общее количество заказов FBS в БД."""
+        result = await self._session.execute(select(func.count()).select_from(FbsOrder))
+        return result.scalar_one()
 
     async def get_all(self, limit: int = 100, offset: int = 0) -> list[FbsOrder]:
         """Возвращает заказы FBS из БД (последние сначала)."""
@@ -98,6 +126,13 @@ class FbsOrdersRepository:
             select(FbsOrder).order_by(FbsOrder.date.desc()).limit(limit).offset(offset)
         )
         return list(result.scalars().all())
+
+    async def get_max_date(self) -> datetime | None:
+        """Возвращает максимальную дату заказа FBS в БД (для инкрементального обновления)."""
+        result = await self._session.execute(
+            select(func.max(FbsOrder.date))
+        )
+        return result.scalar_one_or_none()
 
     async def get_filtered(
         self,

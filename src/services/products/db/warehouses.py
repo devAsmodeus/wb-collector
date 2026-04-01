@@ -10,6 +10,7 @@ class WarehousesDbService(BaseService):
     async def get_warehouses(self, session: AsyncSession) -> dict:
         """Возвращает все склады продавца из БД."""
         repo = WarehousesRepository(session)
+        total = await repo.count()
         items = await repo.get_all()
         return {
             "data": [
@@ -20,5 +21,7 @@ class WarehousesDbService(BaseService):
                 }
                 for w in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": total,
+            "offset": 0,
         }

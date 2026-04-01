@@ -23,3 +23,12 @@ class TagsSyncService(BaseService):
         saved = await repo.upsert_many(tags)
         logger.info(f"Tags synced: {saved} tags saved")
         return {"synced": saved, "source": "full"}
+
+    async def sync_tags_incremental(self, session: AsyncSession) -> dict:
+        """
+        Инкрементальная синхронизация тегов.
+        Теги — справочные данные, incremental = full sync.
+        """
+        result = await self.sync_tags(session)
+        result["source"] = "incremental"
+        return result

@@ -20,7 +20,7 @@ from src.services.products.wb.cards import CardsService
 
 class CardsController(Controller):
     path = "/cards"
-    tags = ["Products — Карточки"]
+    tags = ["02. API Wildberries"]
 
     @post(
         "/",
@@ -100,7 +100,7 @@ class CardsController(Controller):
 
 class BarcodesController(Controller):
     path = "/barcodes"
-    tags = ["Products — Карточки"]
+    tags = ["02. API Wildberries"]
 
     @post(
         "/",

@@ -15,7 +15,7 @@ from src.services.fbw.wb.supplies import FBWSuppliesService
 
 class FBWSuppliesController(Controller):
     path = "/supplies"
-    tags = ["Информация о поставках"]
+    tags = ["07. API Wildberries"]
 
     @post(
         "/",

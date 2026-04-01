@@ -5,7 +5,7 @@ from src.services.general.wb.seller import SellerWbService
 
 class WbPingController(Controller):
     path = "/ping"
-    tags = ["WB / General"]
+    tags = ["01. API Wildberries"]
 
     @get(
         "/",

@@ -1,7 +1,7 @@
 """Репозиторий: Вопросы покупателей."""
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -47,6 +47,16 @@ class QuestionsRepository:
         await self._session.execute(stmt)
         await self._session.commit()
         return len(rows)
+
+    async def get_max_date(self) -> datetime | None:
+        """Возвращает максимальную дату создания вопроса из БД для инкрементальной синхронизации."""
+        result = await self._session.execute(select(func.max(WbQuestion.created_date)))
+        return result.scalar_one_or_none()
+
+    async def count(self) -> int:
+        """Возвращает общее количество вопросов в БД."""
+        result = await self._session.execute(select(func.count()).select_from(WbQuestion))
+        return result.scalar_one()
 
     async def get_all(self, limit: int = 100, offset: int = 0) -> list[WbQuestion]:
         """Возвращает вопросы из БД (последние сначала)."""

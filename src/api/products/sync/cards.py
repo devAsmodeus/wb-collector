@@ -6,7 +6,7 @@ from src.utils.db_manager import DBManager
 
 class SyncCardsController(Controller):
     path = "/cards"
-    tags = ["Sync / Products"]
+    tags = ["02. Синхронизация"]
 
     @post(
         "/full",
@@ -19,3 +19,16 @@ class SyncCardsController(Controller):
     async def sync_cards_full(self) -> dict:
         async with DBManager() as db:
             return await CardsSyncService().sync_cards(db.session)
+
+    @post(
+        "/incremental",
+        summary="Инкрементальная выгрузка карточек товаров в БД",
+        description=(
+            "Загружает только обновлённые карточки, начиная с max(updated_at) из БД.\n\n"
+            "Если БД пуста — выполняет полную синхронизацию.\n\n"
+            "**WB:** `POST content-api.wildberries.ru/content/v2/get/cards/list`"
+        ),
+    )
+    async def sync_cards_incremental(self) -> dict:
+        async with DBManager() as db:
+            return await CardsSyncService().sync_cards_incremental(db.session)

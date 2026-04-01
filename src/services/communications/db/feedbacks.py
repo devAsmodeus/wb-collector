@@ -19,6 +19,7 @@ class FeedbacksDbService(BaseService):
     ) -> dict:
         """Возвращает отзывы из БД с фильтрацией."""
         repo = FeedbacksRepository(session)
+        total = await repo.count()
         items = await repo.get_filtered(
             date_from=date_from,
             date_to=date_to,
@@ -43,5 +44,7 @@ class FeedbacksDbService(BaseService):
                 }
                 for f in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }

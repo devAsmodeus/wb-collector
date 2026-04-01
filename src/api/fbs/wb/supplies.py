@@ -21,7 +21,7 @@ from src.services.fbs.wb.supplies import SuppliesService
 
 class SuppliesController(Controller):
     path = "/supplies"
-    tags = ["Поставки FBS"]
+    tags = ["03. API Wildberries"]
 
     @post(
         "/",

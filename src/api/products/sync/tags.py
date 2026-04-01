@@ -6,7 +6,7 @@ from src.utils.db_manager import DBManager
 
 class SyncTagsController(Controller):
     path = "/tags"
-    tags = ["Sync / Products"]
+    tags = ["02. Синхронизация"]
 
     @post(
         "/full",
@@ -19,3 +19,15 @@ class SyncTagsController(Controller):
     async def sync_tags_full(self) -> dict:
         async with DBManager() as db:
             return await TagsSyncService().sync_tags(db.session)
+
+    @post(
+        "/incremental",
+        summary="Инкрементальная выгрузка тегов в БД",
+        description=(
+            "Теги — справочные данные, инкрементальная = полная синхронизация.\n\n"
+            "**WB:** `GET content-api.wildberries.ru/content/v2/tags`"
+        ),
+    )
+    async def sync_tags_incremental(self) -> dict:
+        async with DBManager() as db:
+            return await TagsSyncService().sync_tags_incremental(db.session)

@@ -1,5 +1,6 @@
 """Сервис Sync: Тарифы — Синхронизация тарифов WB в БД."""
 import logging
+from datetime import date
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -17,46 +18,38 @@ class TariffsSyncService(BaseService):
         repo = TariffsRepository(session)
         async with TariffsCollector() as collector:
             response = await collector.get_commissions()
-        items = response.get("report", []) if isinstance(response, dict) else response
-        if isinstance(items, list):
-            saved = await repo.upsert_commissions(items)
-        else:
-            saved = 0
+        items = response.report or []
+        saved = await repo.upsert_commissions(items)
         logger.info(f"Tariff commissions synced: {saved} records")
         return {"synced": saved, "source": "commissions"}
 
     async def sync_box_tariffs(self, session: AsyncSession) -> dict:
         """Загружает тарифы коробами и сохраняет в БД."""
         repo = TariffsRepository(session)
+        today = date.today().isoformat()
         async with TariffsCollector() as collector:
-            response = await collector.get_box_tariffs()
-        items = response.get("response", {}).get("data", {}).get("warehouseList", []) if isinstance(response, dict) else response
-        if isinstance(items, list):
-            saved = await repo.upsert_box_tariffs(items)
-        else:
-            saved = 0
+            response = await collector.get_box_tariffs(date=today)
+        items = response.warehouseList or []
+        saved = await repo.upsert_box_tariffs(items)
         logger.info(f"Tariff box synced: {saved} records")
         return {"synced": saved, "source": "box"}
 
     async def sync_pallet_tariffs(self, session: AsyncSession) -> dict:
         """Загружает тарифы паллетами и сохраняет в БД."""
         repo = TariffsRepository(session)
+        today = date.today().isoformat()
         async with TariffsCollector() as collector:
-            response = await collector.get_pallet_tariffs()
-        items = response.get("response", {}).get("data", {}).get("warehouseList", []) if isinstance(response, dict) else response
-        if isinstance(items, list):
-            saved = await repo.upsert_pallet_tariffs(items)
-        else:
-            saved = 0
+            response = await collector.get_pallet_tariffs(date=today)
+        items = response.warehouseList or []
+        saved = await repo.upsert_pallet_tariffs(items)
         logger.info(f"Tariff pallet synced: {saved} records")
         return {"synced": saved, "source": "pallet"}
 
     async def sync_supply_tariffs(self, session: AsyncSession) -> dict:
-        """Загружает коэффициенты поставок и сохраняет в БД."""
+        """Загружает коэффициенты приёмки и сохраняет в БД."""
         repo = TariffsRepository(session)
         async with TariffsCollector() as collector:
-            response = await collector.get_supply_tariffs()
-        items = response if isinstance(response, list) else []
+            items = await collector.get_supply_tariffs()
         saved = await repo.upsert_supply_tariffs(items)
         logger.info(f"Tariff supply synced: {saved} records")
         return {"synced": saved, "source": "supply"}

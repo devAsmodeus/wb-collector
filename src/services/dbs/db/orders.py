@@ -18,6 +18,7 @@ class DBSOrdersDbService(BaseService):
     ) -> dict:
         """Возвращает заказы DBS из БД с фильтрацией."""
         repo = DbsOrdersRepository(session)
+        total = await repo.count()
         items = await repo.get_filtered(
             date_from=date_from,
             date_to=date_to,
@@ -47,5 +48,7 @@ class DBSOrdersDbService(BaseService):
                 }
                 for o in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }

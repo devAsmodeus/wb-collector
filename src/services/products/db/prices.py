@@ -10,6 +10,7 @@ class PricesDbService(BaseService):
     async def get_prices(self, session: AsyncSession, limit: int = 100, offset: int = 0) -> dict:
         """Возвращает цены товаров из БД."""
         repo = PricesRepository(session)
+        total = await repo.count()
         items = await repo.get_all(limit=limit, offset=offset)
         return {
             "data": [
@@ -25,7 +26,9 @@ class PricesDbService(BaseService):
                 }
                 for p in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }
 
     async def get_price(self, session: AsyncSession, nm_id: int) -> dict | None:

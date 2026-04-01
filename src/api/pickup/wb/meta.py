@@ -19,7 +19,7 @@ from src.services.pickup.wb.meta import PickupMetaService
 
 class PickupMetaController(Controller):
     path = "/orders"
-    tags = ["Метаданные Самовывоз"]
+    tags = ["06. API Wildberries"]
 
     @post(
         "/meta/info",

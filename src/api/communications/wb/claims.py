@@ -12,7 +12,7 @@ from src.services.communications.wb.claims import ClaimsService
 
 class ClaimsController(Controller):
     path = "/claims"
-    tags = ["Возвраты покупателями"]
+    tags = ["09. API Wildberries"]
 
     @get(
         "/",

@@ -14,7 +14,7 @@ from src.services.promotion.wb.search import SearchService
 
 class SearchController(Controller):
     path = "/normquery"
-    tags = ["Поисковые кластеры"]
+    tags = ["08. API Wildberries"]
 
     @post(
         "/stats",

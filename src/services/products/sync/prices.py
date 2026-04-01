@@ -37,3 +37,13 @@ class PricesSyncService(BaseService):
         saved = await repo.upsert_many(all_prices)
         logger.info(f"Prices synced: {saved} prices saved")
         return {"synced": saved, "source": "full"}
+
+    async def sync_prices_incremental(self, session: AsyncSession) -> dict:
+        """
+        Инкрементальная синхронизация цен.
+        Цены — справочные данные без фильтрации по дате в API.
+        Incremental = full sync (upsert обновит изменённые цены).
+        """
+        result = await self.sync_prices(session)
+        result["source"] = "incremental"
+        return result

@@ -12,7 +12,7 @@ from src.services.communications.wb.pins import PinsService
 
 class PinsController(Controller):
     path = "/pins"
-    tags = ["Закреплённые отзывы"]
+    tags = ["09. API Wildberries"]
 
     @get(
         "/",

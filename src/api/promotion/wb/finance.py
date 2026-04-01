@@ -12,7 +12,7 @@ from src.services.promotion.wb.finance import FinanceService
 
 class FinanceController(Controller):
     path = "/"
-    tags = ["Финансы"]
+    tags = ["08. API Wildberries"]
 
     @get(
         "/balance",

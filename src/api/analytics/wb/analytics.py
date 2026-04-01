@@ -21,13 +21,13 @@ from src.services.analytics.wb.analytics import AnalyticsWbService
 
 class AnalyticsWbController(Controller):
     path = "/analytics"
-    tags = ["WB / Аналитика"]
+    tags = ["11. API Wildberries"]
 
     # ── Воронка продаж ──────────────────────────────────────────────────────────
 
     @post(
         "/funnel/products",
-        tags=["Воронка продаж"],
+        tags=["11. API Wildberries"],
         summary="Воронка продаж по товарам",
         description=(
             "Возвращает показатели воронки продаж (просмотры, корзины, заказы, выкупы) по артикулам.\n\n"
@@ -39,7 +39,7 @@ class AnalyticsWbController(Controller):
 
     @post(
         "/funnel/products/history",
-        tags=["Воронка продаж"],
+        tags=["11. API Wildberries"],
         summary="История воронки продаж по товарам",
         description=(
             "Возвращает динамику воронки продаж по артикулам за период.\n\n"
@@ -51,7 +51,7 @@ class AnalyticsWbController(Controller):
 
     @post(
         "/funnel/grouped/history",
-        tags=["Воронка продаж"],
+        tags=["11. API Wildberries"],
         summary="Сгруппированная история воронки",
         description=(
             "Возвращает динамику воронки с группировкой по брендам, предметам или тегам.\n\n"
@@ -65,7 +65,7 @@ class AnalyticsWbController(Controller):
 
     @post(
         "/nm-report",
-        tags=["Аналитика продавца CSV"],
+        tags=["11. API Wildberries"],
         summary="Создать задачу CSV-отчёта",
         description=(
             "Создаёт задачу на формирование CSV-отчёта по артикулам (аналитика продавца).\n\n"
@@ -77,7 +77,7 @@ class AnalyticsWbController(Controller):
 
     @get(
         "/nm-report",
-        tags=["Аналитика продавца CSV"],
+        tags=["11. API Wildberries"],
         summary="Список задач CSV-отчётов",
         description=(
             "Возвращает список задач формирования CSV-отчётов с их статусами.\n\n"
@@ -94,7 +94,7 @@ class AnalyticsWbController(Controller):
 
     @post(
         "/nm-report/retry",
-        tags=["Аналитика продавца CSV"],
+        tags=["11. API Wildberries"],
         summary="Повторить задачу CSV-отчёта",
         description=(
             "Повторно запускает задачу формирования CSV-отчёта.\n\n"
@@ -106,7 +106,7 @@ class AnalyticsWbController(Controller):
 
     @get(
         "/nm-report/file/{download_id:str}",
-        tags=["Аналитика продавца CSV"],
+        tags=["11. API Wildberries"],
         summary="Скачать CSV-отчёт",
         description=(
             "Скачивает готовый CSV-файл отчёта по артикулам.\n\n"
@@ -123,7 +123,7 @@ class AnalyticsWbController(Controller):
 
     @post(
         "/search/report",
-        tags=["Поисковые запросы по вашим товарам"],
+        tags=["11. API Wildberries"],
         summary="Отчёт по поисковым запросам",
         description=(
             "Возвращает отчёт по поисковым запросам, через которые покупатели находили товары продавца.\n\n"
@@ -135,7 +135,7 @@ class AnalyticsWbController(Controller):
 
     @post(
         "/search/groups",
-        tags=["Поисковые запросы по вашим товарам"],
+        tags=["11. API Wildberries"],
         summary="Сгруппированные поисковые запросы",
         description=(
             "Возвращает сгруппированные поисковые запросы по категориям.\n\n"
@@ -147,7 +147,7 @@ class AnalyticsWbController(Controller):
 
     @post(
         "/search/details",
-        tags=["Поисковые запросы по вашим товарам"],
+        tags=["11. API Wildberries"],
         summary="Детализация поисковых запросов",
         description=(
             "Возвращает детализированный список поисковых запросов.\n\n"
@@ -159,7 +159,7 @@ class AnalyticsWbController(Controller):
 
     @post(
         "/search/texts",
-        tags=["Поисковые запросы по вашим товарам"],
+        tags=["11. API Wildberries"],
         summary="Поисковые тексты по товару",
         description=(
             "Возвращает конкретные поисковые фразы, по которым нашли товар.\n\n"
@@ -171,7 +171,7 @@ class AnalyticsWbController(Controller):
 
     @post(
         "/search/orders",
-        tags=["Поисковые запросы по вашим товарам"],
+        tags=["11. API Wildberries"],
         summary="Заказы из поиска по товару",
         description=(
             "Возвращает данные о заказах из поиска по конкретному артикулу.\n\n"
@@ -185,7 +185,7 @@ class AnalyticsWbController(Controller):
 
     @post(
         "/stocks/groups",
-        tags=["История остатков"],
+        tags=["11. API Wildberries"],
         summary="История остатков по группам",
         description=(
             "Возвращает динамику остатков по группам товаров за период.\n\n"
@@ -197,7 +197,7 @@ class AnalyticsWbController(Controller):
 
     @post(
         "/stocks/products",
-        tags=["История остатков"],
+        tags=["11. API Wildberries"],
         summary="История остатков по артикулам",
         description=(
             "Возвращает динамику остатков по конкретным артикулам WB.\n\n"
@@ -209,7 +209,7 @@ class AnalyticsWbController(Controller):
 
     @post(
         "/stocks/sizes",
-        tags=["История остатков"],
+        tags=["11. API Wildberries"],
         summary="История остатков по размерам",
         description=(
             "Возвращает динамику остатков по размерам конкретного артикула.\n\n"
@@ -221,7 +221,7 @@ class AnalyticsWbController(Controller):
 
     @post(
         "/stocks/offices",
-        tags=["История остатков"],
+        tags=["11. API Wildberries"],
         summary="История остатков по складам",
         description=(
             "Возвращает динамику остатков в разбивке по складам WB.\n\n"

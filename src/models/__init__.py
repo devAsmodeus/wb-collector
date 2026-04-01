@@ -8,6 +8,8 @@ from src.models.references import (
     WbNews,
     WbTariffCommission, WbTariffBox, WbTariffPallet, WbTariffSupply, WbSyncState,
 )
+from src.models.fbw import FbwWarehouse, FbwTransitTariff, FbwSupply, FbwSupplyGood
+from src.models.analytics import AnalyticsFunnelProduct, AnalyticsSearchQuery, AnalyticsStocksGroup
 
 __all__ = [
     "SellerOrm",
@@ -19,4 +21,6 @@ __all__ = [
     "WbNews",
     "WbTariffCommission", "WbTariffBox", "WbTariffPallet", "WbTariffSupply",
     "WbSyncState",
+    "FbwWarehouse", "FbwTransitTariff", "FbwSupply", "FbwSupplyGood",
+    "AnalyticsFunnelProduct", "AnalyticsSearchQuery", "AnalyticsStocksGroup",
 ]

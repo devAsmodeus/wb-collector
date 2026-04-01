@@ -14,7 +14,7 @@ from src.services.fbw.wb.acceptance import FBWAcceptanceService
 
 class FBWAcceptanceController(Controller):
     path = "/"
-    tags = ["Информация для формирования поставок"]
+    tags = ["07. API Wildberries"]
 
     @post(
         "/acceptance/options",

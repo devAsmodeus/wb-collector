@@ -1,6 +1,7 @@
 """Коллектор: Маркетинг — Статистика и медиакампании."""
 from src.collectors.base import WBApiClient
 from src.config import settings
+from src.schemas.promotion.stats import FullStatsResponse
 
 
 class StatsCollector:
@@ -14,11 +15,12 @@ class StatsCollector:
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
 
-    async def get_fullstats(self, ids: str, begin_date: str | None = None, end_date: str | None = None) -> dict:
+    async def get_fullstats(self, ids: str, begin_date: str | None = None, end_date: str | None = None) -> FullStatsResponse:
         params: dict = {"ids": ids}
         if begin_date: params["beginDate"] = begin_date
         if end_date: params["endDate"] = end_date
-        return await self._client.get("/adv/v3/fullstats", params=params)
+        data = await self._client.get("/adv/v3/fullstats", params=params)
+        return FullStatsResponse.model_validate({"data": data} if isinstance(data, list) else data if isinstance(data, dict) else {})
 
     async def get_stats(self, payload: list) -> dict:
         return await self._client.post("/adv/v1/stats", json=payload)

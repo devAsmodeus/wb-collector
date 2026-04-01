@@ -23,7 +23,7 @@ class WbTariffCommission(Base):
     __tablename__ = "wb_tariffs_commission"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    subject_id: Mapped[int | None] = mapped_column(Integer, nullable=True, index=True, comment="ID категории")
+    subject_id: Mapped[int | None] = mapped_column(Integer, unique=True, nullable=True, index=True, comment="ID категории")
     subject_name: Mapped[str | None] = mapped_column(String(255), nullable=True, comment="Название категории (предмет)")
     parent_name: Mapped[str | None] = mapped_column(String(255), nullable=True, comment="Родительская категория")
     kgvp_marketplace: Mapped[float | None] = mapped_column(Numeric(5, 2), nullable=True, comment="Комиссия маркетплейс, %")
@@ -34,29 +34,32 @@ class WbTariffCommission(Base):
 
 
 class WbTariffBox(Base):
-    """Тариф на доставку и хранение коробами."""
+    """Тариф на доставку и хранение коробами.
+
+    WB API /api/v1/tariffs/box не возвращает warehouseId — только warehouseName.
+    Unique key: warehouse_name.
+    """
     __tablename__ = "wb_tariffs_box"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    warehouse_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True, comment="ID склада WB")
-    warehouse_name: Mapped[str | None] = mapped_column(String(255), nullable=True, comment="Название склада")
-    dt_next_box: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, comment="Дата пересчёта")
-    box_delivery_base: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True, comment="Базовый тариф доставки, руб.")
-    box_delivery_liter: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True, comment="Тариф доставки за литр, руб.")
-    box_delivery_additional_liter: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True, comment="Доп. литр доставки, руб.")
-    box_storage_base: Mapped[float | None] = mapped_column(Numeric(10, 4), nullable=True, comment="Базовый тариф хранения, руб./день")
-    box_storage_liter: Mapped[float | None] = mapped_column(Numeric(10, 4), nullable=True, comment="Тариф хранения за литр, руб./день")
-    box_storage_additional_liter: Mapped[float | None] = mapped_column(Numeric(10, 4), nullable=True, comment="Доп. литр хранения, руб./день")
+    warehouse_name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True, comment="Название склада")
+    box_delivery_base: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True, comment="Логистика, первый литр, руб.")
+    box_delivery_liter: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True, comment="Логистика, дополнительный литр, руб.")
+    box_storage_base: Mapped[float | None] = mapped_column(Numeric(10, 4), nullable=True, comment="Хранение в день, первый литр, руб.")
+    box_storage_liter: Mapped[float | None] = mapped_column(Numeric(10, 4), nullable=True, comment="Хранение в день, дополнительный литр, руб.")
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")
 
 
 class WbTariffPallet(Base):
-    """Тариф на доставку и хранение паллетами."""
+    """Тариф на доставку и хранение паллетами.
+
+    WB API /api/v1/tariffs/pallet не возвращает warehouseId — только warehouseName.
+    Unique key: warehouse_name.
+    """
     __tablename__ = "wb_tariffs_pallet"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    warehouse_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True, comment="ID склада WB")
-    warehouse_name: Mapped[str | None] = mapped_column(String(255), nullable=True, comment="Название склада")
+    warehouse_name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True, comment="Название склада")
     is_super_safe: Mapped[bool | None] = mapped_column(Boolean, nullable=True, comment="Повышенная безопасность хранения")
     pallet_delivery_value_base: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True, comment="Базовый тариф доставки паллеты, руб.")
     pallet_delivery_value_liter: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True, comment="Тариф за литр, руб.")
@@ -65,13 +68,22 @@ class WbTariffPallet(Base):
 
 
 class WbTariffSupply(Base):
-    """Коэффициент склада для поставок."""
+    """Коэффициент приёмки на складе WB (acceptance coefficient).
+
+    Unique key: warehouse_id + date + box_type_id (несколько записей на склад).
+    """
     __tablename__ = "wb_tariffs_supply"
+    __table_args__ = (
+        {"comment": "Коэффициенты приёмки на складах WB"},
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     warehouse_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True, comment="ID склада WB")
     warehouse_name: Mapped[str | None] = mapped_column(String(255), nullable=True, comment="Название склада")
+    date: Mapped[str | None] = mapped_column(String(50), nullable=True, comment="Дата начала действия")
     coefficient: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="Коэффициент: 0=бесплатно, -1=закрыт")
+    allow_unload: Mapped[bool | None] = mapped_column(Boolean, nullable=True, comment="Доступность приёмки")
+    box_type_id: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="Тип поставки: 2=Короба, 5=Паллеты, 6=Суперсейф")
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")
 
 

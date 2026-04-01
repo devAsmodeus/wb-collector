@@ -22,4 +22,4 @@ class SellerCollector:
     async def get_seller_info(self) -> SellerInfo:
         """GET /api/v1/seller-info — информация о продавце."""
         data = await self._client.get("/api/v1/seller-info")
-        return SellerInfo.model_validate(data)
+        return SellerInfo.model_validate(data if isinstance(data, dict) else {})

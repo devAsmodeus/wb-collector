@@ -5,7 +5,7 @@ from src.collectors.base import WBApiClient
 from src.config import settings
 from src.schemas.products.directories import (
     ParentCategoriesResponse, SubjectsResponse, SubjectCharcsResponse,
-    TnvedResponse, BrandsResponse,
+    TnvedResponse, BrandsResponse, DirectoryResponse,
 )
 
 
@@ -42,25 +42,30 @@ class DirectoriesCollector:
         )
         return SubjectCharcsResponse.model_validate(data)
 
-    async def get_colors(self, locale: str = "ru") -> dict:
+    async def get_colors(self, locale: str = "ru") -> DirectoryResponse:
         """GET /content/v2/directory/colors — цвета."""
-        return await self._client.get("/content/v2/directory/colors", params={"locale": locale})
+        data = await self._client.get("/content/v2/directory/colors", params={"locale": locale})
+        return DirectoryResponse.model_validate(data if isinstance(data, dict) else {})
 
-    async def get_kinds(self, locale: str = "ru") -> dict:
+    async def get_kinds(self, locale: str = "ru") -> DirectoryResponse:
         """GET /content/v2/directory/kinds — пол."""
-        return await self._client.get("/content/v2/directory/kinds", params={"locale": locale})
+        data = await self._client.get("/content/v2/directory/kinds", params={"locale": locale})
+        return DirectoryResponse.model_validate(data if isinstance(data, dict) else {})
 
-    async def get_countries(self, locale: str = "ru") -> dict:
+    async def get_countries(self, locale: str = "ru") -> DirectoryResponse:
         """GET /content/v2/directory/countries — страны производства."""
-        return await self._client.get("/content/v2/directory/countries", params={"locale": locale})
+        data = await self._client.get("/content/v2/directory/countries", params={"locale": locale})
+        return DirectoryResponse.model_validate(data if isinstance(data, dict) else {})
 
-    async def get_seasons(self, locale: str = "ru") -> dict:
+    async def get_seasons(self, locale: str = "ru") -> DirectoryResponse:
         """GET /content/v2/directory/seasons — сезоны."""
-        return await self._client.get("/content/v2/directory/seasons", params={"locale": locale})
+        data = await self._client.get("/content/v2/directory/seasons", params={"locale": locale})
+        return DirectoryResponse.model_validate(data if isinstance(data, dict) else {})
 
-    async def get_vat_rates(self, locale: str = "ru") -> dict:
+    async def get_vat_rates(self, locale: str = "ru") -> DirectoryResponse:
         """GET /content/v2/directory/vat — ставки НДС."""
-        return await self._client.get("/content/v2/directory/vat", params={"locale": locale})
+        data = await self._client.get("/content/v2/directory/vat", params={"locale": locale})
+        return DirectoryResponse.model_validate(data if isinstance(data, dict) else {})
 
     async def get_tnved(self, subject_id: int, search: int | None = None, locale: str = "ru") -> TnvedResponse:
         """GET /content/v2/directory/tnved — ТНВЭД-коды предмета."""

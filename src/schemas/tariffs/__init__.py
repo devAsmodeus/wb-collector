@@ -3,7 +3,7 @@ from src.schemas.tariffs.tariffs import (
     ReturnCostItem, ReturnCostResponse,
     BoxTariffItem, BoxTariffsResponse,
     PalletTariffItem, PalletTariffsResponse,
-    SupplyTariffItem, SupplyTariffsResponse,
+    SupplyTariffItem,
 )
 
 __all__ = [
@@ -11,5 +11,5 @@ __all__ = [
     "ReturnCostItem", "ReturnCostResponse",
     "BoxTariffItem", "BoxTariffsResponse",
     "PalletTariffItem", "PalletTariffsResponse",
-    "SupplyTariffItem", "SupplyTariffsResponse",
+    "SupplyTariffItem",
 ]

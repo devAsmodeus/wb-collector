@@ -1,6 +1,7 @@
 """
 Базовый HTTP-клиент для WB API.
 - Авторизация через Bearer-токен
+- Rate limiting по документации WB API (src/rate_limits.py)
 - Автоматические ретраи (3 попытки)
 - Обработка 429 (rate limit) с паузой
 - Таймаут на запрос
@@ -19,6 +20,7 @@ from src.exceptions import (
     WBApiUnauthorizedException,
 )
 from src.metrics import WB_API_REQUESTS, WB_API_ERRORS, WB_API_RESPONSE_TIME, WB_RATE_LIMIT_HITS
+from src.rate_limits import rate_limiter
 
 logger = logging.getLogger(__name__)
 
@@ -37,9 +39,10 @@ class WBApiClient:
             data = await client.get("/api/v2/list/goods/filter", params={"limit": 100})
     """
 
-    def __init__(self, base_url: str, token: str | None = None):
+    def __init__(self, base_url: str, token: str | None = None, timeout: float | None = None):
         self.base_url = base_url.rstrip("/")
         self.token = token or settings.WB_API_TOKEN
+        self._timeout = timeout or REQUEST_TIMEOUT
         self._client: httpx.AsyncClient | None = None
 
     async def __aenter__(self):
@@ -50,7 +53,7 @@ class WBApiClient:
                 "Content-Type": "application/json",
                 "Accept": "application/json",
             },
-            timeout=REQUEST_TIMEOUT,
+            timeout=self._timeout,
         )
         return self
 
@@ -67,12 +70,15 @@ class WBApiClient:
         json: Any = None,
         body: Any = None,
     ) -> Any:
-        """Выполняет запрос с ретраями."""
+        """Выполняет запрос с ретраями и rate limiting по документации WB."""
         last_exc = None
 
         host = self.base_url.replace("https://", "").replace("http://", "")
 
         for attempt in range(1, RETRY_COUNT + 1):
+            # Выдерживаем интервал из WB API документации перед запросом
+            await rate_limiter.wait_if_needed(host, path)
+
             t_start = time.monotonic()
             try:
                 response = await self._client.request(
@@ -99,11 +105,11 @@ class WBApiClient:
                     last_exc = WBApiRateLimitException(429, "Rate limit exceeded")
                     continue
 
-                # Другие ошибки
-                body = response.text[:200]
+                # Другие ошибки — передаём полное тело для парсинга в handler
+                body = response.text
                 WB_API_REQUESTS.labels(host=host, method=method, status=str(response.status_code)).inc()
                 WB_API_ERRORS.labels(host=host, error_type="server_error").inc()
-                logger.error(f"WB API {response.status_code}: {path} — {body}",
+                logger.error(f"WB API {response.status_code}: {path} — {body[:300]}",
                              extra={"host": host, "status": response.status_code})
                 raise WBApiException(response.status_code, body)
 

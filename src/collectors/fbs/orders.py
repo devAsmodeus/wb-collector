@@ -32,11 +32,18 @@ class OrdersCollector:
         date_to: int | None = None,
         limit: int = 1000,
         offset: int = 0,
+        next_cursor: int = 0,
     ) -> OrdersResponse:
-        """GET /api/v3/orders — сборочные задания за период."""
-        params: dict = {"limit": limit, "offset": offset}
-        if date_from: params["dateFrom"] = date_from
-        if date_to: params["dateTo"] = date_to
+        """GET /api/v3/orders — сборочные задания (курсорная пагинация).
+
+        WB API v3 использует параметр `next` (id последнего заказа) для пагинации.
+        Первый запрос — next=0.
+        """
+        params: dict = {"limit": limit, "next": next_cursor}
+        if date_from is not None and date_from > 0:
+            params["dateFrom"] = date_from
+        if date_to is not None:
+            params["dateTo"] = date_to
         data = await self._client.get("/api/v3/orders", params=params)
         return OrdersResponse.model_validate(data if isinstance(data, dict) else {"orders": data or []})
 

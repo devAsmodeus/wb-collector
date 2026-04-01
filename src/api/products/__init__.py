@@ -1,22 +1,11 @@
 """Router: Products (02) — Товары."""
 from litestar import Router
 
-from src.api.products.directories import DirectoriesController
-from src.api.products.tags import TagsController
-from src.api.products.cards import CardsController, BarcodesController
-from src.api.products.media import MediaController
-from src.api.products.prices import PricesController
-from src.api.products.warehouses import WarehousesController
+from src.api.products.wb import products_wb_router
+from src.api.products.sync import products_sync_router
+from src.api.products.db import products_db_router
 
 products_router = Router(
     path="/products",
-    route_handlers=[
-        DirectoriesController,
-        TagsController,
-        CardsController,
-        BarcodesController,
-        MediaController,
-        PricesController,
-        WarehousesController,
-    ],
+    route_handlers=[products_wb_router, products_sync_router, products_db_router],
 )

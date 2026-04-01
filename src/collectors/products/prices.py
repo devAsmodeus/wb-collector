@@ -3,7 +3,9 @@
 ✅ Работает с текущим токеном (скоуп: Цены и скидки, bit 4).
 """
 from src.collectors.base import WBApiClient
-from src.schemas.products.prices import GoodsListResponse
+from src.schemas.products.prices import (
+    GoodsListResponse, QuarantineResponse, PriceHistoryResponse, UploadGoodsResponse,
+)
 
 
 class PricesCollector:
@@ -27,11 +29,12 @@ class PricesCollector:
         """GET /api/v2/list/goods/size/nm — цены по размерам артикула."""
         return await self._client.get("/api/v2/list/goods/size/nm", params={"nmId": nm_id})
 
-    async def get_quarantine_goods(self, limit: int = 100, offset: int = 0) -> dict:
+    async def get_quarantine_goods(self, limit: int = 100, offset: int = 0) -> QuarantineResponse:
         """GET /api/v2/quarantine/goods — товары на карантине."""
-        return await self._client.get(
+        data = await self._client.get(
             "/api/v2/quarantine/goods", params={"limit": limit, "offset": offset}
         )
+        return QuarantineResponse.model_validate(data if isinstance(data, dict) else {})
 
     async def set_prices_and_discounts(self, tasks: list[dict]) -> dict:
         """
@@ -54,17 +57,19 @@ class PricesCollector:
         """
         return await self._client.post("/api/v2/upload/task/club-discount", json={"data": tasks})
 
-    async def get_price_upload_history(self, limit: int = 100, offset: int = 0) -> dict:
+    async def get_price_upload_history(self, limit: int = 100, offset: int = 0) -> PriceHistoryResponse:
         """GET /api/v2/history/tasks — история загрузок цен."""
-        return await self._client.get(
+        data = await self._client.get(
             "/api/v2/history/tasks", params={"limit": limit, "offset": offset}
         )
+        return PriceHistoryResponse.model_validate(data if isinstance(data, dict) else {})
 
-    async def get_price_upload_goods(self, upload_id: int) -> dict:
+    async def get_price_upload_goods(self, upload_id: int) -> UploadGoodsResponse:
         """GET /api/v2/history/goods/task — товары конкретной загрузки."""
-        return await self._client.get(
+        data = await self._client.get(
             "/api/v2/history/goods/task", params={"uploadID": upload_id}
         )
+        return UploadGoodsResponse.model_validate(data if isinstance(data, dict) else {})
 
     async def get_buffer_tasks(self, limit: int = 100, offset: int = 0) -> dict:
         """GET /api/v2/buffer/tasks — задачи в буфере цен."""

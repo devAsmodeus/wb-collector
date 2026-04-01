@@ -25,7 +25,19 @@ class Settings(BaseSettings):
     WB_FINANCE_URL: str = "https://finance-api.wildberries.ru"
     WB_MARKETPLACE_URL: str = "https://marketplace-api.wildberries.ru"
     WB_ADVERT_URL: str = "https://advert-api.wildberries.ru"
+    WB_FEEDBACKS_URL: str = "https://feedbacks-api.wildberries.ru"
     WB_USER_MGMT_URL: str = "https://user-management-api.wildberries.ru"
+    WB_RETURNS_URL: str = "https://returns-api.wildberries.ru"
+    WB_SUPPLIES_URL: str = "https://supplies-api.wildberries.ru"
+
+    # Алиасы для обратной совместимости
+    @property
+    def WB_COMMON_URL(self) -> str:
+        return self.WB_API_BASE_URL
+
+    @property
+    def WB_FINANCES_URL(self) -> str:
+        return self.WB_FINANCE_URL
 
     # PostgreSQL
     DB_HOST: str = "localhost"
@@ -46,6 +58,10 @@ class Settings(BaseSettings):
             f"@{self.DB_HOST}:{self.DB_PORT}"
             f"/{self.DB_NAME}"
         )
+
+    @property
+    def test_db_url(self) -> str:
+        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/wb_collector_test"
 
     @property
     def redis_url(self) -> str:

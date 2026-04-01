@@ -11,6 +11,7 @@ class ReportsDbService(BaseService):
 
     async def get_stocks(self, session: AsyncSession, date_from=None, date_to=None, limit=500, offset=0) -> dict:
         repo = StocksRepository(session)
+        total = await repo.count()
         if date_from or date_to:
             items = await repo.get_filtered(date_from=date_from, date_to=date_to, limit=limit, offset=offset)
         else:
@@ -35,11 +36,14 @@ class ReportsDbService(BaseService):
                 }
                 for s in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }
 
     async def get_orders(self, session: AsyncSession, date_from=None, date_to=None, limit=500, offset=0) -> dict:
         repo = OrderReportsRepository(session)
+        total = await repo.count()
         if date_from or date_to:
             items = await repo.get_filtered(date_from=date_from, date_to=date_to, limit=limit, offset=offset)
         else:
@@ -64,11 +68,14 @@ class ReportsDbService(BaseService):
                 }
                 for o in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }
 
     async def get_sales(self, session: AsyncSession, date_from=None, date_to=None, limit=500, offset=0) -> dict:
         repo = SaleReportsRepository(session)
+        total = await repo.count()
         if date_from or date_to:
             items = await repo.get_filtered(date_from=date_from, date_to=date_to, limit=limit, offset=offset)
         else:
@@ -93,5 +100,7 @@ class ReportsDbService(BaseService):
                 }
                 for s in items
             ],
-            "count": len(items),
+            "total": total,
+            "limit": limit,
+            "offset": offset,
         }

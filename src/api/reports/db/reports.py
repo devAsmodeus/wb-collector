@@ -7,7 +7,7 @@ from src.utils.db_manager import DBManager
 
 class DbStocksController(Controller):
     path = "/stocks"
-    tags = ["DB / Reports"]
+    tags = ["12. База данных"]
 
     @get(
         "/",
@@ -30,7 +30,7 @@ class DbStocksController(Controller):
 
 class DbOrdersController(Controller):
     path = "/orders"
-    tags = ["DB / Reports"]
+    tags = ["12. База данных"]
 
     @get(
         "/",
@@ -53,7 +53,7 @@ class DbOrdersController(Controller):
 
 class DbSalesController(Controller):
     path = "/sales"
-    tags = ["DB / Reports"]
+    tags = ["12. База данных"]
 
     @get(
         "/",

@@ -15,14 +15,26 @@ class ReportsCollector:
         await self._client.__aexit__(*args)
 
     # Основные отчёты
-    async def get_stocks(self, date_from: str) -> list:
-        return await self._client.get("/api/v1/supplier/stocks", params={"dateFrom": date_from})
+    async def get_stocks(self, date_from: str) -> list[dict]:
+        """GET /api/v1/supplier/stocks — остатки. dateFrom в формате RFC3339: YYYY-MM-DD."""
+        data = await self._client.get("/api/v1/supplier/stocks", params={"dateFrom": date_from})
+        return data if isinstance(data, list) else []
 
-    async def get_orders(self, date_from: str) -> list:
-        return await self._client.get("/api/v1/supplier/orders", params={"dateFrom": date_from})
+    async def get_orders(self, date_from: str, flag: int = 0) -> list[dict]:
+        """GET /api/v1/supplier/orders — заказы. dateFrom в формате RFC3339: YYYY-MM-DD."""
+        params: dict = {"dateFrom": date_from}
+        if flag:
+            params["flag"] = flag
+        data = await self._client.get("/api/v1/supplier/orders", params=params)
+        return data if isinstance(data, list) else []
 
-    async def get_sales(self, date_from: str) -> list:
-        return await self._client.get("/api/v1/supplier/sales", params={"dateFrom": date_from})
+    async def get_sales(self, date_from: str, flag: int = 0) -> list[dict]:
+        """GET /api/v1/supplier/sales — продажи. dateFrom в формате RFC3339: YYYY-MM-DD."""
+        params: dict = {"dateFrom": date_from}
+        if flag:
+            params["flag"] = flag
+        data = await self._client.get("/api/v1/supplier/sales", params=params)
+        return data if isinstance(data, list) else []
 
     async def get_excise_report(self, payload: dict) -> dict:
         return await self._client.post("/api/v1/analytics/excise-report", json=payload)

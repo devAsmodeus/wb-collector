@@ -1,4 +1,10 @@
-"""Коллектор: Финансы WB."""
+"""Коллектор: Финансы WB.
+
+YAML: docs/api/13-finances.yaml
+Хосты:
+  - finance-api.wildberries.ru — баланс, документы
+  - statistics-api.wildberries.ru — финансовый отчёт (/api/v5/supplier/reportDetailByPeriod)
+"""
 from src.collectors.base import WBApiClient
 from src.config import settings
 
@@ -6,12 +12,15 @@ from src.config import settings
 class FinancesCollector:
     def __init__(self):
         self._client = WBApiClient(base_url=settings.WB_FINANCES_URL, token=settings.WB_API_TOKEN)
+        self._stats_client = WBApiClient(base_url=settings.WB_STATS_URL, token=settings.WB_API_TOKEN)
 
     async def __aenter__(self):
         await self._client.__aenter__()
+        await self._stats_client.__aenter__()
         return self
 
     async def __aexit__(self, *args):
+        await self._stats_client.__aexit__(*args)
         await self._client.__aexit__(*args)
 
     async def get_balance(self) -> dict:
@@ -25,10 +34,11 @@ class FinancesCollector:
         rrdid: int = 0,
         period: int | None = None,
     ) -> list:
+        """GET /api/v5/supplier/reportDetailByPeriod — на statistics-api (НЕ finance-api!)."""
         params: dict = {"dateFrom": date_from, "dateTo": date_to, "limit": limit, "rrdid": rrdid}
         if period is not None:
             params["period"] = period
-        return await self._client.get("/api/v5/supplier/reportDetailByPeriod", params=params)
+        return await self._stats_client.get("/api/v5/supplier/reportDetailByPeriod", params=params)
 
     async def get_document_categories(self) -> dict:
         return await self._client.get("/api/v1/documents/categories")

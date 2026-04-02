@@ -5,6 +5,7 @@ from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.collectors.fbw.supplies import FBWSuppliesCollector
+from src.exceptions import WBApiException
 from src.repositories.fbw.supplies import FbwSuppliesRepository, FbwSupplyGoodsRepository
 from src.services.base import BaseService
 
@@ -19,6 +20,61 @@ def _parse_datetime(value: str | None) -> datetime | None:
         return datetime.fromisoformat(value)
     except (ValueError, TypeError):
         return None
+
+
+async def _fetch_goods(collector, supply_id: int, all_goods: list) -> None:
+    """Загружает товары для одной поставки, обрабатывает 404 gracefully."""
+    goods_offset = 0
+    while True:
+        try:
+            goods_resp = await collector.get_supply_goods(
+                supply_id=supply_id, limit=1000, offset=goods_offset,
+            )
+        except WBApiException as e:
+            if e.status_code == 404:
+                logger.debug(f"Supply {supply_id}: goods not found (404), skipping")
+            else:
+                logger.warning(f"Supply {supply_id}: goods error {e.status_code}")
+            break
+        goods = goods_resp.goods or []
+        if not goods:
+            break
+        for g in goods:
+            all_goods.append({
+                "supply_id": supply_id,
+                "barcode": g.barcode,
+                "vendor_code": g.article,
+                "name": g.name,
+                "quantity": g.quantity,
+                "brand": g.brand,
+                "subject": g.subject,
+                "raw_data": g.model_dump(),
+            })
+        if len(goods) < 1000:
+            break
+        goods_offset += 1000
+
+
+def _supply_to_dict(s) -> dict | None:
+    """Конвертирует FBWSupply в dict для репозитория. Возвращает None если нет supplyID."""
+    # supplyID — реальный ID поставки (>0). preorderID — ID предзаказа.
+    # Пропускаем поставки без реального supplyID.
+    supply_id = s.supplyID if s.supplyID else None
+    if not supply_id:
+        return None
+    return {
+        "supply_id": supply_id,
+        "preorder_id": s.preorderID,
+        "status_id": s.statusID,
+        "box_type_id": s.boxTypeID,
+        "is_box_on_pallet": s.isBoxOnPallet,
+        "create_date": _parse_datetime(s.createDate),
+        "supply_date": _parse_datetime(s.supplyDate),
+        "fact_date": _parse_datetime(s.factDate),
+        "updated_date": _parse_datetime(s.updatedDate),
+        "phone": s.phone,
+        "raw_data": s.model_dump(),
+    }
 
 
 class FbwSuppliesSyncService(BaseService):
@@ -47,61 +103,23 @@ class FbwSuppliesSyncService(BaseService):
                     break
 
                 for s in supplies:
-                    supply_id = s.supplyID or s.preorderID
-                    if supply_id is None:
+                    row = _supply_to_dict(s)
+                    if row is None:
                         continue
-
-                    all_supplies.append({
-                        "supply_id": supply_id,
-                        "preorder_id": s.preorderID,
-                        "status_id": s.statusID,
-                        "box_type_id": s.boxTypeID,
-                        "is_box_on_pallet": s.isBoxOnPallet,
-                        "create_date": _parse_datetime(s.createDate),
-                        "supply_date": _parse_datetime(s.supplyDate),
-                        "fact_date": _parse_datetime(s.factDate),
-                        "updated_date": _parse_datetime(s.updatedDate),
-                        "phone": s.phone,
-                        "raw_data": s.model_dump(),
-                    })
-
-                    # Загрузка товаров для каждой поставки
-                    goods_offset = 0
-                    while True:
-                        goods_resp = await collector.get_supply_goods(
-                            supply_id=supply_id, limit=1000, offset=goods_offset,
-                        )
-                        goods = goods_resp.goods or []
-                        if not goods:
-                            break
-
-                        for g in goods:
-                            all_goods.append({
-                                "supply_id": supply_id,
-                                "barcode": g.barcode,
-                                "vendor_code": g.article,
-                                "name": g.name,
-                                "quantity": g.quantity,
-                                "brand": g.brand,
-                                "subject": g.subject,
-                                "raw_data": g.model_dump(),
-                            })
-
-                        if len(goods) < 1000:
-                            break
-                        goods_offset += 1000
+                    all_supplies.append(row)
+                    # Товары не грузим в full sync — слишком много запросов (1 на поставку).
+                    # Используй incremental sync для загрузки товаров по конкретным поставкам.
 
                 if len(supplies) < limit:
                     break
                 offset += limit
 
         saved_supplies = await supply_repo.upsert_many(all_supplies)
-        saved_goods = await goods_repo.upsert_many(all_goods)
 
-        logger.info(f"FBW supplies synced: {saved_supplies} supplies, {saved_goods} goods")
+        logger.info(f"FBW supplies synced: {saved_supplies} supplies (goods skipped in full sync)")
         return {
-            "synced_supplies": saved_supplies,
-            "synced_goods": saved_goods,
+            "synced": saved_supplies,
+            "synced_goods": 0,
             "source": "full",
         }
 
@@ -124,7 +142,6 @@ class FbwSuppliesSyncService(BaseService):
         all_supplies = []
         all_goods = []
 
-        # Передаём диапазон дат для фильтрации
         date_from = max_updated.strftime("%Y-%m-%d")
         date_to = datetime.utcnow().strftime("%Y-%m-%d")
         payload = {"dates": [date_from, date_to]}
@@ -141,49 +158,11 @@ class FbwSuppliesSyncService(BaseService):
                     break
 
                 for s in supplies:
-                    supply_id = s.supplyID or s.preorderID
-                    if supply_id is None:
+                    row = _supply_to_dict(s)
+                    if row is None:
                         continue
-
-                    all_supplies.append({
-                        "supply_id": supply_id,
-                        "preorder_id": s.preorderID,
-                        "status_id": s.statusID,
-                        "box_type_id": s.boxTypeID,
-                        "is_box_on_pallet": s.isBoxOnPallet,
-                        "create_date": _parse_datetime(s.createDate),
-                        "supply_date": _parse_datetime(s.supplyDate),
-                        "fact_date": _parse_datetime(s.factDate),
-                        "updated_date": _parse_datetime(s.updatedDate),
-                        "phone": s.phone,
-                        "raw_data": s.model_dump(),
-                    })
-
-                    # Загрузка товаров для каждой поставки
-                    goods_offset = 0
-                    while True:
-                        goods_resp = await collector.get_supply_goods(
-                            supply_id=supply_id, limit=1000, offset=goods_offset,
-                        )
-                        goods = goods_resp.goods or []
-                        if not goods:
-                            break
-
-                        for g in goods:
-                            all_goods.append({
-                                "supply_id": supply_id,
-                                "barcode": g.barcode,
-                                "vendor_code": g.article,
-                                "name": g.name,
-                                "quantity": g.quantity,
-                                "brand": g.brand,
-                                "subject": g.subject,
-                                "raw_data": g.model_dump(),
-                            })
-
-                        if len(goods) < 1000:
-                            break
-                        goods_offset += 1000
+                    all_supplies.append(row)
+                    await _fetch_goods(collector, row["supply_id"], all_goods)
 
                 if len(supplies) < limit:
                     break
@@ -197,7 +176,7 @@ class FbwSuppliesSyncService(BaseService):
             f"{saved_goods} goods (from_date={max_updated.isoformat()})"
         )
         return {
-            "synced_supplies": saved_supplies,
+            "synced": saved_supplies,
             "synced_goods": saved_goods,
             "source": "incremental",
             "from_date": max_updated.isoformat(),

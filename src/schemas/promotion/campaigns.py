@@ -2,10 +2,26 @@
 from pydantic import BaseModel, Field
 
 
+class AdvertListItem(BaseModel):
+    """Single campaign entry from advert_list."""
+    advertId: int | None = Field(None)
+    changeTime: str | None = Field(None)
+
+
+class AdvertListItem(BaseModel):
+    """Single campaign entry from advert_list."""
+    advertId: int | None = Field(None)
+    changeTime: str | None = Field(None)
+
+
 class AdvertCountItem(BaseModel):
     """Количество кампаний по статусу."""
     status: int | None = Field(None, description="Статус кампании")
     count: int | None = Field(None, description="Количество кампаний в данном статусе")
+    type: int | None = Field(None)
+    advert_list: list[AdvertListItem] | None = Field(None)
+    type: int | None = Field(None)
+    advert_list: list[AdvertListItem] | None = Field(None)
 
 
 class AdvertCountResponse(BaseModel):

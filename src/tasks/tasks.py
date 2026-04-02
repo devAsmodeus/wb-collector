@@ -607,3 +607,32 @@ def sync_finances_full(self):
         return result
 
     return run_async(_run())
+
+
+# ---------------------------------------------------------------------------
+# (00) Sync Docs — ежедневная проверка изменений WB API документации
+# ---------------------------------------------------------------------------
+
+@celery_app.task(
+    name="sync.docs.wb_api",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_wb_api_docs(self):
+    """Скачивает YAML-спеки WB API, сравнивает с сохранёнными версиями, шлёт уведомление при изменениях."""
+    import subprocess
+    import os
+    result = subprocess.run(
+        ["python", "-m", "tools", "sync"],
+        cwd="/app",
+        capture_output=True,
+        text=True,
+        timeout=240,
+    )
+    if result.returncode != 0:
+        logger.error(f"[sync.docs] Failed:\n{result.stderr[:500]}")
+        raise RuntimeError(f"sync_docs exited with code {result.returncode}")
+    logger.info(f"[sync.docs] OK:\n{result.stdout[:500]}")
+    return {"status": "ok", "output": result.stdout[:500]}

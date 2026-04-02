@@ -200,5 +200,14 @@ celery_app.conf.update(
             "task": "sync.finances.full",
             "schedule": crontab(minute=45, hour=3),  # 03:45
         },
+
+        # =================================================================
+        # (00) Sync Docs — ежедневная проверка изменений WB API
+        # =================================================================
+
+        "sync-docs-wb-api": {
+            "task": "sync.docs.wb_api",
+            "schedule": crontab(minute=0, hour=8),   # 08:00 ежедневно
+        },
     },
 )

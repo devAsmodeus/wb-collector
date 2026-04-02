@@ -1,10 +1,10 @@
 {
-  "fetched_at": "2026-04-01T05:00:19Z",
+  "fetched_at": "2026-04-02T21:56:56Z",
   "files": [
     {
       "file": "01-general.yaml",
-      "sha256": "188a29e552198b4136ca8fe3c82508ca4ddc9f3d5a9420d9d1a3ba256111fb4e",
-      "size": 51645,
+      "sha256": "65cecafa5a12ba045f315c53f4a29464144901e2e6ce3c73d31954167227ef99",
+      "size": 58711,
       "semantics": {
         "version": "general",
         "endpoints": {
@@ -15,6 +15,12 @@
             "get"
           ],
           "/api/v1/seller-info": [
+            "get"
+          ],
+          "/api/common/v1/rating": [
+            "get"
+          ],
+          "/api/common/v1/subscriptions": [
             "get"
           ],
           "/api/v1/invite": [
@@ -66,6 +72,46 @@
             "requestId",
             "status",
             "title"
+          ],
+          "SupplierRatingModel": [
+            "feedbackCount",
+            "valuation"
+          ],
+          "SubscriptionsJamInfo": [
+            "activationSource",
+            "level",
+            "since",
+            "state",
+            "till"
+          ]
+        },
+        "endpoint_servers": {
+          "/ping": [
+            "https://common-api.wildberries.ru"
+          ],
+          "/api/communications/v2/news": [
+            "https://common-api.wildberries.ru"
+          ],
+          "/api/v1/seller-info": [
+            "https://common-api.wildberries.ru"
+          ],
+          "/api/common/v1/rating": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/common/v1/subscriptions": [
+            "https://common-api.wildberries.ru"
+          ],
+          "/api/v1/invite": [
+            "https://user-management-api.wildberries.ru"
+          ],
+          "/api/v1/users": [
+            "https://user-management-api.wildberries.ru"
+          ],
+          "/api/v1/users/access": [
+            "https://user-management-api.wildberries.ru"
+          ],
+          "/api/v1/user": [
+            "https://user-management-api.wildberries.ru"
           ]
         }
       }
@@ -458,13 +504,141 @@
           "swagger.PublicErrorsOrderV2": [
             "ascending"
           ]
+        },
+        "endpoint_servers": {
+          "/content/v2/object/parent/all": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/object/all": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/object/charcs/{subjectId}": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/directory/colors": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/directory/kinds": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/directory/countries": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/directory/seasons": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/directory/vat": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/directory/tnved": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/api/content/v1/brands": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/tags": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/tag": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/tag/{id}": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/tag/nomenclature/link": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/get/cards/list": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/cards/error/list": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/cards/update": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/cards/moveNm": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/cards/delete/trash": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/cards/recover": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/get/cards/trash": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/cards/limits": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/barcodes": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/cards/upload": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v2/cards/upload/add": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v3/media/file": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/content/v3/media/save": [
+            "https://content-api.wildberries.ru"
+          ],
+          "/api/v2/upload/task": [
+            "https://discounts-prices-api.wildberries.ru"
+          ],
+          "/api/v2/upload/task/size": [
+            "https://discounts-prices-api.wildberries.ru"
+          ],
+          "/api/v2/upload/task/club-discount": [
+            "https://discounts-prices-api.wildberries.ru"
+          ],
+          "/api/v2/history/tasks": [
+            "https://discounts-prices-api.wildberries.ru"
+          ],
+          "/api/v2/history/goods/task": [
+            "https://discounts-prices-api.wildberries.ru"
+          ],
+          "/api/v2/buffer/tasks": [
+            "https://discounts-prices-api.wildberries.ru"
+          ],
+          "/api/v2/buffer/goods/task": [
+            "https://discounts-prices-api.wildberries.ru"
+          ],
+          "/api/v2/list/goods/filter": [
+            "https://discounts-prices-api.wildberries.ru"
+          ],
+          "/api/v2/list/goods/size/nm": [
+            "https://discounts-prices-api.wildberries.ru"
+          ],
+          "/api/v2/quarantine/goods": [
+            "https://discounts-prices-api.wildberries.ru"
+          ],
+          "/api/v3/stocks/{warehouseId}": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/offices": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/warehouses": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/warehouses/{warehouseId}": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbw/warehouses/{warehouseId}/contacts": [
+            "https://marketplace-api.wildberries.ru"
+          ]
         }
       }
     },
     {
       "file": "03-orders-fbs.yaml",
-      "sha256": "97cb34b4c0ea34279be6e883b7ac47c745216995ec2e3cddb0a671b4ca690db3",
-      "size": 172806,
+      "sha256": "4d75bac51560e48fd2ad271c0db6e47849d444ef34307e972a7a99ed9dd8a0b7",
+      "size": 173119,
       "semantics": {
         "version": "order",
         "endpoints": {
@@ -724,6 +898,92 @@
             "data",
             "message"
           ]
+        },
+        "endpoint_servers": {
+          "/api/v3/passes/offices": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/passes": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/passes/{passId}": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/orders/new": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/orders": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/orders/status": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/supplies/orders/reshipment": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/orders/{orderId}/cancel": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/orders/stickers": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/orders/meta": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/orders/{orderId}/meta": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/orders/{orderId}/meta/sgtin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/orders/{orderId}/meta/uin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/orders/{orderId}/meta/imei": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/orders/{orderId}/meta/gtin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/orders/{orderId}/meta/expiration": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/orders/{orderId}/meta/customs-declaration": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/orders/stickers/cross-border": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/orders/status/history": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/orders/client": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/supplies": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/supplies/{supplyId}/orders": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/supplies/{supplyId}": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/supplies/{supplyId}/order-ids": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/supplies/{supplyId}/deliver": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/supplies/{supplyId}/barcode": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/supplies/{supplyId}/trbx": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/supplies/{supplyId}/trbx/stickers": [
+            "https://marketplace-api.wildberries.ru"
+          ]
         }
       }
     },
@@ -890,6 +1150,53 @@
             "sgtin",
             "uin",
             "value"
+          ]
+        },
+        "endpoint_servers": {
+          "/api/v3/dbw/orders/new": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbw/orders": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbw/orders/delivery-date": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbw/orders/client": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbw/orders/status": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbw/orders/{orderId}/confirm": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbw/orders/stickers": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbw/orders/{orderId}/assemble": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbw/orders/courier": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbw/orders/{orderId}/cancel": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbw/orders/{orderId}/meta": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbw/orders/{orderId}/meta/sgtin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbw/orders/{orderId}/meta/uin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbw/orders/{orderId}/meta/imei": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbw/orders/{orderId}/meta/gtin": [
+            "https://marketplace-api.wildberries.ru"
           ]
         }
       }
@@ -1225,6 +1532,101 @@
             "kpp",
             "orgName"
           ]
+        },
+        "endpoint_servers": {
+          "/api/v3/dbs/orders/new": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/orders": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/groups/info": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/orders/client": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/b2b/info": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/orders/delivery-date": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/status/info": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/status/cancel": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/status/confirm": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/stickers": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/status/deliver": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/status/receive": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/status/reject": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/orders/status": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/orders/{orderId}/cancel": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/orders/{orderId}/confirm": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/orders/{orderId}/deliver": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/orders/{orderId}/receive": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/orders/{orderId}/reject": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/meta/info": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/meta/delete": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/meta/sgtin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/meta/uin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/meta/imei": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/meta/gtin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/dbs/orders/meta/customs-declaration": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/orders/{orderId}/meta": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/orders/{orderId}/meta/sgtin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/orders/{orderId}/meta/uin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/orders/{orderId}/meta/imei": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/dbs/orders/{orderId}/meta/gtin": [
+            "https://marketplace-api.wildberries.ru"
+          ]
         }
       }
     },
@@ -1543,6 +1945,89 @@
             "key",
             "ordersIds"
           ]
+        },
+        "endpoint_servers": {
+          "/api/v3/click-collect/orders/new": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/click-collect/orders/status/confirm": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/click-collect/orders/status/prepare": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/confirm": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/prepare": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/click-collect/orders/client": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/click-collect/orders/client/identity": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/click-collect/orders/status/receive": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/click-collect/orders/status/reject": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/receive": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/reject": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/click-collect/orders/status/info": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/click-collect/orders/status": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/click-collect/orders": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/click-collect/orders/status/cancel": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/cancel": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/click-collect/orders/meta/info": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/click-collect/orders/meta/delete": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/click-collect/orders/meta/sgtin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/click-collect/orders/meta/uin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/click-collect/orders/meta/imei": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/marketplace/v3/click-collect/orders/meta/gtin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/meta": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/meta/sgtin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/meta/uin": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/meta/imei": [
+            "https://marketplace-api.wildberries.ru"
+          ],
+          "/api/v3/click-collect/orders/{orderId}/meta/gtin": [
+            "https://marketplace-api.wildberries.ru"
+          ]
         }
       }
     },
@@ -1685,13 +2170,36 @@
             "requestId",
             "result"
           ]
+        },
+        "endpoint_servers": {
+          "/api/v1/acceptance/options": [
+            "https://supplies-api.wildberries.ru"
+          ],
+          "/api/v1/warehouses": [
+            "https://supplies-api.wildberries.ru"
+          ],
+          "/api/v1/transit-tariffs": [
+            "https://supplies-api.wildberries.ru"
+          ],
+          "/api/v1/supplies": [
+            "https://supplies-api.wildberries.ru"
+          ],
+          "/api/v1/supplies/{ID}": [
+            "https://supplies-api.wildberries.ru"
+          ],
+          "/api/v1/supplies/{ID}/goods": [
+            "https://supplies-api.wildberries.ru"
+          ],
+          "/api/v1/supplies/{ID}/package": [
+            "https://supplies-api.wildberries.ru"
+          ]
         }
       }
     },
     {
       "file": "08-promotion.yaml",
-      "sha256": "0a39780c80f861e526ad027643e7446d4482daad22a88fd4a3a989ce45fd7d57",
-      "size": 227408,
+      "sha256": "e4d19fa5564e014b802a99e1115376c93c639ad498c4fdf6ac796e51464f249e",
+      "size": 228585,
       "semantics": {
         "version": "promotion",
         "endpoints": {
@@ -2165,6 +2673,116 @@
             "status",
             "title"
           ]
+        },
+        "endpoint_servers": {
+          "/adv/v1/promotion/count": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/api/advert/v2/adverts": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/api/advert/v1/bids/min": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v2/seacat/save-ad": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v1/supplier/subjects": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v2/supplier/nms": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v0/delete": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v0/rename": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v0/start": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v0/pause": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v0/stop": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v0/auction/placements": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/api/advert/v1/bids": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v1/balance": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v1/budget": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v1/budget/deposit": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v1/upd": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v1/payments": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v0/auction/nms": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/api/advert/v0/bids/recommendations": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v0/normquery/stats": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v0/normquery/get-bids": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v0/normquery/bids": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v0/normquery/get-minus": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v0/normquery/set-minus": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v1/count": [
+            "https://advert-media-api.wildberries.ru"
+          ],
+          "/adv/v1/adverts": [
+            "https://advert-media-api.wildberries.ru"
+          ],
+          "/adv/v1/advert": [
+            "https://advert-media-api.wildberries.ru"
+          ],
+          "/adv/v3/fullstats": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v1/stats": [
+            "https://advert-media-api.wildberries.ru"
+          ],
+          "/api/v1/calendar/promotions": [
+            "https://dp-calendar-api.wildberries.ru"
+          ],
+          "/api/v1/calendar/promotions/details": [
+            "https://dp-calendar-api.wildberries.ru"
+          ],
+          "/api/v1/calendar/promotions/nomenclatures": [
+            "https://dp-calendar-api.wildberries.ru"
+          ],
+          "/api/v1/calendar/promotions/upload": [
+            "https://dp-calendar-api.wildberries.ru"
+          ],
+          "/adv/v0/normquery/list": [
+            "https://advert-api.wildberries.ru"
+          ],
+          "/adv/v1/normquery/stats": [
+            "https://advert-api.wildberries.ru"
+          ]
         }
       }
     },
@@ -2416,6 +3034,71 @@
           "respond.SuccessResponse": [
             "data"
           ]
+        },
+        "endpoint_servers": {
+          "/api/v1/new-feedbacks-questions": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/v1/questions/count-unanswered": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/v1/questions/count": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/v1/questions": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/v1/question": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/v1/feedbacks/count-unanswered": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/v1/feedbacks/count": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/v1/feedbacks": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/v1/feedbacks/answer": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/v1/feedbacks/order/return": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/v1/feedback": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/v1/feedbacks/archive": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/feedbacks/v1/pins": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/feedbacks/v1/pins/count": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/feedbacks/v1/pins/limits": [
+            "https://feedbacks-api.wildberries.ru"
+          ],
+          "/api/v1/seller/chats": [
+            "https://buyer-chat-api.wildberries.ru"
+          ],
+          "/api/v1/seller/events": [
+            "https://buyer-chat-api.wildberries.ru"
+          ],
+          "/api/v1/seller/message": [
+            "https://buyer-chat-api.wildberries.ru"
+          ],
+          "/api/v1/seller/download/{id}": [
+            "https://buyer-chat-api.wildberries.ru"
+          ],
+          "/api/v1/claims": [
+            "https://returns-api.wildberries.ru"
+          ],
+          "/api/v1/claim": [
+            "https://returns-api.wildberries.ru"
+          ]
         }
       }
     },
@@ -2554,6 +3237,23 @@
             "origin",
             "requestId",
             "title"
+          ]
+        },
+        "endpoint_servers": {
+          "/api/v1/tariffs/commission": [
+            "https://common-api.wildberries.ru"
+          ],
+          "/api/v1/tariffs/box": [
+            "https://common-api.wildberries.ru"
+          ],
+          "/api/v1/tariffs/pallet": [
+            "https://common-api.wildberries.ru"
+          ],
+          "/api/tariffs/v1/acceptance/coefficients": [
+            "https://common-api.wildberries.ru"
+          ],
+          "/api/v1/tariffs/return": [
+            "https://common-api.wildberries.ru"
           ]
         }
       }
@@ -3244,6 +3944,56 @@
             "title"
           ],
           "Currency": []
+        },
+        "endpoint_servers": {
+          "/api/analytics/v3/sales-funnel/products": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/analytics/v3/sales-funnel/products/history": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/analytics/v3/sales-funnel/grouped/history": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v2/nm-report/downloads": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v2/nm-report/downloads/retry": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v2/nm-report/downloads/file/{downloadId}": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v2/search-report/report": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v2/search-report/table/groups": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v2/search-report/table/details": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v2/search-report/product/search-texts": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v2/search-report/product/orders": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/analytics/v1/stocks-report/wb-warehouses": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v2/stocks-report/products/groups": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v2/stocks-report/products/products": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v2/stocks-report/products/sizes": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v2/stocks-report/offices": [
+            "https://seller-analytics-api.wildberries.ru"
+          ]
         }
       }
     },
@@ -3510,6 +4260,83 @@
             "requestId",
             "title"
           ]
+        },
+        "endpoint_servers": {
+          "/api/v1/supplier/stocks": [
+            "https://statistics-api.wildberries.ru"
+          ],
+          "/api/v1/supplier/orders": [
+            "https://statistics-api.wildberries.ru"
+          ],
+          "/api/v1/supplier/sales": [
+            "https://statistics-api.wildberries.ru"
+          ],
+          "/api/v1/analytics/excise-report": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/warehouse_remains": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/warehouse_remains/tasks/{task_id}/status": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/warehouse_remains/tasks/{task_id}/download": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/analytics/v1/measurement-penalties": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/analytics/v1/warehouse-measurements": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/analytics/v1/deductions": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/analytics/antifraud-details": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/analytics/goods-labeling": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/acceptance_report": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/acceptance_report/tasks/{task_id}/status": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/acceptance_report/tasks/{task_id}/download": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/paid_storage": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/paid_storage/tasks/{task_id}/status": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/paid_storage/tasks/{task_id}/download": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/analytics/region-sale": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/analytics/brand-share/brands": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/analytics/brand-share/parent-subjects": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/analytics/brand-share": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/analytics/banned-products/blocked": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/analytics/banned-products/shadowed": [
+            "https://seller-analytics-api.wildberries.ru"
+          ],
+          "/api/v1/analytics/goods-return": [
+            "https://seller-analytics-api.wildberries.ru"
+          ]
         }
       }
     },
@@ -3652,6 +4479,26 @@
             "ts_name",
             "uuid_promocode",
             "wibes_wb_discount_percent"
+          ]
+        },
+        "endpoint_servers": {
+          "/api/v1/account/balance": [
+            "https://finance-api.wildberries.ru"
+          ],
+          "/api/v5/supplier/reportDetailByPeriod": [
+            "https://statistics-api.wildberries.ru"
+          ],
+          "/api/v1/documents/categories": [
+            "https://documents-api.wildberries.ru"
+          ],
+          "/api/v1/documents/list": [
+            "https://documents-api.wildberries.ru"
+          ],
+          "/api/v1/documents/download": [
+            "https://documents-api.wildberries.ru"
+          ],
+          "/api/v1/documents/download/all": [
+            "https://documents-api.wildberries.ru"
           ]
         }
       }

@@ -489,6 +489,7 @@ paths:
         | `confirm`  | **На сборке** |[Добавить сборочное задание к поставке](/openapi/orders-fbs#tag/Postavki-FBS/paths/~1api~1marketplace~1v3~1supplies~1%7BsupplyId%7D~1orders/patch)
         | `complete` | **В доставке** | [Передать поставку в доставку](/openapi/orders-fbs#tag/Postavki-FBS/paths/~1api~1v3~1supplies~1%7BsupplyId%7D~1deliver/patch) |
         | `cancel`   | **Отменено продавцом**   | [Отменить сборочное задание](/openapi/orders-fbs#tag/Sborochnye-zadaniya-FBS/paths/~1api~1v3~1orders~1%7BorderId%7D~1cancel/patch)|
+        | `cancel_carrier`   | **Отменено перевозчиком** <br>Только для кроссбордера   | Переводится перевозчиком |
 
         <br><br>
         `wbStatus` — статус системы Wildberries.
@@ -504,6 +505,7 @@ paths:
         - `ready_for_pickup` — сборочное задание прибыло на пункт выдачи заказов (ПВЗ)
         - `accepted_by_carrier` — продавец передал заказ в службу доставки в своей стране
         - `sent_to_carrier` — заказ отправлен на склад службы доставки в стране продавца
+        - `canceled_by_carrier` — заказ отменён перевозчиком. Только для кроссбордера
 
         <div class="description_limit">
         <a href="/openapi/api-information#tag/Vvedenie/Limity-zaprosov">Лимит запросов</a> на один аккаунт продавца для методов <strong>сборочных заданий, поставок и пропусков FBS</strong>:

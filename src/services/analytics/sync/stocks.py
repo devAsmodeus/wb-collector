@@ -21,9 +21,16 @@ class StocksSyncService(BaseService):
     ) -> list[dict]:
         """Загружает данные по остаткам из WB API."""
         payload = {
-            "startDate": start_date,
-            "endDate": end_date,
-            "timezone": "Europe/Moscow",
+            "currentPeriod": {
+                "start": start_date,
+                "end": end_date,
+            },
+            "stockType": "",
+            "skipDeletedNm": True,
+            "availabilityFilters": [],
+            "orderBy": {"field": "ordersCount", "mode": "desc"},
+            "offset": 0,
+            "limit": 1000,
         }
 
         try:

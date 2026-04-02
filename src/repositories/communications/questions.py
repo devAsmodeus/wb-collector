@@ -30,23 +30,28 @@ class QuestionsRepository:
             }
             for q in questions
         ]
-        stmt = insert(WbQuestion).values(rows)
-        stmt = stmt.on_conflict_do_update(
-            index_elements=["question_id"],
-            set_={
-                "created_date": stmt.excluded.created_date,
-                "state": stmt.excluded.state,
-                "text": stmt.excluded.text,
-                "nm_id": stmt.excluded.nm_id,
-                "answer_text": stmt.excluded.answer_text,
-                "user_name": stmt.excluded.user_name,
-                "product_details": stmt.excluded.product_details,
-                "fetched_at": stmt.excluded.fetched_at,
-            },
-        )
-        await self._session.execute(stmt)
-        await self._session.commit()
-        return len(rows)
+        CHUNK_SIZE = 32767 // 9  # asyncpg param limit: 32767, 9 cols per row
+        total = 0
+        for i in range(0, len(rows), CHUNK_SIZE):
+            chunk = rows[i:i + CHUNK_SIZE]
+            stmt = insert(WbQuestion).values(chunk)
+            stmt = stmt.on_conflict_do_update(
+                index_elements=["question_id"],
+                set_={
+                    "created_date": stmt.excluded.created_date,
+                    "state": stmt.excluded.state,
+                    "text": stmt.excluded.text,
+                    "nm_id": stmt.excluded.nm_id,
+                    "answer_text": stmt.excluded.answer_text,
+                    "user_name": stmt.excluded.user_name,
+                    "product_details": stmt.excluded.product_details,
+                    "fetched_at": stmt.excluded.fetched_at,
+                },
+            )
+            await self._session.execute(stmt)
+            await self._session.commit()
+            total += len(chunk)
+        return total
 
     async def get_max_date(self) -> datetime | None:
         """Возвращает максимальную дату создания вопроса из БД для инкрементальной синхронизации."""

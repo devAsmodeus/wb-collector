@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     WB_FINANCE_URL: str = "https://finance-api.wildberries.ru"
     WB_MARKETPLACE_URL: str = "https://marketplace-api.wildberries.ru"
     WB_ADVERT_URL: str = "https://advert-api.wildberries.ru"
+    WB_CALENDAR_URL: str = "https://dp-calendar-api.wildberries.ru"
     WB_FEEDBACKS_URL: str = "https://feedbacks-api.wildberries.ru"
     WB_USER_MGMT_URL: str = "https://user-management-api.wildberries.ru"
     WB_RETURNS_URL: str = "https://returns-api.wildberries.ru"

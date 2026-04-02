@@ -8,7 +8,7 @@ from src.schemas.fbw.acceptance import (
 
 class FBWAcceptanceCollector:
     def __init__(self):
-        self._client = WBApiClient(base_url=settings.WB_MARKETPLACE_URL, token=settings.WB_API_TOKEN)
+        self._client = WBApiClient(base_url=settings.WB_SUPPLIES_URL, token=settings.WB_API_TOKEN)
 
     async def __aenter__(self):
         await self._client.__aenter__()

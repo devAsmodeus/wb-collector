@@ -1,4 +1,4 @@
-"""Сервис Sync: Коммуникации — Синхронизация отзывов."""
+﻿"""Ð¡ÐµÑ€Ð²Ð¸Ñ Sync: ÐšÐ¾Ð¼Ð¼ÑƒÐ½Ð¸ÐºÐ°Ñ†Ð¸Ð¸ â€” Ð¡Ð¸Ð½Ñ…Ñ€Ð¾Ð½Ð¸Ð·Ð°Ñ†Ð¸Ñ Ð¾Ñ‚Ð·Ñ‹Ð²Ð¾Ð²."""
 import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,8 +14,8 @@ class FeedbacksSyncService(BaseService):
 
     async def sync_feedbacks(self, session: AsyncSession) -> dict:
         """
-        Полная выгрузка всех отзывов (отвеченных и неотвеченных).
-        Использует offset-based пагинацию по обоим статусам.
+        ÐŸÐ¾Ð»Ð½Ð°Ñ Ð²Ñ‹Ð³Ñ€ÑƒÐ·ÐºÐ° Ð²ÑÐµÑ… Ð¾Ñ‚Ð·Ñ‹Ð²Ð¾Ð² (Ð¾Ñ‚Ð²ÐµÑ‡ÐµÐ½Ð½Ñ‹Ñ… Ð¸ Ð½ÐµÐ¾Ñ‚Ð²ÐµÑ‡ÐµÐ½Ð½Ñ‹Ñ…).
+        Ð˜ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÑ‚ offset-based Ð¿Ð°Ð³Ð¸Ð½Ð°Ñ†Ð¸ÑŽ Ð¿Ð¾ Ð¾Ð±Ð¾Ð¸Ð¼ ÑÑ‚Ð°Ñ‚ÑƒÑÐ°Ð¼.
         """
         repo = FeedbacksRepository(session)
         all_feedbacks: list[dict] = []
@@ -23,7 +23,7 @@ class FeedbacksSyncService(BaseService):
         async with FeedbacksCollector() as collector:
             for is_answered in [False, True]:
                 offset = 0
-                limit = 50  # WB таймаутит при больших батчах
+                limit = 50  # WB Ñ‚Ð°Ð¹Ð¼Ð°ÑƒÑ‚Ð¸Ñ‚ Ð¿Ñ€Ð¸ Ð±Ð¾Ð»ÑŒÑˆÐ¸Ñ… Ð±Ð°Ñ‚Ñ‡Ð°Ñ…
                 while True:
                     response = await collector.get_list(
                         is_answered=is_answered,
@@ -31,7 +31,7 @@ class FeedbacksSyncService(BaseService):
                         offset=offset,
                         order="dateDesc",
                     )
-                    feedbacks = response.get("data", {}).get("feedbacks", [])
+                    feedbacks = (response.data or {}).get("feedbacks", [])
                     if not feedbacks:
                         break
                     all_feedbacks.extend(feedbacks)
@@ -44,8 +44,8 @@ class FeedbacksSyncService(BaseService):
 
     async def sync_feedbacks_incremental(self, session: AsyncSession) -> dict:
         """
-        Инкрементальная выгрузка отзывов — загружает только новые, начиная с max(created_date).
-        Если БД пуста — fallback на полную синхронизацию.
+        Ð˜Ð½ÐºÑ€ÐµÐ¼ÐµÐ½Ñ‚Ð°Ð»ÑŒÐ½Ð°Ñ Ð²Ñ‹Ð³Ñ€ÑƒÐ·ÐºÐ° Ð¾Ñ‚Ð·Ñ‹Ð²Ð¾Ð² â€” Ð·Ð°Ð³Ñ€ÑƒÐ¶Ð°ÐµÑ‚ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð½Ð¾Ð²Ñ‹Ðµ, Ð½Ð°Ñ‡Ð¸Ð½Ð°Ñ Ñ max(created_date).
+        Ð•ÑÐ»Ð¸ Ð‘Ð” Ð¿ÑƒÑÑ‚Ð° â€” fallback Ð½Ð° Ð¿Ð¾Ð»Ð½ÑƒÑŽ ÑÐ¸Ð½Ñ…Ñ€Ð¾Ð½Ð¸Ð·Ð°Ñ†Ð¸ÑŽ.
         """
         repo = FeedbacksRepository(session)
         max_date = await repo.get_max_date()
@@ -56,7 +56,7 @@ class FeedbacksSyncService(BaseService):
             result["source"] = "incremental_fallback_full"
             return result
 
-        # WB API принимает dateFrom как unix timestamp (секунды)
+        # WB API Ð¿Ñ€Ð¸Ð½Ð¸Ð¼Ð°ÐµÑ‚ dateFrom ÐºÐ°Ðº unix timestamp (ÑÐµÐºÑƒÐ½Ð´Ñ‹)
         date_from_ts = str(int(max_date.timestamp()))
         all_feedbacks: list[dict] = []
 
@@ -72,7 +72,7 @@ class FeedbacksSyncService(BaseService):
                         order="dateDesc",
                         date_from=date_from_ts,
                     )
-                    feedbacks = response.get("data", {}).get("feedbacks", [])
+                    feedbacks = (response.data or {}).get("feedbacks", [])
                     if not feedbacks:
                         break
                     all_feedbacks.extend(feedbacks)
@@ -82,3 +82,4 @@ class FeedbacksSyncService(BaseService):
         saved = await repo.upsert_many(all_feedbacks)
         logger.info(f"Feedbacks incremental synced: {saved} records (from_date={max_date.isoformat()})")
         return {"synced": saved, "source": "incremental", "from_date": max_date.isoformat()}
+

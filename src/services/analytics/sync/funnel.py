@@ -1,4 +1,4 @@
-"""Сервис Sync: Аналитика — Воронка продаж по артикулам."""
+﻿"""Сервис Sync: Аналитика — Воронка продаж по артикулам."""
 import logging
 from datetime import date, datetime, timedelta
 
@@ -43,10 +43,15 @@ class FunnelSyncService(BaseService):
             for i in range(0, len(nm_ids), _FUNNEL_BATCH_SIZE):
                 batch_ids = nm_ids[i: i + _FUNNEL_BATCH_SIZE]
                 payload = {
-                    "nmIDs": batch_ids,
-                    "startDate": start_date.isoformat(),
-                    "endDate": end_date.isoformat(),
-                    "timezone": "Europe/Moscow",
+                    "nmIds": batch_ids,
+                    "selectedPeriod": {
+                        "start": start_date.isoformat(),
+                        "end": end_date.isoformat(),
+                    },
+                    "skipDeletedNm": False,
+                    "orderBy": {"field": "orderCount", "mode": "desc"},
+                    "limit": _FUNNEL_BATCH_SIZE,
+                    "offset": 0,
                 }
 
                 try:
@@ -124,10 +129,15 @@ class FunnelSyncService(BaseService):
             for i in range(0, len(nm_ids), _FUNNEL_BATCH_SIZE):
                 batch_ids = nm_ids[i: i + _FUNNEL_BATCH_SIZE]
                 payload = {
-                    "nmIDs": batch_ids,
-                    "startDate": start_date.isoformat(),
-                    "endDate": end_date.isoformat(),
-                    "timezone": "Europe/Moscow",
+                    "nmIds": batch_ids,
+                    "selectedPeriod": {
+                        "start": start_date.isoformat(),
+                        "end": end_date.isoformat(),
+                    },
+                    "skipDeletedNm": False,
+                    "orderBy": {"field": "orderCount", "mode": "desc"},
+                    "limit": _FUNNEL_BATCH_SIZE,
+                    "offset": 0,
                 }
 
                 try:
@@ -177,3 +187,4 @@ class FunnelSyncService(BaseService):
         saved = await repo.upsert_many(all_rows)
         logger.info(f"Funnel incremental synced: {saved} records (from_date={max_date.isoformat()})")
         return {"synced": saved, "source": "incremental", "from_date": max_date.isoformat()}
+

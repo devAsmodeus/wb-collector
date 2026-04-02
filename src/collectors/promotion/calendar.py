@@ -6,7 +6,7 @@ from src.schemas.promotion.calendar import PromotionsResponse
 
 class CalendarCollector:
     def __init__(self):
-        self._client = WBApiClient(base_url=settings.WB_ADVERT_URL, token=settings.WB_API_TOKEN)
+        self._client = WBApiClient(base_url=settings.WB_CALENDAR_URL, token=settings.WB_API_TOKEN)
 
     async def __aenter__(self):
         await self._client.__aenter__()

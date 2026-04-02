@@ -1,9 +1,10 @@
-"""Сервис Sync: Коммуникации — Синхронизация вопросов."""
+﻿"""Ð¡ÐµÑ€Ð²Ð¸Ñ Sync: ÐšÐ¾Ð¼Ð¼ÑƒÐ½Ð¸ÐºÐ°Ñ†Ð¸Ð¸ â€” Ð¡Ð¸Ð½Ñ…Ñ€Ð¾Ð½Ð¸Ð·Ð°Ñ†Ð¸Ñ Ð²Ð¾Ð¿Ñ€Ð¾ÑÐ¾Ð²."""
 import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.collectors.communications.questions import QuestionsCollector
+from src.exceptions import WBApiException
 from src.repositories.communications.questions import QuestionsRepository
 from src.services.base import BaseService
 
@@ -14,8 +15,8 @@ class QuestionsSyncService(BaseService):
 
     async def sync_questions(self, session: AsyncSession) -> dict:
         """
-        Полная выгрузка всех вопросов (отвеченных и неотвеченных).
-        Использует offset-based пагинацию по обоим статусам.
+        ÐŸÐ¾Ð»Ð½Ð°Ñ Ð²Ñ‹Ð³Ñ€ÑƒÐ·ÐºÐ° Ð²ÑÐµÑ… Ð²Ð¾Ð¿Ñ€Ð¾ÑÐ¾Ð² (Ð¾Ñ‚Ð²ÐµÑ‡ÐµÐ½Ð½Ñ‹Ñ… Ð¸ Ð½ÐµÐ¾Ñ‚Ð²ÐµÑ‡ÐµÐ½Ð½Ñ‹Ñ…).
+        Ð˜ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÑ‚ offset-based Ð¿Ð°Ð³Ð¸Ð½Ð°Ñ†Ð¸ÑŽ Ð¿Ð¾ Ð¾Ð±Ð¾Ð¸Ð¼ ÑÑ‚Ð°Ñ‚ÑƒÑÐ°Ð¼.
         """
         repo = QuestionsRepository(session)
         all_questions: list[dict] = []
@@ -27,13 +28,20 @@ class QuestionsSyncService(BaseService):
                 # WB API: take + skip <= 10000
                 max_skip = 10000
                 while offset < max_skip:
-                    response = await collector.get_list(
-                        is_answered=is_answered,
-                        limit=min(limit, max_skip - offset),
-                        offset=offset,
-                        order="dateDesc",
-                    )
-                    questions = response.get("data", {}).get("questions", [])
+                    try:
+                        response = await collector.get_list(
+                            is_answered=is_answered,
+                            limit=min(limit, max_skip - offset),
+                            offset=offset,
+                            order="dateDesc",
+                        )
+                    except WBApiException as e:
+                        if e.status_code == 422:
+                            logger.info(f"Questions: WB limit at offset={offset}, stopping")
+                        else:
+                            logger.error(f"Questions: WB error {e.status_code} at offset={offset}")
+                        break
+                    questions = (response.data or {}).get("questions", [])
                     if not questions:
                         break
                     all_questions.extend(questions)
@@ -46,8 +54,8 @@ class QuestionsSyncService(BaseService):
 
     async def sync_questions_incremental(self, session: AsyncSession) -> dict:
         """
-        Инкрементальная выгрузка вопросов — загружает только новые, начиная с max(created_date).
-        Если БД пуста — fallback на полную синхронизацию.
+        Ð˜Ð½ÐºÑ€ÐµÐ¼ÐµÐ½Ñ‚Ð°Ð»ÑŒÐ½Ð°Ñ Ð²Ñ‹Ð³Ñ€ÑƒÐ·ÐºÐ° Ð²Ð¾Ð¿Ñ€Ð¾ÑÐ¾Ð² â€” Ð·Ð°Ð³Ñ€ÑƒÐ¶Ð°ÐµÑ‚ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð½Ð¾Ð²Ñ‹Ðµ, Ð½Ð°Ñ‡Ð¸Ð½Ð°Ñ Ñ max(created_date).
+        Ð•ÑÐ»Ð¸ Ð‘Ð” Ð¿ÑƒÑÑ‚Ð° â€” fallback Ð½Ð° Ð¿Ð¾Ð»Ð½ÑƒÑŽ ÑÐ¸Ð½Ñ…Ñ€Ð¾Ð½Ð¸Ð·Ð°Ñ†Ð¸ÑŽ.
         """
         repo = QuestionsRepository(session)
         max_date = await repo.get_max_date()
@@ -58,7 +66,7 @@ class QuestionsSyncService(BaseService):
             result["source"] = "incremental_fallback_full"
             return result
 
-        # WB API принимает dateFrom как unix timestamp (секунды)
+        # WB API Ð¿Ñ€Ð¸Ð½Ð¸Ð¼Ð°ÐµÑ‚ dateFrom ÐºÐ°Ðº unix timestamp (ÑÐµÐºÑƒÐ½Ð´Ñ‹)
         date_from_ts = str(int(max_date.timestamp()))
         all_questions: list[dict] = []
 
@@ -75,7 +83,7 @@ class QuestionsSyncService(BaseService):
                         order="dateDesc",
                         date_from=date_from_ts,
                     )
-                    questions = response.get("data", {}).get("questions", [])
+                    questions = (response.data or {}).get("questions", [])
                     if not questions:
                         break
                     all_questions.extend(questions)
@@ -85,3 +93,4 @@ class QuestionsSyncService(BaseService):
         saved = await repo.upsert_many(all_questions)
         logger.info(f"Questions incremental synced: {saved} records (from_date={max_date.isoformat()})")
         return {"synced": saved, "source": "incremental", "from_date": max_date.isoformat()}
+

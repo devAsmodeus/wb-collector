@@ -13,9 +13,12 @@ def _parse_wb_decimal(v) -> Decimal | None:
 
 class CommissionCategory(BaseModel):
     """Комиссия по категории товаров."""
+    model_config = {"populate_by_name": True}
+
     parentName: str | None = Field(None, description="Родительская категория")
     subjectName: str | None = Field(None, description="Название категории (предмет)")
-    subjectId: int | None = Field(None, description="ID категории")
+    subjectID: int | None = Field(None, alias="subjectID", description="ID категории")
+    subjectId: int | None = Field(None, description="ID категории (fallback)")
     kgvpMarketplace: float | None = Field(None, description="Комиссия за продажу (маркетплейс)")
     kgvpSupplier: float | None = Field(None, description="Комиссия за продажу (поставщик)")
     kgvpSupplierExpress: float | None = Field(None, description="Комиссия за продажу (экспресс)")

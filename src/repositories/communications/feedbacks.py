@@ -37,30 +37,35 @@ class FeedbacksRepository:
             }
             for f in feedbacks
         ]
-        stmt = insert(WbFeedback).values(rows)
-        stmt = stmt.on_conflict_do_update(
-            index_elements=["feedback_id"],
-            set_={
-                "created_date": stmt.excluded.created_date,
-                "product_valuation": stmt.excluded.product_valuation,
-                "was_viewed": stmt.excluded.was_viewed,
-                "text": stmt.excluded.text,
-                "nm_id": stmt.excluded.nm_id,
-                "supplier_article": stmt.excluded.supplier_article,
-                "subject_name": stmt.excluded.subject_name,
-                "answer_text": stmt.excluded.answer_text,
-                "answer_state": stmt.excluded.answer_state,
-                "user_name": stmt.excluded.user_name,
-                "is_able_to_change_grade": stmt.excluded.is_able_to_change_grade,
-                "photo": stmt.excluded.photo,
-                "video": stmt.excluded.video,
-                "product_details": stmt.excluded.product_details,
-                "fetched_at": stmt.excluded.fetched_at,
-            },
-        )
-        await self._session.execute(stmt)
-        await self._session.commit()
-        return len(rows)
+        CHUNK_SIZE = 32767 // 15  # asyncpg param limit: 32767, 15 cols per row = ~2184 rows
+        total = 0
+        for i in range(0, len(rows), CHUNK_SIZE):
+            chunk = rows[i:i + CHUNK_SIZE]
+            stmt = insert(WbFeedback).values(chunk)
+            stmt = stmt.on_conflict_do_update(
+                index_elements=["feedback_id"],
+                set_={
+                    "created_date": stmt.excluded.created_date,
+                    "product_valuation": stmt.excluded.product_valuation,
+                    "was_viewed": stmt.excluded.was_viewed,
+                    "text": stmt.excluded.text,
+                    "nm_id": stmt.excluded.nm_id,
+                    "supplier_article": stmt.excluded.supplier_article,
+                    "subject_name": stmt.excluded.subject_name,
+                    "answer_text": stmt.excluded.answer_text,
+                    "answer_state": stmt.excluded.answer_state,
+                    "user_name": stmt.excluded.user_name,
+                    "is_able_to_change_grade": stmt.excluded.is_able_to_change_grade,
+                    "photo": stmt.excluded.photo,
+                    "video": stmt.excluded.video,
+                    "product_details": stmt.excluded.product_details,
+                    "fetched_at": stmt.excluded.fetched_at,
+                },
+            )
+            await self._session.execute(stmt)
+            await self._session.commit()
+            total += len(chunk)
+        return total
 
     async def get_max_date(self) -> datetime | None:
         """Возвращает максимальную дату создания отзыва из БД для инкрементальной синхронизации."""

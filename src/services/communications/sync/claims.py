@@ -24,7 +24,7 @@ class ClaimsSyncService(BaseService):
             offset = 0
             limit = 100
             while True:
-                response = await collector.get_claims(limit=limit, offset=offset)
+                response = await collector.get_claims(limit=limit, offset=offset, is_archive=False)
                 claims = response.get("data", {}).get("claims", [])
                 if not claims:
                     break

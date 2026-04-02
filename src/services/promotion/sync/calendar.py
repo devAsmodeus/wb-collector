@@ -1,5 +1,6 @@
-"""Сервис Sync: Маркетинг — Синхронизация акций (календарь)."""
+"""Сервис Sync: Промо-Календарь — синхронизация акций (ежедневная)."""
 import logging
+from datetime import datetime, timedelta
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -14,13 +15,24 @@ class CalendarSyncService(BaseService):
 
     async def sync_promotions(self, session: AsyncSession) -> dict:
         """
-        Полная выгрузка акций из календаря WB.
-        Загружает все акции через get_promotions и сохраняет в wb_promotions.
+        Полная синхронизация акций из календаря WB.
+        Запрашивает все акции за диапазон -30/+180 дней.
         """
         repo = PromotionsRepository(session)
 
+        now = datetime.utcnow()
+        start = (now - timedelta(days=30)).strftime("%Y-%m-%dT00:00:00Z")
+        end = (now + timedelta(days=180)).strftime("%Y-%m-%dT23:59:59Z")
+        params = {
+            "startDateTime": start,
+            "endDateTime": end,
+            "allPromo": "true",
+            "limit": 1000,
+            "offset": 0,
+        }
+
         async with CalendarCollector() as collector:
-            response = await collector.get_promotions()
+            response = await collector.get_promotions(params=params)
 
         promotions = []
         if isinstance(response, list):
@@ -35,10 +47,7 @@ class CalendarSyncService(BaseService):
         return {"synced": saved, "source": "full"}
 
     async def sync_promotions_incremental(self, session: AsyncSession) -> dict:
-        """
-        Инкрементальная синхронизация акций.
-        Акции — справочные данные, incremental = full sync (upsert обновит данные).
-        """
+        """Акции — динамические данные, incremental = full sync."""
         result = await self.sync_promotions(session)
         result["source"] = "incremental"
         return result

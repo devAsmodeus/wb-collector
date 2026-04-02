@@ -49,7 +49,7 @@ class TariffsRepository:
             return 0
         rows = [
             {
-                "subject_id": item.subjectId,
+                "subject_id": item.subjectID or item.subjectId,
                 "subject_name": item.subjectName,
                 "parent_name": item.parentName,
                 "kgvp_marketplace": item.kgvpMarketplace,

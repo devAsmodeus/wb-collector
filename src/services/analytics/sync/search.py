@@ -29,9 +29,12 @@ class SearchSyncService(BaseService):
 
         while offset < _SEARCH_MAX_OFFSET:
             payload = {
-                "startDate": start_date,
-                "endDate": end_date,
-                "timezone": "Europe/Moscow",
+                "currentPeriod": {
+                    "start": start_date,
+                    "end": end_date,
+                },
+                "positionCluster": "all",
+                "orderBy": {"field": "avgPosition", "mode": "desc"},
                 "limit": _SEARCH_PAGE_SIZE,
                 "offset": offset,
             }

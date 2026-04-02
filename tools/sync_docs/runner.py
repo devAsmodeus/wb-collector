@@ -85,12 +85,12 @@ def run() -> dict:
         summary       = report[:500]
         _git_commit(changed_names, summary)
 
-        # Отправляем уведомление в Telegram
-        try:
-            from tools.telegram import send as tg_send
-            tg_send(report)
-        except Exception:
-            pass
+    # Уведомление в Telegram всегда (изменения или нет)
+    try:
+        from tools.telegram import send as tg_send
+        tg_send(report)
+    except Exception:
+        pass
 
     return {
         "status":        "changed" if changed else "ok",

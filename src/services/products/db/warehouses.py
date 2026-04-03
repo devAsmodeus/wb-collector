@@ -17,6 +17,11 @@ class WarehousesDbService(BaseService):
                 {
                     "warehouse_id": w.warehouse_id,
                     "name": w.name,
+                    "office_id": w.office_id,
+                    "cargo_type": w.cargo_type,
+                    "delivery_type": w.delivery_type,
+                    "is_deleting": w.is_deleting,
+                    "is_processing": w.is_processing,
                     "fetched_at": w.fetched_at.isoformat() if w.fetched_at else None,
                 }
                 for w in items

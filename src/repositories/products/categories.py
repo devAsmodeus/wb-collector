@@ -23,7 +23,6 @@ class CategoriesRepository:
             {
                 "category_id": cat["category_id"],
                 "name": cat["name"],
-                "parent_id": cat.get("parent_id"),
                 "fetched_at": datetime.utcnow(),
             }
             for cat in categories
@@ -33,7 +32,6 @@ class CategoriesRepository:
             index_elements=["category_id"],
             set_={
                 "name": stmt.excluded.name,
-                "parent_id": stmt.excluded.parent_id,
                 "fetched_at": stmt.excluded.fetched_at,
             },
         )

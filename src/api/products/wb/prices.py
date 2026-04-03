@@ -34,15 +34,13 @@ class PricesController(Controller):
     )
     async def get_goods(
         self,
-        limit: int = Parameter(
-            100,
+        limit: int = Parameter(default=100,
             query="limit",
             ge=1,
             le=1000,
             description="Количество товаров в ответе. Диапазон: 1–1000. По умолчанию: 100.",
         ),
-        offset: int = Parameter(
-            0,
+        offset: int = Parameter(default=0,
             query="offset",
             ge=0,
             description="Смещение для пагинации. По умолчанию: 0.",
@@ -84,15 +82,13 @@ class PricesController(Controller):
     )
     async def get_quarantine(
         self,
-        limit: int = Parameter(
-            100,
+        limit: int = Parameter(default=100,
             query="limit",
             ge=1,
             le=1000,
             description="Количество товаров в ответе. По умолчанию: 100.",
         ),
-        offset: int = Parameter(
-            0,
+        offset: int = Parameter(default=0,
             query="offset",
             ge=0,
             description="Смещение для пагинации. По умолчанию: 0.",
@@ -113,15 +109,13 @@ class PricesController(Controller):
     )
     async def get_upload_history(
         self,
-        limit: int = Parameter(
-            100,
+        limit: int = Parameter(default=100,
             query="limit",
             ge=1,
             le=1000,
             description="Количество задач в ответе. По умолчанию: 100.",
         ),
-        offset: int = Parameter(
-            0,
+        offset: int = Parameter(default=0,
             query="offset",
             ge=0,
             description="Смещение для пагинации. По умолчанию: 0.",
@@ -163,15 +157,13 @@ class PricesController(Controller):
     )
     async def get_buffer_tasks(
         self,
-        limit: int = Parameter(
-            100,
+        limit: int = Parameter(default=100,
             query="limit",
             ge=1,
             le=1000,
             description="Количество задач в ответе. По умолчанию: 100.",
         ),
-        offset: int = Parameter(
-            0,
+        offset: int = Parameter(default=0,
             query="offset",
             ge=0,
             description="Смещение для пагинации. По умолчанию: 0.",

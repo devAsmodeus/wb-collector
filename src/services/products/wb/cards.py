@@ -25,3 +25,27 @@ class CardsService(BaseService):
     async def generate_barcodes(self, count: int) -> dict:
         async with ProductsCollector() as c:
             return await c.cards.generate_barcodes(count)
+
+    async def update_cards(self, cards: list) -> dict:
+        async with ProductsCollector() as c:
+            return await c.cards.update_cards(cards)
+
+    async def move_cards(self, target_imt: int, nm_ids: list) -> dict:
+        async with ProductsCollector() as c:
+            return await c.cards.move_cards(target_imt_id=target_imt, nm_ids=nm_ids)
+
+    async def delete_cards_to_trash(self, nm_ids: list) -> dict:
+        async with ProductsCollector() as c:
+            return await c.cards.delete_cards_to_trash(nm_ids)
+
+    async def recover_cards(self, nm_ids: list) -> dict:
+        async with ProductsCollector() as c:
+            return await c.cards.recover_cards(nm_ids)
+
+    async def upload_cards(self, cards: list) -> dict:
+        async with ProductsCollector() as c:
+            return await c.cards.create_cards(cards)
+
+    async def upload_add_cards(self, cards: list) -> dict:
+        async with ProductsCollector() as c:
+            return await c.cards.create_cards_with_attach(imt_id=0, cards_to_add=cards)

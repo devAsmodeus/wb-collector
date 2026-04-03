@@ -41,10 +41,11 @@ class CardTag(BaseModel):
 
 class CardDimensions(BaseModel):
     """Габариты и вес товара."""
-    length: float | None = Field(None, description="Длина упаковки, см")
-    width: float | None = Field(None, description="Ширина упаковки, см")
-    height: float | None = Field(None, description="Высота упаковки, см")
+    length: int | None = Field(None, description="Длина упаковки, см")
+    width: int | None = Field(None, description="Ширина упаковки, см")
+    height: int | None = Field(None, description="Высота упаковки, см")
     weightBrutto: float | None = Field(None, description="Вес брутто (с упаковкой), кг")
+    isValid: bool | None = Field(None, description="isValid — Корректность габаритов")
 
 
 # ---------------------------------------------------------------------------

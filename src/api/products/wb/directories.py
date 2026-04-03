@@ -35,14 +35,9 @@ class DirectoriesController(Controller):
     async def get_parent_categories(
         self,
         locale: str = Parameter(
-            "ru",
+            default="ru",
             query="locale",
-            description=(
-                "Язык ответа. Поддерживаемые значения: "
-                "`ru` — русский (по умолчанию), "
-                "`en` — английский, "
-                "`zh` — китайский."
-            ),
+            description="Язык ответа: ru (по умолчанию), en, zh.",
         ),
     ) -> ParentCategoriesResponse:
         return await DirectoriesService().get_parent_categories(locale=locale)
@@ -60,21 +55,8 @@ class DirectoriesController(Controller):
     )
     async def get_subjects(
         self,
-        name: str | None = Parameter(
-            None,
-            query="name",
-            description=(
-                "Фильтр по названию предмета (частичное совпадение, регистронезависимо).\n"
-                "Напр. `футбол` вернёт 'Футболка', 'Футбол' и др."
-            ),
-        ),
-        limit: int = Parameter(
-            1000,
-            query="limit",
-            ge=1,
-            le=1000,
-            description="Максимальное количество предметов в ответе. Диапазон: 1–1000. По умолчанию: 1000.",
-        ),
+        name: str | None = Parameter(default=None, query="name", description="Фильтр по названию предмета"),
+        limit: int = Parameter(default=1000, query="limit", ge=1, le=1000, description="Кол-во предметов (1–1000)"),
     ) -> SubjectsResponse:
         return await DirectoriesService().get_subjects(name=name, limit=limit)
 

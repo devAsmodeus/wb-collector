@@ -18,7 +18,6 @@ class DirectoriesDbService(BaseService):
                 {
                     "category_id": c.category_id,
                     "name": c.name,
-                    "parent_id": c.parent_id,
                     "fetched_at": c.fetched_at.isoformat() if c.fetched_at else None,
                 }
                 for c in items

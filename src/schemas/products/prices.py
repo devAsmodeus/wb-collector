@@ -40,6 +40,7 @@ class GoodsItem(BaseModel):
         default=False,
         description="Если `true` — цену можно устанавливать отдельно для каждого размера",
     )
+    isBadTurnover: bool | None = Field(None, description="Плохая оборачиваемость товара")
 
 
 class GoodsListData(BaseModel):

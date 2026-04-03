@@ -56,27 +56,14 @@ class WBOfficesResponse(BaseModel):
 # ---------------------------------------------------------------------------
 
 class SellerWarehouse(BaseModel):
-    """Склад продавца (для схемы FBS — отгрузка со своего склада)."""
-    id: int | None = Field(None, description="Внутренний ID склада продавца")
-    warehouseId: int | None = Field(None, description="ID склада в системе WB")
-    name: str | None = Field(None, description="Название склада продавца")
-    officeId: int | None = Field(
-        None,
-        description="ID офиса WB, к которому привязан склад продавца",
-    )
-    isProcessing: bool | None = Field(
-        None,
-        description="Обрабатывает ли склад заказы в данный момент",
-    )
-    cargoType: int | None = Field(
-        None,
-        description=(
-            "Тип доставки: "
-            "`1` — короба, "
-            "`2` — монопаллеты, "
-            "`3` — суперсейф."
-        ),
-    )
+    """Склад продавца. GET /api/v3/warehouses — схема Warehouse."""
+    id: int | None = Field(None, description="id — ID склада")
+    name: str | None = Field(None, description="name — Название склада")
+    officeId: int | None = Field(None, description="officeId — ID офиса WB")
+    cargoType: int | None = Field(None, description="cargoType — Тип груза (1=короба, 2=паллеты, 3=суперсейф)")
+    deliveryType: int | None = Field(None, description="deliveryType — Тип доставки")
+    isDeleting: bool | None = Field(None, description="isDeleting — В процессе удаления")
+    isProcessing: bool | None = Field(None, description="isProcessing — В процессе создания")
 
     model_config = {"extra": "allow"}
 

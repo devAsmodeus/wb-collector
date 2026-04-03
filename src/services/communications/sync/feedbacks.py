@@ -153,3 +153,40 @@ class FeedbacksSyncService(BaseService):
             "source": "incremental",
             "from_date": max_date.isoformat(),
         }
+
+
+    async def sync_feedbacks_historical(self, session: AsyncSession) -> dict:
+        """
+        Разовая полная выгрузка всех 116k+ отзывов.
+        Запускается через Celery task (time_limit=6h), не через HTTP.
+        Не ограничивает диапазон дат — загружает всё.
+        """
+        repo = FeedbacksRepository(session)
+        total_saved = 0
+        CHUNK = 50
+
+        async with FeedbacksCollector() as collector:
+            for is_answered in [False, True]:
+                offset = 0
+                page = 0
+                while True:
+                    response = await collector.get_list(
+                        is_answered=is_answered,
+                        limit=CHUNK,
+                        offset=offset,
+                        order="dateDesc",
+                    )
+                    feedbacks = (response.data or {}).get("feedbacks", [])
+                    if not feedbacks:
+                        break
+                    saved = await repo.upsert_many(feedbacks)
+                    total_saved += saved
+                    page += 1
+                    if page % 100 == 0:
+                        logger.info(f"Historical feedbacks: is_answered={is_answered}, page={page}, total={total_saved}")
+                    if len(feedbacks) < CHUNK:
+                        break
+                    offset += CHUNK
+
+        logger.info(f"Historical feedbacks done: {total_saved} total")
+        return {"synced": total_saved, "source": "historical"}

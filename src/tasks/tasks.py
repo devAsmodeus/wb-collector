@@ -601,8 +601,11 @@ def sync_finances_full(self):
     from src.services.finances.sync.finances import FinancesSyncService
 
     async def _run():
+        from datetime import datetime, timedelta
+        date_from = (datetime.utcnow() - timedelta(days=30)).strftime("%Y-%m-%d")
+        date_to = datetime.utcnow().strftime("%Y-%m-%d")
         async with DBManager() as db:
-            result = await FinancesSyncService().sync_financial_report(db.session)
+            result = await FinancesSyncService().sync_financial_report(db.session, date_from, date_to)
         logger.info(f"[sync.finances.full] Synced: {result.get('synced', 0)} finance records")
         return result
 

@@ -74,7 +74,7 @@ class FinancesSyncService(BaseService):
         """
         repo = FinancialReportsRepository(session)
         rrdid = 0
-        limit = 100000
+        limit = 10000   # 100k строк → OOM crash. 10k строк × 40 полей = 400k params — OK
         total_saved = 0
         page = 0
 
@@ -127,7 +127,7 @@ class FinancesSyncService(BaseService):
             return result
 
         rrdid = max_rrd_id
-        limit = 100000
+        limit = 10000
         total_saved = 0
         page = 0
 
@@ -170,3 +170,53 @@ class FinancesSyncService(BaseService):
             "from_rrd_id": max_rrd_id,
             "pages": page,
         }
+
+
+    async def sync_financial_report_historical(self, session: AsyncSession) -> dict:
+        """
+        Разовая полная историческая выгрузка финотчёта за 2 года по неделям.
+        Запускается через Celery task, не через HTTP (слишком долго).
+        Делит период на недели чтобы не перегружать WB API и память.
+        """
+        from datetime import date, timedelta
+        repo = FinancialReportsRepository(session)
+        total_saved = 0
+        weeks = 0
+        limit = 10000
+
+        # WB хранит данные за 2 года
+        end = date.today()
+        start = end - timedelta(days=730)
+
+        # Идём по неделям начиная с самых ранних
+        current = start
+        async with FinancesCollector() as collector:
+            while current < end:
+                week_end = min(current + timedelta(days=7), end)
+                date_from = current.strftime("%Y-%m-%d")
+                date_to = week_end.strftime("%Y-%m-%d")
+                rrdid = 0
+                weeks += 1
+
+                while True:
+                    try:
+                        items = await collector.get_financial_report(
+                            date_from, date_to, limit=limit, rrdid=rrdid
+                        )
+                    except WBApiException as e:
+                        if e.status_code == 204:
+                            break
+                        raise
+                    if not items or not isinstance(items, list):
+                        break
+                    saved = await repo.upsert_many(items)
+                    total_saved += saved
+                    last_rrd_id = items[-1].get("rrd_id", 0)
+                    if last_rrd_id <= rrdid or len(items) < limit:
+                        break
+                    rrdid = last_rrd_id
+
+                logger.info(f"Historical finances: week {weeks} ({date_from}→{date_to}), total={total_saved}")
+                current = week_end
+
+        return {"synced": total_saved, "weeks": weeks, "source": "historical"}

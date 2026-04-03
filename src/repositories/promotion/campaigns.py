@@ -1,5 +1,5 @@
 """Репозиторий: Рекламные кампании WB."""
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import insert
@@ -16,6 +16,19 @@ class CampaignsRepository:
         """Вставляет или обновляет кампании. Возвращает кол-во обработанных записей."""
         if not campaigns:
             return 0
+
+        def _parse_dt(val) -> datetime | None:
+            """Конвертирует ISO-строку или datetime в datetime (naive UTC)."""
+            if val is None:
+                return None
+            if isinstance(val, datetime):
+                return val.replace(tzinfo=None) if val.tzinfo else val
+            try:
+                dt = datetime.fromisoformat(str(val))
+                return dt.replace(tzinfo=None) if dt.tzinfo else dt
+            except (ValueError, TypeError):
+                return None
+
         rows = [
             {
                 "advert_id": c.get("advertId") or c.get("advert_id"),
@@ -23,14 +36,14 @@ class CampaignsRepository:
                 "status": c.get("status"),
                 "type": c.get("type"),
                 "payment_type": c.get("paymentType") or c.get("payment_type"),
-                "create_time": c.get("createTime") or c.get("create_time"),
-                "change_time": c.get("changeTime") or c.get("change_time"),
-                "start_time": c.get("startTime") or c.get("start_time"),
-                "end_time": c.get("endTime") or c.get("end_time"),
+                "create_time": _parse_dt(c.get("createTime") or c.get("create_time")),
+                "change_time": _parse_dt(c.get("changeTime") or c.get("change_time")),
+                "start_time": _parse_dt(c.get("startTime") or c.get("start_time")),
+                "end_time": _parse_dt(c.get("endTime") or c.get("end_time")),
                 "fetched_at": datetime.utcnow(),
             }
             for c in campaigns
-            if c.get("advertId") or c.get("advert_id")  # WB может вернуть кампанию без ID
+            if c.get("advertId") or c.get("advert_id")
         ]
         if not rows:
             return 0

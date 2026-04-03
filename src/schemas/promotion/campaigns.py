@@ -3,86 +3,64 @@ from pydantic import BaseModel, Field
 
 
 class AdvertListItem(BaseModel):
-    """Single campaign entry from advert_list."""
-    advertId: int | None = Field(None)
-    changeTime: str | None = Field(None)
-
-
-class AdvertListItem(BaseModel):
-    """Single campaign entry from advert_list."""
+    """Элемент advert_list (advertId + changeTime) из /adv/v1/promotion/count."""
     advertId: int | None = Field(None)
     changeTime: str | None = Field(None)
 
 
 class AdvertCountItem(BaseModel):
-    """Количество кампаний по статусу."""
-    status: int | None = Field(None, description="Статус кампании")
-    count: int | None = Field(None, description="Количество кампаний в данном статусе")
+    """Группа кампаний по типу и статусу."""
     type: int | None = Field(None)
-    advert_list: list[AdvertListItem] | None = Field(None)
-    type: int | None = Field(None)
+    status: int | None = Field(None)
+    count: int | None = Field(None)
     advert_list: list[AdvertListItem] | None = Field(None)
 
 
 class AdvertCountResponse(BaseModel):
     """Количество кампаний по типам и статусам."""
-    adverts: list[AdvertCountItem] | None = Field(None, description="Данные по кампаниям")
-    all: int | None = Field(None, description="Общее количество кампаний всех статусов и типов")
+    adverts: list[AdvertCountItem] | None = Field(None)
+    all: int | None = Field(None)
 
 
 class AdvertInfo(BaseModel):
-    """Информация о рекламной кампании."""
-    advertId: int | None = Field(None, description="ID кампании")
-    name: str | None = Field(None, description="Название кампании")
-    status: int | None = Field(
-        None,
-        description=(
-            "Статус кампании:\n"
-            "- `-1` — удалена\n- `4` — готова к запуску\n"
-            "- `7` — завершена\n- `8` — отказ\n- `9` — идут показы\n- `11` — на паузе"
-        ),
-    )
-    type: int | None = Field(
-        None,
-        description="Тип кампании: `4` — каталог, `5` — карточка, `6` — поиск, `7` — рекомендации, `9` — авто",
-    )
-    paymentType: str | None = Field(None, description="Тип оплаты: `cpm` — за показы, `cpc` — за клики")
-    createTime: str | None = Field(None, description="Дата и время создания кампании (ISO 8601)")
-    changeTime: str | None = Field(None, description="Дата и время последнего изменения (ISO 8601)")
-    startTime: str | None = Field(None, description="Дата и время запуска кампании (ISO 8601)")
-    endTime: str | None = Field(None, description="Дата и время завершения кампании (ISO 8601)")
+    """Информация об отдельной кампании."""
+    advertId: int | None = Field(None)
+    name: str | None = Field(None)
+    status: int | None = Field(None)
+    type: int | None = Field(None)
+    paymentType: str | None = Field(None)
+    createTime: str | None = Field(None)
+    changeTime: str | None = Field(None)
+    startTime: str | None = Field(None)
+    endTime: str | None = Field(None)
 
 
 class AdvertsResponse(BaseModel):
     """Список рекламных кампаний."""
-    adverts: list[AdvertInfo] = Field(default=[], description="Рекламные кампании")
+    adverts: list[AdvertInfo] = Field(default=[])
 
 
 class MinBidRequest(BaseModel):
     """Запрос минимальных ставок."""
     advert_id: int = Field(description="ID кампании")
     nm_ids: list[int] = Field(description="Список артикулов WB (nmID)")
-    payment_type: str = Field(description="Тип оплаты: `cpm` — за показы, `cpc` — за клики")
-    placement_types: list[str] = Field(
-        description="Места размещения: `search` — поиск, `recommendation` — рекомендации",
-    )
+    payment_type: str = Field(description="Тип оплаты: `cpm` или `cpc`")
+    placement_types: list[str] = Field(description="Типы размещения: `search`, `recommendation`")
 
 
 class CreateCampaignRequest(BaseModel):
     """Создание рекламной кампании."""
-    name: str = Field(description="Название кампании (максимум 100 символов)")
-    nms: list[int] = Field(description="Артикулы WB (nmID) для кампании")
-    bid_type: str = Field(description="Тип ставки: `manual` — ручная, `unified` — единая")
-    payment_type: str = Field(description="Тип оплаты: `cpm` — за показы, `cpc` — за клики")
-    placement_types: list[str] = Field(
-        description="Места размещения: `search` — в поиске, `recommendations` — в рекомендациях",
-    )
+    name: str = Field(description="Название кампании")
+    nms: list[int] = Field(description="Артикулы WB (nmID)")
+    bid_type: str = Field(description="Тип ставки: `manual` или `unified`")
+    payment_type: str = Field(description="Тип оплаты: `cpm` или `cpc`")
+    placement_types: list[str] = Field(description="Типы размещения")
 
 
 class RenameRequest(BaseModel):
     """Переименование кампании."""
     advertId: int = Field(description="ID кампании")
-    name: str = Field(description="Новое название кампании (максимум 100 символов)")
+    name: str = Field(description="Новое название кампании")
 
 
 class UpdatePlacementsRequest(BaseModel):
@@ -97,17 +75,17 @@ class UpdateBidsRequest(BaseModel):
 
 class UpdateNmsRequest(BaseModel):
     """Обновление артикулов в кампаниях."""
-    nms: list[dict] = Field(description="Карточки товаров в кампаниях")
+    nms: list[dict] = Field(description="Артикулы товаров в кампаниях")
 
 
 class SubjectsResponse(BaseModel):
     """Предметы для рекламных кампаний."""
-    subjects: list[dict] = Field(default=[], description="Доступные предметы для создания кампании")
+    subjects: list[dict] = Field(default=[])
 
 
 class BidRecommendation(BaseModel):
     """Рекомендация по ставке."""
-    advertId: int | None = Field(None, description="ID кампании")
-    nmId: int | None = Field(None, description="Артикул WB")
-    position: int | None = Field(None, description="Рекомендуемая позиция")
-    bid: int | None = Field(None, description="Рекомендуемая ставка, руб.")
+    advertId: int | None = Field(None)
+    nmId: int | None = Field(None)
+    position: int | None = Field(None)
+    bid: int | None = Field(None)

@@ -1,7 +1,7 @@
-"""DB: General / Рейтинг продавца."""
+"""DB: Общее — Рейтинг продавца."""
 from litestar import Controller, get
-from src.schemas.general.rating import SupplierRatingModel
-from src.services.general.db.rating import RatingDbService
+
+from src.repositories.general.rating import RatingRepository
 from src.utils.db_manager import DBManager
 
 
@@ -9,14 +9,10 @@ class DbRatingController(Controller):
     path = "/rating"
     tags = ["01. База данных"]
 
-    @get(
-        "/",
-        summary="Рейтинг продавца из БД",
-        description=(
-            "Возвращает рейтинг продавца из таблицы `wb_seller_rating`.\n\n"
-            "Перед первым вызовом выполните `POST /general/sync/rating/full`."
-        ),
-    )
-    async def get_rating(self) -> SupplierRatingModel | None:
+    @get(summary="Рейтинг продавца из БД")
+    async def get_rating(self) -> dict:
         async with DBManager() as db:
-            return await RatingDbService().get_rating(db.session)
+            repo = RatingRepository(db.session)
+            rating = await repo.get_one_or_none()
+            data = [rating.model_dump()] if rating else []
+            return {"data": data, "total": len(data), "limit": 1, "offset": 0}

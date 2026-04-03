@@ -18,14 +18,14 @@ class SellerRepository(BaseRepository):
                 sid=data.sid,
                 name=data.name,
                 trade_mark=data.tradeMark,
-                itn=data.itn,
+                tin=data.tin,
             )
             .on_conflict_do_update(
                 index_elements=["sid"],
                 set_=dict(
                     name=data.name,
                     trade_mark=data.tradeMark,
-                    itn=data.itn,
+                    tin=data.tin,
                 ),
             )
             .returning(SellerOrm)

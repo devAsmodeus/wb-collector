@@ -7,7 +7,7 @@ from src.database import Base
 
 class WbNews(Base):
     """Новость портала продавцов WB."""
-    __tablename__ = "wb_news"
+    __tablename__ = "news"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     news_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False, index=True, comment="ID новости")

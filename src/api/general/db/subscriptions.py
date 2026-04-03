@@ -1,7 +1,7 @@
-"""DB: General / Подписки Джем."""
+"""DB: Общее — Подписки Джем."""
 from litestar import Controller, get
-from src.schemas.general.subscriptions import SubscriptionsJamInfo
-from src.services.general.db.subscriptions import SubscriptionsDbService
+
+from src.repositories.general.subscriptions import SubscriptionsRepository
 from src.utils.db_manager import DBManager
 
 
@@ -9,14 +9,10 @@ class DbSubscriptionsController(Controller):
     path = "/subscriptions"
     tags = ["01. База данных"]
 
-    @get(
-        "/",
-        summary="Подписки Джем из БД",
-        description=(
-            "Возвращает подписки Джем из таблицы `wb_seller_subscriptions`.\n\n"
-            "Перед первым вызовом выполните `POST /general/sync/subscriptions/full`."
-        ),
-    )
-    async def get_subscriptions(self) -> SubscriptionsJamInfo | None:
+    @get(summary="Подписки Джем из БД")
+    async def get_subscriptions(self) -> dict:
         async with DBManager() as db:
-            return await SubscriptionsDbService().get_subscriptions(db.session)
+            repo = SubscriptionsRepository(db.session)
+            subs = await repo.get_one_or_none()
+            data = [subs.model_dump()] if subs else []
+            return {"data": data, "total": len(data), "limit": 1, "offset": 0}

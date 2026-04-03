@@ -16,10 +16,21 @@ class CampaignStatsRepository:
         """Вставляет или обновляет статистику кампаний. Возвращает кол-во обработанных записей."""
         if not stats:
             return 0
+        def _parse_date(val):
+            if val is None:
+                return None
+            if isinstance(val, datetime):
+                return val.replace(tzinfo=None) if val.tzinfo else val
+            try:
+                dt = datetime.fromisoformat(str(val).replace("Z", "+00:00"))
+                return dt.replace(tzinfo=None)
+            except (ValueError, TypeError):
+                return None
+
         rows = [
             {
                 "advert_id": s.get("advertId") or s.get("advert_id"),
-                "date": s.get("date"),
+                "date": _parse_date(s.get("date")),
                 "views": s.get("views"),
                 "clicks": s.get("clicks"),
                 "ctr": s.get("ctr"),

@@ -99,3 +99,11 @@ class CampaignsRepository:
         query = query.order_by(WbCampaign.advert_id.desc()).limit(limit).offset(offset)
         result = await self._session.execute(query)
         return list(result.scalars().all())
+
+    async def get_all_ids(self) -> list[int]:
+        """Возвращает все advert_id из БД."""
+        from sqlalchemy import text
+        result = await self._session.execute(
+            select(WbCampaign.advert_id).where(WbCampaign.advert_id.isnot(None))
+        )
+        return [row[0] for row in result.all()]

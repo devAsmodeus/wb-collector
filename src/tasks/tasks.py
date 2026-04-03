@@ -18,11 +18,7 @@ logger = logging.getLogger(__name__)
 
 def run_async(coro):
     """Запускает корутину в синхронном контексте Celery."""
-    loop = asyncio.new_event_loop()
-    try:
-        return loop.run_until_complete(coro)
-    finally:
-        loop.close()
+    return asyncio.run(coro)
 
 
 # ---------------------------------------------------------------------------
@@ -686,3 +682,107 @@ def sync_wb_api_docs(self):
     logger.info(f"[sync.docs] OK:\n{result.stdout[:500]}")
     return {"status": "ok", "output": result.stdout[:500]}
 
+
+
+# ---------------------------------------------------------------------------
+# FBW Supply Goods - товары в поставках (исторический dump)
+# ---------------------------------------------------------------------------
+
+@celery_app.task(
+    name="sync.fbw.supply_goods",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+    time_limit=7200,  # 2 часа
+)
+def sync_fbw_supply_goods(self):
+    """Загружает товары для всех поставок FBW из БД (1 запрос на поставку)."""
+    from src.collectors.fbw.supplies import FBWSuppliesCollector
+    from src.exceptions import WBApiException
+    from src.repositories.fbw.supplies import FbwSuppliesRepository, FbwSupplyGoodsRepository
+
+    async def _run():
+        async with DBManager() as db:
+            supply_repo = FbwSuppliesRepository(db.session)
+            goods_repo = FbwSupplyGoodsRepository(db.session)
+
+            # Берём все supply_id из БД
+            from sqlalchemy import select, text
+            from src.models.fbw import FbwSupply
+            result = await db.session.execute(select(FbwSupply.supply_id))
+            supply_ids = [row[0] for row in result.all()]
+
+            logger.info(f"[sync.fbw.supply_goods] Loading goods for {len(supply_ids)} supplies")
+            total_saved = 0
+
+            async with FBWSuppliesCollector() as collector:
+                for idx, supply_id in enumerate(supply_ids):
+                    all_goods = []
+                    offset = 0
+                    while True:
+                        try:
+                            resp = await collector.get_supply_goods(supply_id=supply_id, limit=1000, offset=offset)
+                        except WBApiException as e:
+                            if e.status_code == 404:
+                                break
+                            logger.warning(f"Supply {supply_id}: error {e.status_code}")
+                            break
+                        goods = resp.goods or []
+                        if not goods:
+                            break
+                        for g in goods:
+                            all_goods.append({
+                                "supply_id": supply_id,
+                                "barcode": g.barcode,
+                                "vendor_code": g.article,
+                                "name": g.name,
+                                "quantity": g.quantity,
+                                "brand": g.brand,
+                                "subject": g.subject,
+                                "raw_data": g.model_dump(),
+                            })
+                        if len(goods) < 1000:
+                            break
+                        offset += 1000
+
+                    if all_goods:
+                        saved = await goods_repo.upsert_many(all_goods)
+                        total_saved += saved
+
+                    if idx % 100 == 0:
+                        logger.info(f"[sync.fbw.supply_goods] Progress: {idx}/{len(supply_ids)}, total_saved={total_saved}")
+
+            logger.info(f"[sync.fbw.supply_goods] Done: {total_saved} goods from {len(supply_ids)} supplies")
+            return {"synced": total_saved, "supplies": len(supply_ids)}
+
+    return run_async(_run())
+
+
+# ---------------------------------------------------------------------------
+# Promotion Stats - статистика кампаний (rate limit 1 req/min)
+# ---------------------------------------------------------------------------
+
+@celery_app.task(
+    name="sync.promotion.stats",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=120,
+    retry_kwargs={"max_retries": 3},
+    time_limit=3600,  # 1 час
+    rate_limit="1/m",  # WB лимит: 1 запрос/минута
+)
+def sync_promotion_stats(self):
+    """Статистика рекламных кампаний. Rate limit 1 req/min — 23+ минут на 1113 кампаний."""
+    from datetime import datetime, timedelta
+    from src.services.promotion.sync.stats import StatsSyncService
+
+    async def _run():
+        begin_date = (datetime.utcnow() - timedelta(days=14)).strftime("%Y-%m-%d")
+        end_date = datetime.utcnow().strftime("%Y-%m-%d")
+        async with DBManager() as db:
+            result = await StatsSyncService().sync_stats(db.session, begin_date=begin_date, end_date=end_date)
+        logger.info(f"[sync.promotion.stats] Synced: {result.get('synced', 0)} stats records")
+        return result
+
+    return run_async(_run())

@@ -14,26 +14,20 @@ class RatingRepository:
         self._session = session
 
     async def upsert(self, data: SupplierRatingModel) -> SupplierRatingModel:
-        """Вставить или обновить запись рейтинга (всегда id=1)."""
+        """Обновить или создать запись рейтинга (всегда id=1)."""
         stmt = (
             insert(WbSellerRating)
             .values(
                 id=1,
-                current=data.current,
-                wb_rating=data.wbRating,
-                delivery_speed=data.deliverySpeed,
-                quality_goods=data.qualityGoods,
-                service_review=data.serviceReview,
+                feedback_count=data.feedbackCount,
+                valuation=data.valuation,
                 fetched_at=datetime.utcnow(),
             )
             .on_conflict_do_update(
                 index_elements=["id"],
                 set_=dict(
-                    current=data.current,
-                    wb_rating=data.wbRating,
-                    delivery_speed=data.deliverySpeed,
-                    quality_goods=data.qualityGoods,
-                    service_review=data.serviceReview,
+                    feedback_count=data.feedbackCount,
+                    valuation=data.valuation,
                     fetched_at=datetime.utcnow(),
                 ),
             )
@@ -41,10 +35,11 @@ class RatingRepository:
         )
         result = await self._session.execute(stmt)
         row = result.scalars().one()
+        await self._session.commit()
         return SupplierRatingModel.model_validate(row, from_attributes=True)
 
     async def get_one_or_none(self) -> SupplierRatingModel | None:
-        """Возвращает текущий рейтинг из БД (или None если пусто)."""
+        """Получить текущий рейтинг из БД."""
         result = await self._session.execute(
             select(WbSellerRating).where(WbSellerRating.id == 1)
         )

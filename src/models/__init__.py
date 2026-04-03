@@ -1,4 +1,4 @@
-from src.models.seller import SellerOrm
+from src.models.seller import SellerOrm, WbSellerRating, WbSellerSubscription
 from src.models.products import WbCard, WbPrice, WbTag, WbWarehouse, WbCategory, WbSubject
 from src.models.orders import FbsOrder, DbwOrder, DbsOrder, PickupOrder
 from src.models.reports import WbStock, WbOrderReport, WbSaleReport, WbFinancialReport
@@ -12,7 +12,7 @@ from src.models.fbw import FbwWarehouse, FbwTransitTariff, FbwSupply, FbwSupplyG
 from src.models.analytics import AnalyticsFunnelProduct, AnalyticsSearchQuery, AnalyticsStocksGroup
 
 __all__ = [
-    "SellerOrm",
+    "SellerOrm", "WbSellerRating", "WbSellerSubscription",
     "WbCard", "WbPrice", "WbTag", "WbWarehouse", "WbCategory", "WbSubject",
     "FbsOrder", "DbwOrder", "DbsOrder", "PickupOrder",
     "WbStock", "WbOrderReport", "WbSaleReport", "WbFinancialReport",

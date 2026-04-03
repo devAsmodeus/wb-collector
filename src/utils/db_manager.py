@@ -9,7 +9,11 @@ class DBManager:
         self.session = self.session_factory()
 
         from src.repositories.general.seller import SellerRepository
+        from src.repositories.general.rating import RatingRepository
+        from src.repositories.general.subscriptions import SubscriptionsRepository
         self.seller = SellerRepository(self.session)
+        self.rating = RatingRepository(self.session)
+        self.subscriptions = SubscriptionsRepository(self.session)
 
         return self
 

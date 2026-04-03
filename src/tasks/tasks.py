@@ -618,6 +618,25 @@ def sync_finances_full(self):
     return run_async(_run())
 
 
+@celery_app.task(
+    name="sync.general.users_full",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_general_users_full(self):
+    """POST /general/sync/users/full — полная синхронизация пользователей."""
+    from src.services.general.sync.users import UsersSyncService
+
+    async def _run():
+        async with DBManager() as db:
+            result = await UsersSyncService().sync_users_full(db.session)
+        logger.info(f"[sync.general.users_full] Synced: {result.get('synced', 0)} users")
+        return result
+
+    return run_async(_run())
+
 
 
 # ---------------------------------------------------------------------------

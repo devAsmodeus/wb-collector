@@ -35,6 +35,10 @@ celery_app.conf.update(
             "task": "sync.general.news_incremental",
             "schedule": crontab(minute=10, hour=5),  # 05:10 (ежедневно)
         },
+        "sync-general-users-full": {
+            "task": "sync.general.users_full",
+            "schedule": crontab(minute=15, hour=5),  # 05:15 (ежедневно)
+        },
 
         # =================================================================
         # (02) Products — Карточки, цены, теги, склады, справочники

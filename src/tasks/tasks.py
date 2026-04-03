@@ -219,6 +219,46 @@ def sync_products_directories_subjects(self):
     return run_async(_run())
 
 
+@celery_app.task(
+    name="sync.products.cards_incremental",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_products_cards_incremental(self):
+    """POST /products/sync/cards/incremental — инкрементальная синхронизация карточек."""
+    from src.services.products.sync.cards import CardsSyncService
+
+    async def _run():
+        async with DBManager() as db:
+            result = await CardsSyncService().sync_cards_incremental(db.session)
+        logger.info(f"[sync.products.cards_incremental] Synced: {result.get('synced', 0)} cards")
+        return result
+
+    return run_async(_run())
+
+
+@celery_app.task(
+    name="sync.products.prices_incremental",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_products_prices_incremental(self):
+    """POST /products/sync/prices/incremental — инкрементальная синхронизация цен."""
+    from src.services.products.sync.prices import PricesSyncService
+
+    async def _run():
+        async with DBManager() as db:
+            result = await PricesSyncService().sync_prices_incremental(db.session)
+        logger.info(f"[sync.products.prices_incremental] Synced: {result.get('synced', 0)} prices")
+        return result
+
+    return run_async(_run())
+
+
 # ---------------------------------------------------------------------------
 # (03) FBS — Заказы
 # ---------------------------------------------------------------------------

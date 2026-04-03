@@ -44,35 +44,35 @@ celery_app.conf.update(
         # (02) Products — Карточки, цены, теги, склады, справочники
         # =================================================================
 
-        # Карточки — каждый час, данные часто обновляются
-        "sync-products-cards-full": {
-            "task": "sync.products.cards_full",
+        # Карточки — инкрементально каждый час (full — вручную при первом запуске)
+        "sync-products-cards-incremental": {
+            "task": "sync.products.cards_incremental",
             "schedule": crontab(minute=5),            # :05 каждого часа
         },
-        # Цены — каждый час
-        "sync-products-prices-full": {
-            "task": "sync.products.prices_full",
-            "schedule": crontab(minute=10),           # :10 каждого часа
+        # Цены — инкрементально каждые 30 минут (цены меняются часто)
+        "sync-products-prices-incremental": {
+            "task": "sync.products.prices_incremental",
+            "schedule": crontab(minute="*/30"),       # каждые 30 минут
         },
-        # Теги — раз в сутки, меняются редко
+        # Теги — раз в неделю (меняются очень редко, full достаточно)
         "sync-products-tags-full": {
             "task": "sync.products.tags_full",
-            "schedule": crontab(minute=20, hour=4),  # 04:20
+            "schedule": crontab(minute=20, hour=4, day_of_week=0),  # воскресенье 04:20
         },
-        # Склады — раз в сутки
+        # Склады — раз в сутки (небольшой справочник)
         "sync-products-warehouses-full": {
             "task": "sync.products.warehouses_full",
             "schedule": crontab(minute=25, hour=4),  # 04:25
         },
-        # Категории — раз в сутки, справочник
+        # Категории — раз в неделю (справочник WB, почти не меняется)
         "sync-products-directories-categories": {
             "task": "sync.products.directories_categories",
-            "schedule": crontab(minute=15, hour=4),  # 04:15
+            "schedule": crontab(minute=15, hour=4, day_of_week=0),  # воскресенье 04:15
         },
-        # Предметы — раз в сутки, справочник
+        # Предметы — раз в неделю
         "sync-products-directories-subjects": {
             "task": "sync.products.directories_subjects",
-            "schedule": crontab(minute=17, hour=4),  # 04:17
+            "schedule": crontab(minute=17, hour=4, day_of_week=0),  # воскресенье 04:17
         },
 
         # =================================================================

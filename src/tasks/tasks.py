@@ -1,4 +1,4 @@
-"""Celery-задачи синхронизации данных WB API → БД.
+﻿"""Celery-задачи синхронизации данных WB API → БД.
 
 Правило: 1 задача = 1 sync-эндпоинт. Всего 25 задач = 25 эндпоинтов.
 
@@ -609,6 +609,52 @@ def sync_finances_full(self):
     return run_async(_run())
 
 
+
+
+# ---------------------------------------------------------------------------
+# ИСТОРИЧЕСКИЕ ЗАДАЧИ — запускаются разово для первоначальной загрузки
+# ---------------------------------------------------------------------------
+
+@celery_app.task(
+    name="sync.finances.historical",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=120,
+    retry_kwargs={"max_retries": 5},
+    time_limit=14400,  # 4 часа максимум
+)
+def sync_finances_historical(self):
+    """Полный исторический дамп финансового отчёта за 2 года (по неделям)."""
+    from src.services.finances.sync.finances import FinancesSyncService
+
+    async def _run():
+        async with DBManager() as db:
+            result = await FinancesSyncService().sync_financial_report_historical(db.session)
+        logger.info(f"[sync.finances.historical] Done: {result.get('synced', 0)} records, {result.get('weeks')} weeks")
+        return result
+
+    return run_async(_run())
+
+
+@celery_app.task(
+    name="sync.feedbacks.historical",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=120,
+    retry_kwargs={"max_retries": 5},
+    time_limit=21600,  # 6 часов максимум
+)
+def sync_feedbacks_historical(self):
+    """Полный исторический дамп всех отзывов (116k+). Запускается разово."""
+    from src.services.communications.sync.feedbacks import FeedbacksSyncService
+
+    async def _run():
+        async with DBManager() as db:
+            result = await FeedbacksSyncService().sync_feedbacks_historical(db.session)
+        logger.info(f"[sync.feedbacks.historical] Done: {result.get('synced', 0)} feedbacks")
+        return result
+
+    return run_async(_run())
 # ---------------------------------------------------------------------------
 # (00) Sync Docs — ежедневная проверка изменений WB API документации
 # ---------------------------------------------------------------------------
@@ -636,3 +682,4 @@ def sync_wb_api_docs(self):
         raise RuntimeError(f"sync_docs exited with code {result.returncode}")
     logger.info(f"[sync.docs] OK:\n{result.stdout[:500]}")
     return {"status": "ok", "output": result.stdout[:500]}
+

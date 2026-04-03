@@ -32,7 +32,7 @@ class SyncFinancialReportController(Controller):
         ),
     ) -> dict:
         if not date_from:
-            date_from = (datetime.utcnow() - timedelta(days=90)).strftime("%Y-%m-%d")
+            date_from = (datetime.utcnow() - timedelta(days=30)).strftime("%Y-%m-%d")
         if not date_to:
             date_to = datetime.utcnow().strftime("%Y-%m-%d")
         async with DBManager() as db:

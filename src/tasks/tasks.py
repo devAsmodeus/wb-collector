@@ -17,8 +17,18 @@ logger = logging.getLogger(__name__)
 
 
 def run_async(coro):
-    """Запускает корутину в синхронном контексте Celery."""
-    return asyncio.run(coro)
+    """Запускает корутину в синхронном контексте Celery (ForkPoolWorker)."""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        return loop.run_until_complete(coro)
+    finally:
+        try:
+            loop.run_until_complete(loop.shutdown_asyncgens())
+        except Exception:
+            pass
+        loop.close()
+        asyncio.set_event_loop(None)
 
 
 # ---------------------------------------------------------------------------
@@ -778,7 +788,7 @@ def sync_promotion_stats(self):
     from src.services.promotion.sync.stats import StatsSyncService
 
     async def _run():
-        begin_date = (datetime.utcnow() - timedelta(days=14)).strftime("%Y-%m-%d")
+        begin_date = (datetime.utcnow() - timedelta(days=30)).strftime("%Y-%m-%d")
         end_date = datetime.utcnow().strftime("%Y-%m-%d")
         async with DBManager() as db:
             result = await StatsSyncService().sync_stats(db.session, begin_date=begin_date, end_date=end_date)
@@ -786,3 +796,4 @@ def sync_promotion_stats(self):
         return result
 
     return run_async(_run())
+

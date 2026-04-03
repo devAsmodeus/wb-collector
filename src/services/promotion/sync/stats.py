@@ -12,10 +12,10 @@ from src.services.base import BaseService
 
 logger = logging.getLogger(__name__)
 
-# WB rate limit: 1 запрос/минута для /adv/v3/fullstats
-FULLSTATS_RATE_LIMIT_DELAY = 61  # секунд между батчами
+# WB rate limit: 3 запроса/минуту для /adv/v3/fullstats
+FULLSTATS_RATE_LIMIT_DELAY = 21  # секунд между батчами (60/3 = 20 + 1 запас)
 BATCH_SIZE = 50                  # макс IDs в одном запросе (лимит WB)
-MAX_DATE_RANGE_DAYS = 14         # безопасный диапазон (WB лимит 20 дней)
+MAX_DATE_RANGE_DAYS = 30         # безопасный диапазон (WB лимит 31 день)
 
 
 class StatsSyncService(BaseService):

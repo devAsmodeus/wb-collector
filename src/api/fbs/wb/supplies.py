@@ -47,15 +47,13 @@ class SuppliesController(Controller):
     )
     async def get_supplies(
         self,
-        limit: int = Parameter(
-            1000,
+        limit: int = Parameter(default=1000,
             query="limit",
             ge=1,
             le=1000,
             description="Количество поставок в ответе. По умолчанию: 1000.",
         ),
-        offset: int = Parameter(
-            0,
+        offset: int = Parameter(default=0,
             query="offset",
             ge=0,
             description="Смещение для пагинации. По умолчанию: 0.",

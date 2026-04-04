@@ -1,10 +1,10 @@
-"""ORM модели: Заказы FBS / DBW / DBS / Самовывоз.
+﻿"""ORM модели: Заказы FBS / DBW / DBS / Самовывоз.
 
 Все таблицы строго по схемам WB API v3 (marketplace-api.wildberries.ru).
 НЕ смешивать с полями из Statistics/Reports API.
 """
 from datetime import datetime
-from sqlalchemy import BigInteger, Boolean, Integer, String, DateTime, JSON
+from sqlalchemy import BigInteger, Boolean, Integer, String, Text, DateTime, JSON
 from sqlalchemy.orm import Mapped, mapped_column
 from src.database import Base
 
@@ -118,3 +118,36 @@ class PickupOrder(Base):
     skus: Mapped[list | None] = mapped_column(JSON, nullable=True, comment="skus")
     address: Mapped[dict | None] = mapped_column(JSON, nullable=True, comment="address")
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")
+
+class FbsPass(Base):
+    """??????? ?? ????? WB. GET /api/v3/passes"""
+    __tablename__ = "fbs_passes"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    pass_id: Mapped[int | None] = mapped_column(BigInteger, unique=True, nullable=True, comment="passId")
+    warehouse_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True, comment="warehouseId")
+    warehouse_name: Mapped[str | None] = mapped_column(String(255), nullable=True, comment="warehouseName")
+    status: Mapped[str | None] = mapped_column(String(50), nullable=True, comment="status")
+    date_start: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, comment="dateStart")
+    date_end: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, comment="dateEnd")
+    first_name: Mapped[str | None] = mapped_column(String(100), nullable=True, comment="firstName")
+    last_name: Mapped[str | None] = mapped_column(String(100), nullable=True, comment="lastName")
+    car_model: Mapped[str | None] = mapped_column(String(100), nullable=True, comment="carModel")
+    car_number: Mapped[str | None] = mapped_column(String(50), nullable=True, comment="carNumber")
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+
+class FbsSupply(Base):
+    """???????? FBS. GET /api/v3/supplies � Supply schema ?? YAML."""
+    __tablename__ = "fbs_supplies"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    supply_id: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True, comment="id � WB-GI-...")
+    name: Mapped[str | None] = mapped_column(String(255), nullable=True, comment="name")
+    is_b2b: Mapped[bool | None] = mapped_column(Boolean, nullable=True, comment="isB2b")
+    done: Mapped[bool | None] = mapped_column(Boolean, nullable=True, comment="done")
+    cargo_type: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="cargoType")
+    cross_border_type: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="crossBorderType")
+    destination_office_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True, comment="destinationOfficeId")
+    created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, comment="createdAt")
+    closed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, comment="closedAt")
+    scan_dt: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, comment="scanDt")
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)

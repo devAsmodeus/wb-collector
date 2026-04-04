@@ -232,7 +232,31 @@ celery_app.conf.update(
         "sync-docs-wb-api": {
             "task": "sync.docs.wb_api",
             "schedule": crontab(minute=0, hour=8),   # 08:00 ежедневно
+                "sync-analytics-funnel-full": {
+            "task": "sync.analytics.funnel_full",
+            "schedule": crontab(hour=5, minute=0),
         },
+        "sync-analytics-funnel-incremental": {
+            "task": "sync.analytics.funnel_incremental",
+            "schedule": crontab(minute="*/30"),
+        },
+        "sync-analytics-stocks-full": {
+            "task": "sync.analytics.stocks_full",
+            "schedule": crontab(hour=5, minute=10),
+        },
+        "sync-analytics-stocks-incremental": {
+            "task": "sync.analytics.stocks_incremental",
+            "schedule": crontab(minute="*/30"),
+        },
+        "sync-analytics-search-full": {
+            "task": "sync.analytics.search_full",
+            "schedule": crontab(hour=5, minute=20),
+        },
+        "sync-analytics-search-incremental": {
+            "task": "sync.analytics.search_incremental",
+            "schedule": crontab(minute="*/30"),
+        },
+},
     },
 )
 

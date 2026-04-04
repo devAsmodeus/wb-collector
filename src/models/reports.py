@@ -7,7 +7,7 @@ from src.database import Base
 
 class WbStock(Base):
     """Остаток товара на складе WB (statistics-api)."""
-    __tablename__ = "wb_stocks"
+    __tablename__ = "stocks"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     last_change_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True, comment="Дата последнего изменения")
@@ -33,7 +33,7 @@ class WbStock(Base):
 
 class WbOrderReport(Base):
     """Заказ из отчёта (statistics-api /api/v1/supplier/orders)."""
-    __tablename__ = "wb_orders_report"
+    __tablename__ = "orders_report"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     odid: Mapped[int | None] = mapped_column(BigInteger, unique=True, nullable=True, index=True, comment="ID уникальной позиции заказа")
@@ -58,7 +58,7 @@ class WbOrderReport(Base):
 
 class WbSaleReport(Base):
     """Продажа / возврат из отчёта (statistics-api /api/v1/supplier/sales)."""
-    __tablename__ = "wb_sales_report"
+    __tablename__ = "sales_report"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     srid: Mapped[str | None] = mapped_column(String(100), unique=True, nullable=True, index=True, comment="Уникальный ID продажи/возврата")
@@ -85,7 +85,7 @@ class WbSaleReport(Base):
 
 class WbFinancialReport(Base):
     """Детальный финансовый отчёт (reportDetailByPeriod)."""
-    __tablename__ = "wb_financial_report"
+    __tablename__ = "financial_report"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     rrd_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False, index=True, comment="ID строки отчёта")

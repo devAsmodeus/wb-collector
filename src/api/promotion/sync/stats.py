@@ -1,7 +1,6 @@
 """Sync: Маркетинг / Статистика кампаний."""
 from litestar import Controller, post
-from src.services.promotion.sync.stats import StatsSyncService
-from src.utils.db_manager import DBManager
+from src.tasks.celery_app import celery_app
 
 
 class SyncStatsController(Controller):
@@ -10,24 +9,27 @@ class SyncStatsController(Controller):
 
     @post(
         "/full",
-        summary="Полная выгрузка статистики кампаний в БД",
+        summary="Полная выгрузка статистики кампаний в БД (Celery)",
         description=(
-            "Загружает статистику по всем кампаниям и сохраняет в `wb_campaign_stats`.\n\n"
+            "Запускает Celery-задачу для загрузки статистики по всем кампаниям.\n\n"
+            "Задача выполняется в фоне (1118+ кампаний, ~8 минут из-за rate-limit WB).\n\n"
             "**WB:** `GET advert-api.wildberries.ru/adv/v3/fullstats`"
         ),
+        status_code=202,
     )
     async def sync_stats_full(self) -> dict:
-        async with DBManager() as db:
-            return await StatsSyncService().sync_stats(db.session)
+        task = celery_app.send_task("sync.promotion.stats_full")
+        return {"task_id": task.id, "status": "queued", "source": "full"}
 
     @post(
         "/incremental",
-        summary="Инкрементальная выгрузка статистики кампаний в БД",
+        summary="Инкрементальная выгрузка статистики кампаний в БД (Celery)",
         description=(
-            "Статистика обновляется ежедневно — инкрементальная = полная синхронизация (upsert обновит данные).\n\n"
+            "Запускает Celery-задачу для обновления статистики кампаний.\n\n"
             "**WB:** `GET advert-api.wildberries.ru/adv/v3/fullstats`"
         ),
+        status_code=202,
     )
     async def sync_stats_incremental(self) -> dict:
-        async with DBManager() as db:
-            return await StatsSyncService().sync_stats_incremental(db.session)
+        task = celery_app.send_task("sync.promotion.stats_full")
+        return {"task_id": task.id, "status": "queued", "source": "incremental"}

@@ -1,5 +1,6 @@
 """ORM модели: Справочники — новости, тарифы, склады WB, комиссии."""
 from datetime import datetime
+from decimal import Decimal
 from sqlalchemy import BigInteger, Boolean, Float, Integer, Numeric, String, DateTime, JSON, Text
 from sqlalchemy.orm import Mapped, mapped_column
 from src.database import Base
@@ -18,9 +19,9 @@ class WbNews(Base):
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")
 
 
-class WbTariffCommission(Base):
+class TariffCommission(Base):
     """Комиссия WB по категории товаров."""
-    __tablename__ = "wb_tariffs_commission"
+    __tablename__ = "tariffs_commission"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     subject_id: Mapped[int | None] = mapped_column(Integer, unique=True, nullable=True, index=True, comment="ID категории")
@@ -33,13 +34,13 @@ class WbTariffCommission(Base):
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")
 
 
-class WbTariffBox(Base):
+class TariffBox(Base):
     """Тариф на доставку и хранение коробами.
 
     WB API /api/v1/tariffs/box не возвращает warehouseId — только warehouseName.
     Unique key: warehouse_name.
     """
-    __tablename__ = "wb_tariffs_box"
+    __tablename__ = "tariffs_box"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     warehouse_name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True, comment="Название склада")
@@ -50,13 +51,13 @@ class WbTariffBox(Base):
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")
 
 
-class WbTariffPallet(Base):
+class TariffPallet(Base):
     """Тариф на доставку и хранение паллетами.
 
     WB API /api/v1/tariffs/pallet не возвращает warehouseId — только warehouseName.
     Unique key: warehouse_name.
     """
-    __tablename__ = "wb_tariffs_pallet"
+    __tablename__ = "tariffs_pallet"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     warehouse_name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True, comment="Название склада")
@@ -67,23 +68,22 @@ class WbTariffPallet(Base):
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")
 
 
-class WbTariffSupply(Base):
-    """Коэффициент приёмки на складе WB (acceptance coefficient).
-
-    Unique key: warehouse_id + date + box_type_id (несколько записей на склад).
-    """
-    __tablename__ = "wb_tariffs_supply"
-    __table_args__ = (
-        {"comment": "Коэффициенты приёмки на складах WB"},
-    )
-
+class TariffSupply(Base):
+    __tablename__ = "tariffs_supply"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    warehouse_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True, comment="ID склада WB")
-    warehouse_name: Mapped[str | None] = mapped_column(String(255), nullable=True, comment="Название склада")
-    date: Mapped[str | None] = mapped_column(String(50), nullable=True, comment="Дата начала действия")
-    coefficient: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="Коэффициент: 0=бесплатно, -1=закрыт")
-    allow_unload: Mapped[bool | None] = mapped_column(Boolean, nullable=True, comment="Доступность приёмки")
-    box_type_id: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="Тип поставки: 2=Короба, 5=Паллеты, 6=Суперсейф")
+    warehouse_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True, comment="warehouseID")
+    warehouse_name: Mapped[str | None] = mapped_column(String(255), nullable=True, comment="warehouseName")
+    date: Mapped[str | None] = mapped_column(String(50), nullable=True, comment="date")
+    coefficient: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="coefficient")
+    allow_unload: Mapped[bool | None] = mapped_column(Boolean, nullable=True, comment="allowUnload")
+    box_type_id: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="boxTypeID")
+    storage_coef: Mapped[Decimal | None] = mapped_column(Numeric(10, 4), nullable=True, comment="storageCoef")
+    delivery_coef: Mapped[Decimal | None] = mapped_column(Numeric(10, 4), nullable=True, comment="deliveryCoef")
+    delivery_base_liter: Mapped[Decimal | None] = mapped_column(Numeric(10, 4), nullable=True, comment="deliveryBaseLiter")
+    delivery_additional_liter: Mapped[Decimal | None] = mapped_column(Numeric(10, 4), nullable=True, comment="deliveryAdditionalLiter")
+    storage_base_liter: Mapped[Decimal | None] = mapped_column(Numeric(10, 4), nullable=True, comment="storageBaseLiter")
+    storage_additional_liter: Mapped[Decimal | None] = mapped_column(Numeric(10, 4), nullable=True, comment="storageAdditionalLiter")
+    is_sorting_center: Mapped[bool | None] = mapped_column(Boolean, nullable=True, comment="isSortingCenter")
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")
 
 

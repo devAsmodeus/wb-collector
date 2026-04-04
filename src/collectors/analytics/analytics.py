@@ -68,3 +68,8 @@ class AnalyticsCollector:
 
     async def get_stocks_offices(self, payload: dict) -> dict:
         return await self._client.post("/api/v2/stocks-report/offices", json=payload)
+
+    async def get_inventory_wb_warehouses(self, payload: dict) -> dict:
+        """Остатки на складах WB. POST /api/analytics/v1/stocks-report/wb-warehouses"""
+        return await self._client.post('/api/analytics/v1/stocks-report/wb-warehouses', json=payload)
+

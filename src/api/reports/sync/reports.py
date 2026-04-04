@@ -1,15 +1,6 @@
-"""Sync: Reports — Синхронизация отчётов WB в БД."""
-from datetime import datetime, timedelta
-
+"""Sync: Reports — Синхронизация отчётов WB в БД (Celery fire-and-forget)."""
 from litestar import Controller, post
-from litestar.params import Parameter
-from src.services.reports.sync.reports import ReportsSyncService
-from src.utils.db_manager import DBManager
-
-
-def _default_date_from() -> str:
-    """Дата год назад в формате RFC3339 (YYYY-MM-DD)."""
-    return (datetime.utcnow() - timedelta(days=365)).strftime("%Y-%m-%d")
+from src.tasks.celery_app import celery_app
 
 
 class SyncStocksController(Controller):
@@ -18,36 +9,29 @@ class SyncStocksController(Controller):
 
     @post(
         "/",
-        summary="Синхронизация остатков на складах",
+        summary="Синхронизация остатков на складах (Celery)",
         description=(
-            "Загружает остатки товаров на складах WB и сохраняет в `wb_stocks`.\n\n"
-            "**WB:** `GET statistics-api.wildberries.ru/api/v1/supplier/stocks`\n\n"
-            "По умолчанию — за последний год."
+            "Запускает Celery-задачу для загрузки остатков товаров на складах WB.\n\n"
+            "**WB:** `GET statistics-api.wildberries.ru/api/v1/supplier/stocks`"
         ),
+        status_code=202,
     )
-    async def sync_stocks(
-        self,
-        date_from: str | None = Parameter(
-            default=None, query="dateFrom",
-            description="Дата обновления (YYYY-MM-DDTHH:MM:SS). По умолчанию — год назад.",
-        ),
-    ) -> dict:
-        async with DBManager() as db:
-            return await ReportsSyncService().sync_stocks(db.session, date_from or _default_date_from())
-
+    async def sync_stocks(self) -> dict:
+        task = celery_app.send_task("sync.reports.stocks")
+        return {"task_id": task.id, "status": "queued", "source": "full"}
 
     @post(
         "/incremental",
-        summary="Инкрементальная синхронизация остатков",
+        summary="Инкрементальная синхронизация остатков (Celery)",
         description=(
-            "Загружает только новые остатки (начиная с последней `lastChangeDate` в БД).\n\n"
-            "Если БД пуста — автоматически делает полную выгрузку за год.\n\n"
+            "Запускает Celery-задачу для инкременталь��ого обновления остатков.\n\n"
             "**WB:** `GET statistics-api.wildberries.ru/api/v1/supplier/stocks`"
         ),
+        status_code=202,
     )
     async def sync_stocks_incremental(self) -> dict:
-        async with DBManager() as db:
-            return await ReportsSyncService().sync_stocks_incremental(db.session)
+        task = celery_app.send_task("sync.reports.stocks_incremental")
+        return {"task_id": task.id, "status": "queued", "source": "incremental"}
 
 
 class SyncOrdersController(Controller):
@@ -56,36 +40,29 @@ class SyncOrdersController(Controller):
 
     @post(
         "/",
-        summary="Синхронизация заказов",
+        summary="Синхронизация заказов (Celery)",
         description=(
-            "Загружает заказы за период и сохраняет в `wb_orders_report`.\n\n"
-            "**WB:** `GET statistics-api.wildberries.ru/api/v1/supplier/orders`\n\n"
-            "По умолчанию — за последний год."
+            "Запускает Celery-задачу для загрузки заказов из Statistics API.\n\n"
+            "**WB:** `GET statistics-api.wildberries.ru/api/v1/supplier/orders`"
         ),
+        status_code=202,
     )
-    async def sync_orders(
-        self,
-        date_from: str | None = Parameter(
-            default=None, query="dateFrom",
-            description="Дата начала (YYYY-MM-DDTHH:MM:SS). По умолчанию — год назад.",
-        ),
-    ) -> dict:
-        async with DBManager() as db:
-            return await ReportsSyncService().sync_orders(db.session, date_from or _default_date_from())
-
+    async def sync_orders(self) -> dict:
+        task = celery_app.send_task("sync.reports.orders")
+        return {"task_id": task.id, "status": "queued", "source": "full"}
 
     @post(
         "/incremental",
-        summary="Инкрементальная синхронизация заказов",
+        summary="Инкрементальная синхронизация заказов (Celery)",
         description=(
-            "Загружает только новые заказы (начиная с последней `lastChangeDate` в БД).\n\n"
-            "Если БД пуста — автоматически делает полную выгрузку за год.\n\n"
+            "Запускает Celery-задачу для инкрементального обновления заказов.\n\n"
             "**WB:** `GET statistics-api.wildberries.ru/api/v1/supplier/orders`"
         ),
+        status_code=202,
     )
     async def sync_orders_incremental(self) -> dict:
-        async with DBManager() as db:
-            return await ReportsSyncService().sync_orders_incremental(db.session)
+        task = celery_app.send_task("sync.reports.orders_incremental")
+        return {"task_id": task.id, "status": "queued", "source": "incremental"}
 
 
 class SyncSalesController(Controller):
@@ -94,32 +71,26 @@ class SyncSalesController(Controller):
 
     @post(
         "/",
-        summary="Синхронизация продаж и возвратов",
+        summary="Синхронизация продаж и возвратов (Celery)",
         description=(
-            "Загружает продажи и возвраты за период и сохраняет в `wb_sales_report`.\n\n"
-            "**WB:** `GET statistics-api.wildberries.ru/api/v1/supplier/sales`\n\n"
-            "По умолчанию — за последний год."
+            "Запускает Celery-задачу для загрузки продаж и возвратов.\n\n"
+            "**WB:** `GET statistics-api.wildberries.ru/api/v1/supplier/sales`"
         ),
+        status_code=202,
     )
-    async def sync_sales(
-        self,
-        date_from: str | None = Parameter(
-            default=None, query="dateFrom",
-            description="Дата начала (YYYY-MM-DDTHH:MM:SS). По умолчанию — год назад.",
-        ),
-    ) -> dict:
-        async with DBManager() as db:
-            return await ReportsSyncService().sync_sales(db.session, date_from or _default_date_from())
+    async def sync_sales(self) -> dict:
+        task = celery_app.send_task("sync.reports.sales")
+        return {"task_id": task.id, "status": "queued", "source": "full"}
 
     @post(
         "/incremental",
-        summary="Инкрементальная синхронизация продаж",
+        summary="Инкрементальная синхронизация продаж (Celery)",
         description=(
-            "Загружает только новые продажи/возвраты (начиная с последней `lastChangeDate` в БД).\n\n"
-            "Если БД пуста — автоматически делает полную выгрузку за год.\n\n"
+            "Запускает Celery-задачу для инкрементального обновления продаж.\n\n"
             "**WB:** `GET statistics-api.wildberries.ru/api/v1/supplier/sales`"
         ),
+        status_code=202,
     )
     async def sync_sales_incremental(self) -> dict:
-        async with DBManager() as db:
-            return await ReportsSyncService().sync_sales_incremental(db.session)
+        task = celery_app.send_task("sync.reports.sales_incremental")
+        return {"task_id": task.id, "status": "queued", "source": "incremental"}

@@ -1,4 +1,5 @@
 """Sync: General / Новости."""
+from http import HTTPStatus
 from litestar import Controller, post
 from src.services.general.sync.news import NewsSyncService
 from src.utils.db_manager import DBManager
@@ -10,16 +11,18 @@ class SyncNewsController(Controller):
 
     @post(
         "/full",
-        summary="Полная выгрузка новостей в БД",
+        status_code=HTTPStatus.ACCEPTED,
+        summary="Полная выгрузка новостей в БД (Celery)",
         description=(
-            "Загружает все новости с 2020-01-01 и сохраняет в `wb_news`.\n\n"
-            "Используйте один раз для начального заполнения.\n\n"
+            "Запускает выгрузку всех новостей через Celery (WB rate limit: 1 req/min — может занять несколько минут).\n\n"
+            "Возвращает `task_id`. Данные в БД появятся по окончании задачи.\n\n"
             "**WB:** `GET common-api.wildberries.ru/api/communications/v2/news`"
         ),
     )
     async def sync_news_full(self) -> dict:
-        async with DBManager() as db:
-            return await NewsSyncService().sync_all(db.session)
+        from src.tasks.tasks import sync_general_news_full
+        task = sync_general_news_full.delay()
+        return {"task_id": task.id, "status": "queued"}
 
     @post(
         "/incremental",

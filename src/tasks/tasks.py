@@ -632,6 +632,70 @@ def sync_reports_sales(self):
 
 
 # ---------------------------------------------------------------------------
+# (12b) Reports — Incremental sync tasks
+# ---------------------------------------------------------------------------
+
+@celery_app.task(
+    name="sync.reports.stocks_incremental",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_reports_stocks_incremental(self):
+    """POST /reports/sync/stocks/incremental — инкрементальная синхронизация остатков."""
+    from src.services.reports.sync.reports import ReportsSyncService
+
+    async def _run():
+        async with DBManager() as db:
+            result = await ReportsSyncService().sync_stocks_incremental(db.session)
+        logger.info(f"[sync.reports.stocks_incremental] Synced: {result.get('synced', 0)} stock records")
+        return result
+
+    return run_async(_run())
+
+
+@celery_app.task(
+    name="sync.reports.orders_incremental",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_reports_orders_incremental(self):
+    """POST /reports/sync/orders/incremental — инкрементальная синхронизация заказов."""
+    from src.services.reports.sync.reports import ReportsSyncService
+
+    async def _run():
+        async with DBManager() as db:
+            result = await ReportsSyncService().sync_orders_incremental(db.session)
+        logger.info(f"[sync.reports.orders_incremental] Synced: {result.get('synced', 0)} order reports")
+        return result
+
+    return run_async(_run())
+
+
+@celery_app.task(
+    name="sync.reports.sales_incremental",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_reports_sales_incremental(self):
+    """POST /reports/sync/sales/incremental — инкрементальная синхронизация продаж."""
+    from src.services.reports.sync.reports import ReportsSyncService
+
+    async def _run():
+        async with DBManager() as db:
+            result = await ReportsSyncService().sync_sales_incremental(db.session)
+        logger.info(f"[sync.reports.sales_incremental] Synced: {result.get('synced', 0)} sale reports")
+        return result
+
+    return run_async(_run())
+
+
+# ---------------------------------------------------------------------------
 # (13) Finances — Финансовый отчёт
 # ---------------------------------------------------------------------------
 
@@ -1063,3 +1127,89 @@ def sync_fbw_transit_tariffs_full(self):
         logger.info("[sync.fbw.transit_tariffs_full] Synced: %d tariffs", result.get("synced", 0))
         return result
     return run_async(_run())
+
+
+@celery_app.task(name="sync.analytics.funnel_full", bind=True, max_retries=3, default_retry_delay=60)
+def sync_analytics_funnel_full(self):
+    """Полная синхронизация воронки продаж (аналитика)."""
+    async def _run():
+        from src.services.analytics.sync.funnel import FunnelSyncService
+        from src.utils.db_manager import DBManager
+        async with DBManager() as db:
+            return await FunnelSyncService().sync_funnel_full(db.session)
+    try:
+        return run_async(_run())
+    except Exception as exc:
+        raise self.retry(exc=exc)
+
+
+@celery_app.task(name="sync.analytics.funnel_incremental", bind=True, max_retries=3, default_retry_delay=60)
+def sync_analytics_funnel_incremental(self):
+    """Инкрементальная синхронизация воронки продаж."""
+    async def _run():
+        from src.services.analytics.sync.funnel import FunnelSyncService
+        from src.utils.db_manager import DBManager
+        async with DBManager() as db:
+            return await FunnelSyncService().sync_funnel_incremental(db.session)
+    try:
+        return run_async(_run())
+    except Exception as exc:
+        raise self.retry(exc=exc)
+
+
+@celery_app.task(name="sync.analytics.stocks_full", bind=True, max_retries=3, default_retry_delay=60)
+def sync_analytics_stocks_full(self):
+    """Полная синхронизация остатков (аналитика)."""
+    async def _run():
+        from src.services.analytics.sync.stocks import StocksSyncService
+        from src.utils.db_manager import DBManager
+        async with DBManager() as db:
+            return await StocksSyncService().sync_stocks_full(db.session)
+    try:
+        return run_async(_run())
+    except Exception as exc:
+        raise self.retry(exc=exc)
+
+
+@celery_app.task(name="sync.analytics.stocks_incremental", bind=True, max_retries=3, default_retry_delay=60)
+def sync_analytics_stocks_incremental(self):
+    """Инкрементальная синхронизация остатков."""
+    async def _run():
+        from src.services.analytics.sync.stocks import StocksSyncService
+        from src.utils.db_manager import DBManager
+        async with DBManager() as db:
+            return await StocksSyncService().sync_stocks_incremental(db.session)
+    try:
+        return run_async(_run())
+    except Exception as exc:
+        raise self.retry(exc=exc)
+
+
+@celery_app.task(name="sync.analytics.search_full", bind=True, max_retries=3, default_retry_delay=60)
+def sync_analytics_search_full(self):
+    """Полная синхронизация поисковых запросов (аналитика)."""
+    async def _run():
+        from src.services.analytics.sync.search import SearchSyncService
+        from src.utils.db_manager import DBManager
+        async with DBManager() as db:
+            return await SearchSyncService().sync_search_full(db.session)
+    try:
+        return run_async(_run())
+    except Exception as exc:
+        raise self.retry(exc=exc)
+
+
+@celery_app.task(name="sync.analytics.search_incremental", bind=True, max_retries=3, default_retry_delay=60)
+def sync_analytics_search_incremental(self):
+    """Инкрементальная синхронизация поисковых запросов."""
+    async def _run():
+        from src.services.analytics.sync.search import SearchSyncService
+        from src.utils.db_manager import DBManager
+        async with DBManager() as db:
+            return await SearchSyncService().sync_search_incremental(db.session)
+    try:
+        return run_async(_run())
+    except Exception as exc:
+        raise self.retry(exc=exc)
+
+

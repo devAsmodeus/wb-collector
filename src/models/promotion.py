@@ -7,7 +7,7 @@ from src.database import Base
 
 class WbCampaign(Base):
     """Рекламная кампания WB."""
-    __tablename__ = "wb_campaigns"
+    __tablename__ = "campaigns"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     advert_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False, index=True, comment="ID кампании")
@@ -24,7 +24,7 @@ class WbCampaign(Base):
 
 class WbCampaignStat(Base):
     """Статистика рекламной кампании."""
-    __tablename__ = "wb_campaign_stats"
+    __tablename__ = "campaign_stats"
     __table_args__ = (
         UniqueConstraint("advert_id", "date", name="uq_campaign_stats_advert_date"),
     )
@@ -48,7 +48,7 @@ class WbCampaignStat(Base):
 
 class WbPromotion(Base):
     """Акция WB (календарь акций)."""
-    __tablename__ = "wb_promotions"
+    __tablename__ = "promotions"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     promotion_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False, index=True, comment="ID акции")

@@ -7,7 +7,7 @@ from src.database import Base
 
 class WbFeedback(Base):
     """Отзыв покупателя."""
-    __tablename__ = "wb_feedbacks"
+    __tablename__ = "feedbacks"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     feedback_id: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True, comment="ID отзыва")
@@ -30,7 +30,7 @@ class WbFeedback(Base):
 
 class WbQuestion(Base):
     """Вопрос покупателя."""
-    __tablename__ = "wb_questions"
+    __tablename__ = "questions"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     question_id: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True, comment="ID вопроса")
@@ -46,7 +46,7 @@ class WbQuestion(Base):
 
 class WbClaim(Base):
     """Претензия покупателя."""
-    __tablename__ = "wb_claims"
+    __tablename__ = "claims"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     claim_id: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True, comment="ID претензии")

@@ -230,3 +230,17 @@ class AnalyticsWbController(Controller):
     )
     async def get_stocks_offices(self, data: StocksOfficesRequest) -> dict:
         return await AnalyticsWbService().get_stocks_offices(data)
+
+    @post(
+        "/stocks/wb-warehouses",
+        tags=["11. API Wildberries"],
+        summary="Остатки на складах WB",
+        description=(
+            "Возвращает остатки товаров на складах WB.\n\n"
+            "**WB:** `POST seller-analytics-api.wildberries.ru/api/analytics/v1/stocks-report/wb-warehouses`"
+        ),
+    )
+    async def get_inventory_wb_warehouses(self, data: dict) -> dict:
+        async with AnalyticsCollector() as c:
+            return await c.get_inventory_wb_warehouses(data)
+

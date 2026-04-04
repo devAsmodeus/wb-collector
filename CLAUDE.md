@@ -504,6 +504,105 @@ docker logs wb_celery --tail 50
 
 ---
 
+## ✅ Обязательная самопроверка после каждого изменения
+
+**После ЛЮБОГО изменения кода — всегда выполнить все шаги ниже. Не пропускать.**
+
+### Шаг 1: деплой и перезапуск
+
+```powershell
+# Скопировать все изменённые файлы
+docker cp src\... wb_app:/app/src/...
+
+# Перезапустить контейнеры
+docker restart wb_app
+Start-Sleep 5
+# Если менялись tasks.py или celery_app.py — ещё:
+docker restart wb_celery wb_celery_beat
+Start-Sleep 3
+```
+
+### Шаг 2: проверить что app стартовал без ошибок
+
+```powershell
+docker logs wb_app --tail 20
+# Должно быть: "Started server process" или "Application startup complete"
+# Ошибки импорта / синтаксиса — красный флаг, фиксить сразу
+```
+
+### Шаг 3: HTTP-тест каждого изменённого эндпоинта
+
+Для каждого нового или изменённого эндпоинта — явный `Invoke-WebRequest`:
+
+```powershell
+# GET эндпоинт:
+$r = Invoke-WebRequest "http://localhost:8080/{path}" -UseBasicParsing
+Write-Host "$($r.StatusCode) — $($r.Content | ConvertFrom-Json | ConvertTo-Json -Depth 1)"
+
+# POST sync эндпоинт:
+$r = Invoke-WebRequest "http://localhost:8080/{path}/sync/full" -Method POST -UseBasicParsing -TimeoutSec 30
+$d = $r.Content | ConvertFrom-Json
+Write-Host "$($r.StatusCode) synced=$($d.synced)"
+
+# Ожидаемый результат: 200/201, synced > 0 (или 0 если данных нет — тоже ОК, без 5xx)
+```
+
+### Шаг 4: проверить данные в БД
+
+```powershell
+docker exec wb_postgres psql -U wb_user -d wb_collector -c "
+SELECT '{table}' as t, count(*) FROM {table};"
+# Ожидаемый результат: строки появились / обновились
+# Если count=0 — проверить логи sync, возможно WB API вернул пустой список
+```
+
+### Шаг 5: проверить типы и поля (для новых схем)
+
+```powershell
+docker exec wb_postgres psql -U wb_user -d wb_collector -c "
+SELECT * FROM {table} LIMIT 2;"
+# Проверить: нет ли NULL там где не должно быть, нет ли кириллических вопросиков
+```
+
+### Шаг 6: Celery (если менялись задачи)
+
+```powershell
+docker logs wb_celery --tail 20
+docker logs wb_celery_beat --tail 10
+# Celery должен принять задачу без ошибок
+# Beat должен показать расписание без warnings
+```
+
+### Шаг 7: отчёт
+
+После проверки — **явно написать результат**:
+```
+✅ /fbw/sync/supplies/full → 201 synced=818
+✅ /fbw/wb/supplies/38304393?isPreorderID=false → 200
+✅ fbw_supplies: 818 строк
+❌ /fbw/wb/supplies/{id}/package → 500 (починил: ...)
+```
+
+### Когда НЕ нужна полная проверка
+
+- Изменение только документации / комментариев
+- Изменение только `.md` / `.yaml` файлов
+- `chore: remove debug scripts` коммит
+
+### Автоматическая проверка через cron
+
+Для долгих Celery задач — ставить отложенную проверку:
+```python
+cron.add(job={
+    "schedule": {"kind": "at", "at": "<ISO время через N минут>"},
+    "payload": {"kind": "agentTurn", "message": "Проверь Celery task <id>: статус, строк в БД, нет ли ошибок. Сообщи результат."},
+    "sessionTarget": "isolated",
+    "delivery": {"mode": "announce"}
+})
+```
+
+---
+
 ## Как отлаживать 500 ошибки
 
 Litestar скрывает трейсбеки от клиента. Чтобы увидеть реальную ошибку:

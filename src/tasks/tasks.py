@@ -871,3 +871,66 @@ def sync_fbs_supplies_full(self):
         logger.info("[sync.fbs.supplies_full] Synced: %d supplies", result.get("synced", 0))
         return result
     return run_async(_run())
+
+
+# ---------------------------------------------------------------------------
+# (04) DBW — Incremental (added by audit)
+# ---------------------------------------------------------------------------
+
+@celery_app.task(
+    name="sync.dbw.orders_incremental",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_dbw_orders_incremental(self):
+    from src.services.dbw.sync.orders import DbwOrdersSyncService
+    async def _run():
+        async with DBManager() as db:
+            result = await DbwOrdersSyncService().sync_incremental(db.session)
+        logger.info("[sync.dbw.orders_incremental] Synced: %d orders", result.get("synced", 0))
+        return result
+    return run_async(_run())
+
+
+# ---------------------------------------------------------------------------
+# (05) DBS — Incremental (added by audit)
+# ---------------------------------------------------------------------------
+
+@celery_app.task(
+    name="sync.dbs.orders_incremental",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_dbs_orders_incremental(self):
+    from src.services.dbs.sync.orders import DBSOrdersSyncService
+    async def _run():
+        async with DBManager() as db:
+            result = await DBSOrdersSyncService().sync_incremental(db.session)
+        logger.info("[sync.dbs.orders_incremental] Synced: %d orders", result.get("synced", 0))
+        return result
+    return run_async(_run())
+
+
+# ---------------------------------------------------------------------------
+# (06) Pickup — Incremental (added by audit)
+# ---------------------------------------------------------------------------
+
+@celery_app.task(
+    name="sync.pickup.orders_incremental",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_pickup_orders_incremental(self):
+    from src.services.pickup.sync.orders import PickupOrdersSyncService
+    async def _run():
+        async with DBManager() as db:
+            result = await PickupOrdersSyncService().sync_incremental(db.session)
+        logger.info("[sync.pickup.orders_incremental] Synced: %d orders", result.get("synced", 0))
+        return result
+    return run_async(_run())

@@ -111,13 +111,11 @@ class DbsOrder(Base):
 
 
 class PickupOrder(Base):
-    """Заказ самовывоза (Click & Collect). GET /api/v3/orders?deliveryType=pickup"""
+    """Заказ самовывоза (Click & Collect). GET /api/v3/click-collect/orders — api.Order schema из YAML."""
     __tablename__ = "pickup_orders"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     order_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False, index=True, comment="id — ID заказа")
-    order_uid: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True, comment="orderUid — UUID заказа")
-    group_id: Mapped[str | None] = mapped_column(String(50), nullable=True, comment="groupId")
     rid: Mapped[str | None] = mapped_column(String(100), nullable=True, comment="rid — ID позиции")
     created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True, comment="createdAt — дата создания")
     article: Mapped[str | None] = mapped_column(String(100), nullable=True, comment="article — артикул продавца")
@@ -127,15 +125,15 @@ class PickupOrder(Base):
     converted_price: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="convertedPrice")
     currency_code: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="currencyCode")
     converted_currency_code: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="convertedCurrencyCode")
-    delivery_type: Mapped[str | None] = mapped_column(String(20), nullable=True, comment="deliveryType")
-    warehouse_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True, comment="warehouseId")
-    office_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True, comment="officeId")
+    final_price: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="finalPrice — итоговая цена")
+    converted_final_price: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="convertedFinalPrice")
     cargo_type: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="cargoType")
-    comment: Mapped[str | None] = mapped_column(String(500), nullable=True, comment="comment")
+    order_code: Mapped[str | None] = mapped_column(String(50), nullable=True, comment="orderCode — код заказа для выдачи")
+    pay_mode: Mapped[str | None] = mapped_column(String(50), nullable=True, comment="payMode — способ оплаты")
+    warehouse_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True, comment="warehouseId")
+    warehouse_address: Mapped[str | None] = mapped_column(String(500), nullable=True, comment="warehouseAddress — адрес ПВЗ")
     is_zero_order: Mapped[bool] = mapped_column(Boolean, default=False, comment="isZeroOrder")
-    skus: Mapped[list | None] = mapped_column(JSON, nullable=True, comment="skus")
-    address: Mapped[dict | None] = mapped_column(JSON, nullable=True, comment="address")
-    options: Mapped[dict | None] = mapped_column(JSON, nullable=True, comment="options")
+    skus: Mapped[list | None] = mapped_column(JSON, nullable=True, comment="skus — баркоды")
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")
 
 class FbsPass(Base):

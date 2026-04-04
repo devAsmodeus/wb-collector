@@ -48,7 +48,7 @@ class PickupOrdersSyncService(BaseService):
         Если БД пуста — делает полную выгрузку.
         """
         repo = PickupOrdersRepository(session)
-        max_date = await repo.get_max_date()
+        max_date = await repo.get_max_created_at()
 
         if not max_date:
             return await self.sync_orders(session)

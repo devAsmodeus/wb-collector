@@ -75,7 +75,7 @@ class DbwOrder(Base):
 
 
 class DbsOrder(Base):
-    """Сборочное задание DBS (Доставка продавцом). GET /api/v3/orders?deliveryType=dbs"""
+    """Сборочное задание DBS (Доставка продавцом). GET /api/v3/dbs/orders — OrderDBS schema из YAML."""
     __tablename__ = "dbs_orders"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -92,6 +92,10 @@ class DbsOrder(Base):
     converted_price: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="convertedPrice")
     currency_code: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="currencyCode")
     converted_currency_code: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="convertedCurrencyCode")
+    final_price: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="finalPrice — итоговая цена")
+    converted_final_price: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="convertedFinalPrice")
+    scan_price: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="scanPrice — цена при сканировании")
+    wb_sticker_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True, comment="wbStickerId — ID стикера WB")
     delivery_type: Mapped[str | None] = mapped_column(String(20), nullable=True, comment="deliveryType")
     supply_id: Mapped[str | None] = mapped_column(String(50), nullable=True, comment="supplyId")
     warehouse_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True, comment="warehouseId")

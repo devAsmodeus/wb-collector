@@ -76,9 +76,9 @@ class FBWSuppliesController(Controller):
     async def get_supply_goods(
         self,
         supply_id: int = Parameter(description="ID поставки или ID заказа"),
-        limit: int = Parameter(1000, query="limit", ge=1, le=5000, description="Количество записей. По умолчанию: 1000."),
-        offset: int = Parameter(0, query="offset", ge=0, description="Смещение. По умолчанию: 0."),
-        is_preorder_id: bool = Parameter(False, query="isPreorderID", description="`true` — поиск по ID заказа."),
+        limit: int = Parameter(default=1000, query="limit", ge=1, le=5000, description="Количество записей. По умолчанию: 1000."),
+        offset: int = Parameter(default=0, query="offset", ge=0, description="Смещение. По умолчанию: 0."),
+        is_preorder_id: bool = Parameter(default=False, query="isPreorderID", description="`true` — поиск по ID заказа."),
     ) -> FBWSupplyGoodsResponse:
         return await FBWSuppliesService().get_supply_goods(supply_id, limit, offset, is_preorder_id)
 

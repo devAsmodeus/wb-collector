@@ -35,3 +35,12 @@ class SyncFbwSuppliesController(Controller):
     async def sync_supplies_incremental(self) -> dict:
         async with DBManager() as db:
             return await FbwSuppliesSyncService().sync_supplies_incremental(db.session)
+
+    @post(
+        "/supply-goods",
+        summary="Синхронизация товаров в поставках FBW",
+        description="Загружает товары для всех поставок FBW из WB API. Тяжёлая операция — 1 запрос на поставку.",
+    )
+    async def sync_supply_goods(self) -> dict:
+        async with DBManager() as db:
+            return await FbwSuppliesSyncService().sync_supply_goods(db.session)

@@ -57,4 +57,4 @@ class FBWSuppliesCollector:
     async def get_supply_package(self, supply_id: int) -> FBWPackageQR:
         """GET /api/v1/supplies/{ID}/package — QR-код упаковки поставки."""
         data = await self._client.get(f"/api/v1/supplies/{supply_id}/package")
-        return FBWPackageQR.model_validate(data if isinstance(data, dict) else {"file": data})
+        return FBWPackageQR.model_validate(data if isinstance(data, (dict, list)) else {"file": data})

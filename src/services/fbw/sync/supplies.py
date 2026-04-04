@@ -183,5 +183,24 @@ class FbwSuppliesSyncService(BaseService):
         }
 
     async def sync_supply_goods(self, session) -> dict:
-        """Публичный метод для Celery: загрузка товаров для всех поставок."""
-        return await self._fetch_goods(session)
+        """Загружает товары для ВСЕХ поставок из БД (1 запрос/поставку)."""
+        from sqlalchemy import select
+        from src.models.fbw import FbwSupply
+
+        supply_repo = FbwSuppliesRepository(session)
+        goods_repo = FbwSupplyGoodsRepository(session)
+
+        result = await session.execute(select(FbwSupply.supply_id))
+        supply_ids = [row[0] for row in result.fetchall()]
+
+        if not supply_ids:
+            return {"synced": 0, "synced_goods": 0}
+
+        all_goods = []
+        async with FBWSuppliesCollector() as collector:
+            for sid in supply_ids:
+                await _fetch_goods(collector, sid, all_goods)
+
+        saved_goods = await goods_repo.upsert_many(all_goods)
+        logger.info(f"FBW supply_goods sync: {saved_goods} goods for {len(supply_ids)} supplies")
+        return {"synced": len(supply_ids), "synced_goods": saved_goods}

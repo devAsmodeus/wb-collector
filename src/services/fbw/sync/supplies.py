@@ -144,7 +144,7 @@ class FbwSuppliesSyncService(BaseService):
 
         date_from = max_updated.strftime("%Y-%m-%d")
         date_to = datetime.utcnow().strftime("%Y-%m-%d")
-        payload = {"dates": [date_from, date_to]}
+        payload = {"dates": [{"from": date_from, "till": date_to, "type": "updatedDate"}]}
 
         async with FBWSuppliesCollector() as collector:
             offset = 0
@@ -181,3 +181,7 @@ class FbwSuppliesSyncService(BaseService):
             "source": "incremental",
             "from_date": max_updated.isoformat(),
         }
+
+    async def sync_supply_goods(self, session) -> dict:
+        """Публичный метод для Celery: загрузка товаров для всех поставок."""
+        return await self._fetch_goods(session)

@@ -84,20 +84,26 @@ class FbwSupplyGoodsRepository:
         self._session = session
 
     async def upsert_many(self, items: list[dict]) -> int:
-        """Вставляет или обновляет товары в поставках FBW. Возвращает кол-во обработанных записей."""
+        """Вставляет или обновляет товары в поставках FBW — поля по models.GoodInSupply из YAML."""
         if not items:
             return 0
         rows = [
             {
-                "supply_id": item["supply_id"],
-                "barcode": item.get("barcode"),
-                "vendor_code": item.get("vendor_code"),
-                "name": item.get("name"),
-                "quantity": item.get("quantity"),
-                "brand": item.get("brand"),
-                "subject": item.get("subject"),
-                "raw_data": item.get("raw_data"),
-                "fetched_at": datetime.utcnow(),
+                "supply_id":               item["supply_id"],
+                "barcode":                 item.get("barcode"),
+                "vendor_code":             item.get("vendorCode") or item.get("vendor_code"),
+                "nm_id":                   item.get("nmID") or item.get("nm_id"),
+                "need_kiz":                item.get("needKiz") or item.get("need_kiz"),
+                "tnved":                   item.get("tnved"),
+                "tech_size":               item.get("techSize") or item.get("tech_size"),
+                "color":                   item.get("color"),
+                "supplier_box_amount":     item.get("supplierBoxAmount") or item.get("supplier_box_amount"),
+                "quantity":                item.get("quantity"),
+                "ready_for_sale_quantity": item.get("readyForSaleQuantity") or item.get("ready_for_sale_quantity"),
+                "accepted_quantity":       item.get("acceptedQuantity") or item.get("accepted_quantity"),
+                "unloading_quantity":      item.get("unloadingQuantity") or item.get("unloading_quantity"),
+                "raw_data":                item.get("raw_data"),
+                "fetched_at":              datetime.utcnow(),
             }
             for item in items
         ]

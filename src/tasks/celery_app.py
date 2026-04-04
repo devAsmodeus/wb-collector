@@ -209,6 +209,26 @@ celery_app.conf.update(
         # (00) Sync Docs — ежедневная проверка изменений WB API
         # =================================================================
 
+        "sync-fbw-supplies-full": {
+            "task": "sync.fbw.supplies_full",
+            "schedule": crontab(minute=0, hour=4),
+        },
+        "sync-fbw-supplies-incremental": {
+            "task": "sync.fbw.supplies_incremental",
+            "schedule": crontab(minute="*/30"),
+        },
+        "sync-fbw-supply-goods": {
+            "task": "sync.fbw.supply_goods",
+            "schedule": crontab(minute=10, hour=4),
+        },
+        "sync-fbw-warehouses-full": {
+            "task": "sync.fbw.warehouses_full",
+            "schedule": crontab(minute=20, hour=4),
+        },
+        "sync-fbw-transit-tariffs-full": {
+            "task": "sync.fbw.transit_tariffs_full",
+            "schedule": crontab(minute=25, hour=4),
+        },
         "sync-docs-wb-api": {
             "task": "sync.docs.wb_api",
             "schedule": crontab(minute=0, hour=8),   # 08:00 ежедневно

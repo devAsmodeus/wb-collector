@@ -974,3 +974,92 @@ def sync_pickup_orders_incremental(self):
         logger.info("[sync.pickup.orders_incremental] Synced: %d orders", result.get("synced", 0))
         return result
     return run_async(_run())
+
+
+# ---------------------------------------------------------------------------
+# (07) FBW — Поставки FBW
+# ---------------------------------------------------------------------------
+
+@celery_app.task(
+    name="sync.fbw.supplies_full",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_fbw_supplies_full(self):
+    from src.services.fbw.sync.supplies import FBWSuppliesSyncService
+    async def _run():
+        async with DBManager() as db:
+            result = await FBWSuppliesSyncService().sync_supplies_full(db.session)
+        logger.info("[sync.fbw.supplies_full] Synced: %d supplies", result.get("synced", 0))
+        return result
+    return run_async(_run())
+
+
+@celery_app.task(
+    name="sync.fbw.supplies_incremental",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_fbw_supplies_incremental(self):
+    from src.services.fbw.sync.supplies import FBWSuppliesSyncService
+    async def _run():
+        async with DBManager() as db:
+            result = await FBWSuppliesSyncService().sync_supplies_incremental(db.session)
+        logger.info("[sync.fbw.supplies_incremental] Synced: %d supplies", result.get("synced", 0))
+        return result
+    return run_async(_run())
+
+
+@celery_app.task(
+    name="sync.fbw.supply_goods",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_fbw_supply_goods(self):
+    from src.services.fbw.sync.supplies import FBWSuppliesSyncService
+    async def _run():
+        async with DBManager() as db:
+            result = await FBWSuppliesSyncService().sync_supply_goods(db.session)
+        logger.info("[sync.fbw.supply_goods] Synced: %d goods", result.get("synced", 0))
+        return result
+    return run_async(_run())
+
+
+@celery_app.task(
+    name="sync.fbw.warehouses_full",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_fbw_warehouses_full(self):
+    from src.services.fbw.sync.warehouses import FBWWarehousesSyncService
+    async def _run():
+        async with DBManager() as db:
+            result = await FBWWarehousesSyncService().sync_warehouses_full(db.session)
+        logger.info("[sync.fbw.warehouses_full] Synced: %d warehouses", result.get("synced", 0))
+        return result
+    return run_async(_run())
+
+
+@celery_app.task(
+    name="sync.fbw.transit_tariffs_full",
+    bind=True,
+    autoretry_for=(Exception,),
+    default_retry_delay=60,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_fbw_transit_tariffs_full(self):
+    from src.services.fbw.sync.transit_tariffs import FBWTransitTariffsSyncService
+    async def _run():
+        async with DBManager() as db:
+            result = await FBWTransitTariffsSyncService().sync_transit_tariffs_full(db.session)
+        logger.info("[sync.fbw.transit_tariffs_full] Synced: %d tariffs", result.get("synced", 0))
+        return result
+    return run_async(_run())

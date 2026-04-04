@@ -1,189 +1,137 @@
-"""Схемы: FBS — Сборочные задания (заказы).
+"""Схемы: FBS — Сборочные задания.
 
-WB API v3 (/api/v3/orders) возвращает поле `id` (не `orderId`),
-`createdAt` (не `date`), `orderUid` (не `orderUID`), `warehouseId` (не `warehouseName`).
+Строго по схеме WB API v3: GET/POST marketplace-api.wildberries.ru/api/v3/orders
+Схема Order из 03-orders-fbs.yaml.
 """
 from typing import Any
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 
 
 class Order(BaseModel):
-    """Сборочное задание FBS.
+    """Сборочное задание FBS (Order schema из YAML)."""
+    id: int | None = Field(None, description="id — ID сборочного задания (int64)")
+    orderUid: str | None = Field(None, description="orderUid — UUID заказа")
+    rid: str | None = Field(None, description="rid — уникальный ID позиции заказа")
+    createdAt: str | None = Field(None, description="createdAt — дата создания (ISO 8601)")
+    article: str | None = Field(None, description="article — артикул продавца")
+    colorCode: str | None = Field(None, description="colorCode — код цвета")
+    nmId: int | None = Field(None, description="nmId — артикул WB")
+    chrtId: int | None = Field(None, description="chrtId — ID характеристики размера")
+    price: int | None = Field(None, description="price — цена в копейках × 100")
+    convertedPrice: int | None = Field(None, description="convertedPrice — цена в валюте продавца")
+    currencyCode: int | None = Field(None, description="currencyCode — код валюты ISO 4217")
+    convertedCurrencyCode: int | None = Field(None, description="convertedCurrencyCode")
+    deliveryType: str | None = Field(None, description="deliveryType — тип доставки (fbs/dbs/wbexpress)")
+    supplyId: str | None = Field(None, description="supplyId — ID поставки FBS")
+    warehouseId: int | None = Field(None, description="warehouseId — ID склада продавца")
+    officeId: int | None = Field(None, description="officeId — ID офиса WB (ПВЗ)")
+    cargoType: int | None = Field(None, description="cargoType — тип груза (1=короба, 2=паллеты, 3=суперсейф)")
+    crossBorderType: int | None = Field(None, description="crossBorderType — тип кроссбордер")
+    scanPrice: float | None = Field(None, description="scanPrice — цена при сканировании (uint32)")
+    isZeroOrder: bool = Field(default=False, description="isZeroOrder — нулевой заказ")
+    comment: str | None = Field(None, description="comment — комментарий к заказу")
+    skus: list[str] | None = Field(None, description="skus — баркоды товара")
+    offices: list[str] | None = Field(None, description="offices — коды офисов доставки")
+    address: dict | Any = Field(None, description="address — объект адреса доставки")
+    options: dict | Any = Field(None, description="options — доп. опции (isB2B и др.)")
 
-    WB v3 API: id, createdAt, orderUid, warehouseId
-    Statistics API: orderId, date, orderUID, warehouseName
-    """
-    # WB v3 возвращает `id`, statistics API — `orderId`
-    id: int | None = Field(None, description="ID сборочного задания (WB v3)")
-    orderId: int | None = Field(None, description="ID сборочного задания (statistics)")
-    # WB v3: createdAt, statistics: date
-    createdAt: str | None = Field(None, description="Дата создания (WB v3, ISO 8601)")
-    date: str | None = Field(None, description="Дата создания (statistics, ISO 8601)")
-    lastChangeDate: str | None = Field(None, description="Дата последнего изменения статуса (ISO 8601)")
-    # WB v3: warehouseId, statistics: warehouseName
-    warehouseId: int | None = Field(None, description="ID склада WB (WB v3)")
-    warehouseName: str | None = Field(None, description="Склад WB, с которого идёт отгрузка")
-    countryName: str | None = Field(None, description="Страна доставки")
-    oblastOkrugName: str | None = Field(None, description="Федеральный округ доставки")
-    regionName: str | None = Field(None, description="Регион доставки")
-    # WB v3: orderUid, statistics: orderUID
-    orderUid: str | None = Field(None, description="UUID заказа (WB v3)")
-    orderUID: str | None = Field(None, description="UUID заказа (statistics)")
-    article: str | None = Field(None, description="Артикул продавца")
-    # WB v3 дополнительные поля
-    deliveryType: str | None = Field(None, description="Тип доставки (fbs, dbs, ...)")
-    supplyId: str | None = Field(None, description="ID поставки")
-    cargoType: int | None = Field(None, description="Тип груза")
-    officeId: int | None = Field(None, description="ID ПВЗ")
-    offices: list[str] | None = Field(None, description="Офисы доставки")
-    comment: str | None = Field(None, description="Комментарий к заказу")
-    options: dict | None = Field(None, description="Доп. опции (isB2B и др.)")
-
-    @property
-    def effective_order_id(self) -> int | None:
-        return self.id or self.orderId
-
-    @property
-    def effective_date(self) -> str | None:
-        return self.createdAt or self.date
-
-    @property
-    def effective_order_uid(self) -> str | None:
-        return self.orderUid or self.orderUID
-    colorCode: str | None = Field(None, description="Код цвета товара")
-    rid: str | None = Field(None, description="Уникальный идентификатор позиции заказа")
-    totalPrice: float | None = Field(None, description="Цена без скидок, руб.")
-    discountPercent: int | None = Field(None, description="Скидка продавца, %")
-    spp: int | None = Field(None, description="Скидка по программе WB (СПП), %")
-    finishedPrice: float | None = Field(None, description="Итоговая цена с учётом всех скидок, руб.")
-    priceWithDisc: float | None = Field(None, description="Цена после скидки продавца, руб.")
-    isCancel: bool = Field(default=False, description="Признак отменённого заказа")
-    cancelDate: str | None = Field(None, description="Дата отмены заказа (ISO 8601)")
-    orderType: str | None = Field(
-        None,
-        description="Тип заказа: `Клиентский`, `Возврат Брака`, `Принудительный возврат`, `Возврат обезлички`",
-    )
-    nmId: int | None = Field(None, description="Артикул WB (nmID)")
-    chrtId: int | None = Field(None, description="ID характеристики размера (chrtID)")
-    price: float | None = Field(None, description="Цена, коп×100 (напр. 300000 = 3000 ₽)")
-    convertedPrice: float | None = Field(None, description="Цена в валюте расчётов продавца")
-    currencyCode: int | None = Field(None, description="Числовой код валюты (ISO 4217, напр. 643 = RUB)")
-    quantity: int | None = Field(None, description="Количество товара в заказе")
-    subject: str | None = Field(None, description="Предмет (подкатегория) товара")
-    category: str | None = Field(None, description="Родительская категория товара")
-    brand: str | None = Field(None, description="Бренд товара")
-    name: str | None = Field(None, description="Наименование товара")
-    techSize: str | None = Field(None, description="Технический размер (напр. '42', 'XL')")
-    skus: list[str] = Field(default=[], description="Баркоды (EAN-13) товара")
-    isZeroOrder: bool = Field(default=False, description="Нулевой (тестовый) заказ без реальной оплаты")
+    model_config = {"extra": "allow"}
 
 
 class OrdersResponse(BaseModel):
-    """Список сборочных заданий."""
-    next: int | None = Field(None, description="Курсор для следующей страницы (id последнего заказа)")
-    orders: list[Order] = Field(default=[], description="Сборочные задания")
+    """Ответ GET /api/v3/orders."""
+    orders: list[Order] = Field(default=[], description="Список сборочных заданий")
+    next: int | None = Field(None, description="Курсор для следующей страницы (next)")
 
 
-class OrderStatus(BaseModel):
-    """Статус сборочного задания."""
-    orderId: int = Field(description="ID сборочного задания")
-    supplierStatus: str | None = Field(
-        None,
-        description=(
-            "Статус продавца: "
-            "`confirm` — подтверждён, "
-            "`pack` — собран, "
-            "`deliver` — передан в доставку, "
-            "`reshipment` — повторная отгрузка, "
-            "`cancel` — отменён продавцом."
-        ),
-    )
-    wbStatus: str | None = Field(
-        None,
-        description=(
-            "Статус WB: "
-            "`waiting` — ожидает сборки, "
-            "`sorted` — отсортирован, "
-            "`sold` — выкуплен, "
-            "`canceled` — отменён WB."
-        ),
-    )
-
-
-class OrderStatusRequest(BaseModel):
-    """Запрос статусов сборочных заданий."""
-    orders: list[int] = Field(
-        description="Список ID сборочных заданий. Максимум **1000** за запрос.",
-        max_length=1000,
-    )
+class OrderStatusInfo(BaseModel):
+    """Статус конкретного заказа."""
+    id: int = Field(description="ID заказа")
+    supplierStatus: str | None = Field(None, description="Статус у продавца")
+    wbStatus: str | None = Field(None, description="Статус WB")
 
 
 class OrderStatusResponse(BaseModel):
-    """Статусы сборочных заданий."""
-    orders: list[OrderStatus] = Field(default=[], description="Статусы запрошенных заданий")
+    """Ответ POST /api/v3/orders/status."""
+    orders: list[OrderStatusInfo] = Field(default=[])
 
 
-class Sticker(BaseModel):
-    """Стикер (этикетка) для сборочного задания."""
-    orderId: int | None = Field(None, description="ID сборочного задания")
-    partA: int | None = Field(None, description="Первая часть числового кода на стикере")
-    partB: int | None = Field(None, description="Вторая часть числового кода на стикере")
-    barcode: str | None = Field(None, description="Полный штрихкод стикера")
-    file: str | None = Field(None, description="Стикер в формате base64 (SVG или PNG в зависимости от запроса)")
-
-
-class StickersRequest(BaseModel):
-    """Запрос стикеров для сборочных заданий."""
-    orders: list[int] = Field(description="Список ID сборочных заданий для получения стикеров")
+class StickerItem(BaseModel):
+    """Стикер для сборочного задания."""
+    orderId: int | None = Field(None)
+    partA: int | None = Field(None)
+    partB: int | None = Field(None)
+    barcode: str | None = Field(None)
+    file: str | None = Field(None, description="Base64-encoded PNG/SVG")
 
 
 class StickersResponse(BaseModel):
-    """Стикеры сборочных заданий."""
-    stickers: list[Sticker] = Field(default=[], description="Стикеры для печати")
+    """Ответ POST /api/v3/orders/stickers."""
+    stickers: list[StickerItem] = Field(default=[])
 
 
-class OrderMetaRequest(BaseModel):
-    """Запрос метаданных сборочных заданий."""
-    orders: list[int] = Field(description="Список ID сборочных заданий")
+class OrderMetaDetail(BaseModel):
+    imei: str | None = None
+    uin: str | None = None
+    gtin: str | None = None
+    sgtin: str | None = None
+
+
+class OrderMetaItem(BaseModel):
+    id: int | None = None
+    meta: dict | Any = None
+    metaDetails: dict | Any = None
 
 
 class OrderMetaResponse(BaseModel):
-    """Метаданные сборочных заданий."""
-    data: list[Any] | None = Field(None, description="Метаданные (коды маркировки, IMEI и др.)")
+    """Ответ POST /api/marketplace/v3/orders/meta."""
+    data: list[OrderMetaItem] | Any = Field(default=None)
 
 
-class SetSgtinRequest(BaseModel):
-    """Код маркировки товара (честный знак)."""
-    sgtin: str = Field(description="SGTIN — код маркировки товара (КИЗ/честный знак, 18 или 20 символов)")
+# Алиасы для совместимости
+Sticker = StickerItem
+OrderStatus = OrderStatusInfo
 
 
-class SetUinRequest(BaseModel):
-    """УИН ювелирного изделия."""
-    uin: str = Field(description="УИН — уникальный идентификационный номер ювелирного изделия")
+class OrderStatusRequest(BaseModel):
+    """POST /api/v3/orders/status — запрос статусов."""
+    orders: list[int] = Field(default=[], description="Список ID заказов")
 
 
-class SetImeiRequest(BaseModel):
-    """IMEI мобильного устройства."""
-    imei: str = Field(description="IMEI — международный идентификатор мобильного оборудования (15 цифр)")
-
-
-class SetGtinRequest(BaseModel):
-    """GTIN товара."""
-    gtin: str = Field(description="GTIN — глобальный идентификатор торговой единицы (8, 12, 13 или 14 цифр)")
-
-
-class SetExpirationRequest(BaseModel):
-    """Срок годности товара."""
-    expirationDate: str = Field(description="Срок годности в формате `YYYY-MM-DD`")
-
-
-class SetCustomsRequest(BaseModel):
-    """Номер таможенной декларации."""
-    customsDeclarationNumber: str = Field(
-        description="Номер грузовой таможенной декларации (ГТД) для товаров из-за рубежа"
-    )
+class StickersRequest(BaseModel):
+    """POST /api/v3/orders/stickers — запрос стикеров."""
+    orders: list[int] = Field(default=[], description="Список ID заказов")
 
 
 class ClientOrdersRequest(BaseModel):
-    """Запрос заказов с данными клиента."""
-    orders: list[int] = Field(description="Список ID сборочных заданий для получения данных покупателя")
+    """POST /api/v3/orders/client — запрос данных клиента."""
+    orders: list[int] = Field(default=[], description="Список ID заказов")
+
+
+class OrderMetaRequest(BaseModel):
+    """POST /api/marketplace/v3/orders/meta — запрос метаданных."""
+    orders: list[int] = Field(default=[], description="Список ID заказов")
+
+
+class SetSgtinRequest(BaseModel):
+    sgtin: str = Field(description="Код маркировки КИЗ (честный знак)")
+
+
+class SetUinRequest(BaseModel):
+    uin: str = Field(description="УИН ювелирного изделия")
+
+
+class SetImeiRequest(BaseModel):
+    imei: str = Field(description="IMEI мобильного устройства")
+
+
+class SetGtinRequest(BaseModel):
+    gtin: str = Field(description="GTIN товара")
+
+
+class SetExpirationRequest(BaseModel):
+    expirationDate: str = Field(description="Срок годности (ISO 8601)")
+
+
+class SetCustomsRequest(BaseModel):
+    customsDeclarationNumber: str = Field(description="Номер таможенной декларации (ГТД)")

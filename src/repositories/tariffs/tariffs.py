@@ -7,7 +7,7 @@ from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.references import WbTariffCommission, WbTariffBox, WbTariffPallet, WbTariffSupply
+from src.models.references import TariffCommission, TariffBox, TariffPallet, TariffSupply
 from src.schemas.tariffs.tariffs import (
     CommissionCategory, BoxTariffItem, PalletTariffItem, SupplyTariffItem,
 )
@@ -61,7 +61,7 @@ class TariffsRepository:
             for item in items
         ]
         return await self._batched_upsert(
-            model=WbTariffCommission,
+            model=TariffCommission,
             rows=rows,
             index_elements=["subject_id"],
             update_set=lambda stmt: {
@@ -76,12 +76,12 @@ class TariffsRepository:
         )
 
     async def count_commissions(self) -> int:
-        result = await self._session.execute(select(func.count()).select_from(WbTariffCommission))
+        result = await self._session.execute(select(func.count()).select_from(TariffCommission))
         return result.scalar_one()
 
-    async def get_all_commissions(self, limit: int = 500, offset: int = 0) -> list[WbTariffCommission]:
+    async def get_all_commissions(self, limit: int = 500, offset: int = 0) -> list[TariffCommission]:
         result = await self._session.execute(
-            select(WbTariffCommission).order_by(WbTariffCommission.subject_id).limit(limit).offset(offset)
+            select(TariffCommission).order_by(TariffCommission.subject_id).limit(limit).offset(offset)
         )
         return list(result.scalars().all())
 
@@ -103,7 +103,7 @@ class TariffsRepository:
             if item.warehouseName  # skip items without name
         ]
         return await self._batched_upsert(
-            model=WbTariffBox,
+            model=TariffBox,
             rows=rows,
             index_elements=["warehouse_name"],
             update_set=lambda stmt: {
@@ -116,12 +116,12 @@ class TariffsRepository:
         )
 
     async def count_box_tariffs(self) -> int:
-        result = await self._session.execute(select(func.count()).select_from(WbTariffBox))
+        result = await self._session.execute(select(func.count()).select_from(TariffBox))
         return result.scalar_one()
 
-    async def get_all_box_tariffs(self, limit: int = 500, offset: int = 0) -> list[WbTariffBox]:
+    async def get_all_box_tariffs(self, limit: int = 500, offset: int = 0) -> list[TariffBox]:
         result = await self._session.execute(
-            select(WbTariffBox).order_by(WbTariffBox.warehouse_name).limit(limit).offset(offset)
+            select(TariffBox).order_by(TariffBox.warehouse_name).limit(limit).offset(offset)
         )
         return list(result.scalars().all())
 
@@ -143,7 +143,7 @@ class TariffsRepository:
             if item.warehouseName  # skip items without name
         ]
         return await self._batched_upsert(
-            model=WbTariffPallet,
+            model=TariffPallet,
             rows=rows,
             index_elements=["warehouse_name"],
             update_set=lambda stmt: {
@@ -156,12 +156,12 @@ class TariffsRepository:
         )
 
     async def count_pallet_tariffs(self) -> int:
-        result = await self._session.execute(select(func.count()).select_from(WbTariffPallet))
+        result = await self._session.execute(select(func.count()).select_from(TariffPallet))
         return result.scalar_one()
 
-    async def get_all_pallet_tariffs(self, limit: int = 500, offset: int = 0) -> list[WbTariffPallet]:
+    async def get_all_pallet_tariffs(self, limit: int = 500, offset: int = 0) -> list[TariffPallet]:
         result = await self._session.execute(
-            select(WbTariffPallet).order_by(WbTariffPallet.warehouse_name).limit(limit).offset(offset)
+            select(TariffPallet).order_by(TariffPallet.warehouse_name).limit(limit).offset(offset)
         )
         return list(result.scalars().all())
 
@@ -172,7 +172,7 @@ class TariffsRepository:
         if not items:
             return 0
         # Truncate old data and insert fresh (supply tariffs are a full snapshot)
-        await self._session.execute(WbTariffSupply.__table__.delete())
+        await self._session.execute(TariffSupply.__table__.delete())
         rows = [
             {
                 "warehouse_id": item.warehouseID,
@@ -190,16 +190,16 @@ class TariffsRepository:
         batch_size = max(1, _MAX_PG_PARAMS // max(len(rows[0]), 1)) if rows else 0
         for i in range(0, len(rows), batch_size or 1):
             batch = rows[i: i + (batch_size or len(rows))]
-            await self._session.execute(WbTariffSupply.__table__.insert(), batch)
+            await self._session.execute(TariffSupply.__table__.insert(), batch)
         await self._session.commit()
         return len(rows)
 
     async def count_supply_tariffs(self) -> int:
-        result = await self._session.execute(select(func.count()).select_from(WbTariffSupply))
+        result = await self._session.execute(select(func.count()).select_from(TariffSupply))
         return result.scalar_one()
 
-    async def get_all_supply_tariffs(self, limit: int = 500, offset: int = 0) -> list[WbTariffSupply]:
+    async def get_all_supply_tariffs(self, limit: int = 500, offset: int = 0) -> list[TariffSupply]:
         result = await self._session.execute(
-            select(WbTariffSupply).order_by(WbTariffSupply.warehouse_name).limit(limit).offset(offset)
+            select(TariffSupply).order_by(TariffSupply.warehouse_name).limit(limit).offset(offset)
         )
         return list(result.scalars().all())

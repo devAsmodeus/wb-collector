@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     WB_USER_MGMT_URL: str = "https://user-management-api.wildberries.ru"
     WB_RETURNS_URL: str = "https://returns-api.wildberries.ru"
     WB_SUPPLIES_URL: str = "https://supplies-api.wildberries.ru"
+    WB_BUYER_CHAT_URL: str = "https://buyer-chat-api.wildberries.ru"
 
     # Алиасы для обратной совместимости
     @property

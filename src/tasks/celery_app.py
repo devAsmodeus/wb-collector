@@ -232,7 +232,13 @@ celery_app.conf.update(
         "sync-docs-wb-api": {
             "task": "sync.docs.wb_api",
             "schedule": crontab(minute=0, hour=8),   # 08:00 ежедневно
-                "sync-analytics-funnel-full": {
+        },
+
+        # =================================================================
+        # (11) Analytics — Воронка, остатки, поисковые запросы
+        # =================================================================
+
+        "sync-analytics-funnel-full": {
             "task": "sync.analytics.funnel_full",
             "schedule": crontab(hour=5, minute=0),
         },
@@ -256,7 +262,19 @@ celery_app.conf.update(
             "task": "sync.analytics.search_incremental",
             "schedule": crontab(minute="*/30"),
         },
-},
+
+        # =================================================================
+        # (03) FBS — Поставки и пропуска (добавлены в Beat)
+        # =================================================================
+
+        "sync-fbs-supplies-full": {
+            "task": "sync.fbs.supplies_full",
+            "schedule": crontab(minute=35, hour=4),  # 04:35 ежедневно
+        },
+        "sync-fbs-passes-full": {
+            "task": "sync.fbs.passes_full",
+            "schedule": crontab(minute=40, hour=4),  # 04:40 ежедневно
+        },
     },
 )
 

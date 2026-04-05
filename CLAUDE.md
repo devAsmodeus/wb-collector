@@ -224,17 +224,31 @@ WB API  →  Collector (httpx)  →  Service  →  Repository  →  PostgreSQL
 
 ### Важно про порты:
 - **Внутри Docker-сети** app подключается к postgres на порту `5432` (переменная `DB_PORT=5432` в docker-compose environment)
-- **Снаружи** (PyCharm, DBeaver) подключение на порту **`5434`** (потому что локальный PostgreSQL занял 5432)
+- **Снаружи** (PyCharm, DBeaver) подключение зависит от `.env`: если `DB_PORT=5432` → порт `5432`, если `DB_PORT=5434` → порт `5434`
 - **API доступен** по `http://localhost:8080` (через nginx) или `http://localhost:8000` (если порт пробрасывать напрямую)
 
 ### Подключение к БД из PyCharm:
-```
-Host: localhost
-Port: 5434
-Database: wb_collector
-User: wb_user
-Password: wb_pass
-```
+
+1. **Database** → **+** → **Data Source** → **PostgreSQL**
+2. Заполнить:
+   ```
+   Host: localhost
+   Port: 5432        (или 5434 — смотри DB_PORT в .env)
+   Database: wb_collector
+   User: wb_user
+   Password: wb_pass
+   ```
+3. **Test Connection** → должно быть ✅
+4. **Schemas** → отметить `public`
+5. **Apply** → **OK**
+
+> Если порт 5432 занят локальным PostgreSQL — поменяй `DB_PORT=5434` в `.env` и пересоздай контейнер: `docker compose up -d wb_postgres`
+
+### Подключение к БД из DBeaver:
+
+1. **New Connection** → **PostgreSQL**
+2. Те же параметры: `localhost:5432`, `wb_collector`, `wb_user` / `wb_pass`
+3. **Test Connection** → **Finish**
 
 ---
 
@@ -428,18 +442,31 @@ async def sync_incremental(self, session):
 | Эндпоинт | Проблема | Решение |
 |----------|---------|---------|
 | `/promotion/sync/stats/full` | TMO по HTTP (23 мин) | ✅ работает через Celery |
-| `/finances/sync/full` | 502 OOM по HTTP | нужен fire-and-forget → task_id |
-| `/reports/sync/orders/full` | 404 | роут не зарегистрирован |
-| `/reports/sync/sales/full` | 404 | роут не зарегистрирован |
+| `/finances/sync/full` | 502 OOM по HTTP | ✅ работает через Celery (task_id) |
+| `/reports/sync/orders/full` | 404 | ✅ исправлено (route path `/` → `/full`) |
+| `/reports/sync/sales/full` | 404 | ✅ исправлено (route path `/` → `/full`) |
 | `/communications/sync/feedbacks/full` | 502 | расследовать |
 | `seller_rating`, `seller_subscriptions` | 403 | создать токен с нужными правами |
 
+### ✅ Исправлено (2026-04-05)
+
+- Reports sync routes: `@post("/")` → `@post("/full")` для stocks/orders/sales
+- Tariffs sync routes: `@post("/")` → `@post("/full")` для commissions/box/pallet/supply
+- FBS supplies/passes: добавлены sync/db контроллеры, repositories, сервисы
+- FBS supplies/passes: добавлены в Celery Beat (ежедневно 04:35/04:40)
+- Broken imports: `WbTariffCommission` → `TariffCommission` и т.д. в repositories/tariffs
+- Alembic: исправлена битая цепочка миграций (отсутствующая ревизия `f2a3b4c5d6e7`)
+- `migrations/env.py`: убраны дублирующие импорты (достаточно `import src.models`)
+- `celery_app.py`: исправлена синтаксическая ошибка (вложенный dict в beat_schedule)
+- FBS supplies sync: параметр `next_cursor` → `offset` (совместимость с коллектором)
+
 ### 🟠 Технический долг
 
-- **Переименование таблиц** — убрать префикс `wb_` где нет смысла (через Alembic)
-- **Unique constraints** — проверить все таблицы
-- **raw_data JSONB** — добавить во все модели для сохранения сырого ответа WB
-- **fbw_supply_goods** — дождаться завершения Celery task (812 поставок)
+- **Excel-экспорт** — CLAUDE.md требует, но не реализован ни в одном DB-эндпоинте
+- **`wb_sync_state`** — единственная таблица с `wb_` префиксом (переименовать → `sync_state`)
+- **`campaign_stats.raw_data`** — использует `JSON` вместо `JSONB`
+- **Reports таблицы** — `stocks`, `orders_report`, `sales_report` без префикса `reports_` (по CLAUDE.md нужен)
+- **Unique constraints** — все таблицы проверены ✅
 
 ---
 

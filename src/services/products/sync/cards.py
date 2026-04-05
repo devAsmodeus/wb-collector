@@ -28,7 +28,7 @@ class CardsSyncService(BaseService):
             cursor_nm_id = None
 
             while True:
-                settings = {"cursor": {"limit": 100}}
+                settings = {"cursor": {"limit": 100}, "filter": {"withPhoto": -1}}
                 if cursor_updated_at and cursor_nm_id:
                     settings["cursor"]["updatedAt"] = cursor_updated_at
                     settings["cursor"]["nmID"] = cursor_nm_id

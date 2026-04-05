@@ -34,15 +34,25 @@ class CalendarSyncService(BaseService):
         async with CalendarCollector() as collector:
             response = await collector.get_promotions(params=params)
 
+        # response может быть Pydantic-модель или dict
         promotions = []
-        if isinstance(response, list):
-            promotions = response
+        if hasattr(response, 'promotions'):
+            promotions = response.promotions or []
+        elif hasattr(response, 'data') and hasattr(response.data, 'promotions'):
+            promotions = response.data.promotions or []
         elif isinstance(response, dict):
-            promotions = response.get("data", response.get("promotions", []))
-            if not isinstance(promotions, list):
-                promotions = [response]
+            data = response.get("data", response)
+            if isinstance(data, dict):
+                promotions = data.get("promotions", [])
+            elif isinstance(data, list):
+                promotions = data
 
-        saved = await repo.upsert_many(promotions)
+        # Convert Pydantic objects to dicts
+        promo_dicts = [
+            p.model_dump() if hasattr(p, 'model_dump') else p
+            for p in promotions
+        ]
+        saved = await repo.upsert_many(promo_dicts)
         logger.info(f"Promotions synced: {saved} promotions saved")
         return {"synced": saved, "source": "full"}
 

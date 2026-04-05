@@ -8,7 +8,7 @@ class SyncStocksController(Controller):
     tags = ["12. Синхронизация"]
 
     @post(
-        "/",
+        "/full",
         summary="Синхронизация остатков на складах (Celery)",
         description=(
             "Запускает Celery-задачу для загрузки остатков товаров на складах WB.\n\n"
@@ -39,7 +39,7 @@ class SyncOrdersController(Controller):
     tags = ["12. Синхронизация"]
 
     @post(
-        "/",
+        "/full",
         summary="Синхронизация заказов (Celery)",
         description=(
             "Запускает Celery-задачу для загрузки заказов из Statistics API.\n\n"
@@ -70,7 +70,7 @@ class SyncSalesController(Controller):
     tags = ["12. Синхронизация"]
 
     @post(
-        "/",
+        "/full",
         summary="Синхронизация продаж и возвратов (Celery)",
         description=(
             "Запускает Celery-задачу для загрузки продаж и возвратов.\n\n"

@@ -5,7 +5,7 @@ from src.config import settings
 
 class ChatCollector:
     def __init__(self):
-        self._client = WBApiClient(base_url=settings.WB_FEEDBACKS_URL, token=settings.WB_API_TOKEN)
+        self._client = WBApiClient(base_url=settings.WB_BUYER_CHAT_URL, token=settings.WB_API_TOKEN)
 
     async def __aenter__(self):
         await self._client.__aenter__()

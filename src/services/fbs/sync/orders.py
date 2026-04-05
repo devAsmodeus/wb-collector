@@ -14,36 +14,54 @@ class FbsOrdersSyncService(BaseService):
 
     async def sync_orders(self, session: AsyncSession) -> dict:
         """
-        Полная выгрузка всех сборочных заданий FBS.
-        WB API v3 использует курсорную пагинацию через `next` (id последнего заказа).
+        Полная выгрузка ВСЕХ сборочных заданий FBS за все время.
+        WB API v3 позволяет максимум 30 дней за один запрос,
+        поэтому перебираем 30-дневные окна с самого начала (2 года назад).
+        Курсорная пагинация через `next` (id последнего заказа).
         """
+        from datetime import datetime, timedelta
+
         repo = FbsOrdersRepository(session)
         all_orders: list[dict] = []
 
+        # Перебираем 30-дневные окна за последние 2 года
+        now = datetime.utcnow()
+        window_start = now - timedelta(days=730)  # 2 года назад
+
         async with OrdersCollector() as collector:
-            next_cursor = 0
-            limit = 1000
+            while window_start < now:
+                window_end = min(window_start + timedelta(days=30), now)
+                date_from = int(window_start.timestamp())
+                date_to = int(window_end.timestamp())
 
-            while True:
-                response = await collector.get_orders(limit=limit, next_cursor=next_cursor)
+                next_cursor = 0
+                limit = 1000
 
-                if not response.orders:
-                    break
+                while True:
+                    response = await collector.get_orders(
+                        limit=limit, next_cursor=next_cursor,
+                        date_from=date_from, date_to=date_to,
+                    )
 
-                for order in response.orders:
-                    all_orders.append(order.model_dump() if hasattr(order, "model_dump") else order)
+                    if not response.orders:
+                        break
 
-                # WB API возвращает next в корне ответа (курсор для следующей страницы)
-                new_cursor = response.next
-                if not new_cursor or new_cursor == next_cursor:
-                    break
-                next_cursor = new_cursor
+                    for order in response.orders:
+                        all_orders.append(order.model_dump() if hasattr(order, "model_dump") else order)
 
-                if len(response.orders) < limit:
-                    break
+                    new_cursor = response.next
+                    if not new_cursor or new_cursor == next_cursor:
+                        break
+                    next_cursor = new_cursor
+
+                    if len(response.orders) < limit:
+                        break
+
+                logger.info(f"FBS orders window {window_start.date()}..{window_end.date()}: +{len(all_orders)} total")
+                window_start = window_end
 
         saved = await repo.upsert_many(all_orders)
-        logger.info(f"FBS orders synced: {saved} orders saved")
+        logger.info(f"FBS orders synced: {saved} orders saved (all time)")
         return {"synced": saved, "source": "full"}
 
     async def sync_incremental(self, session: AsyncSession) -> dict:

@@ -57,3 +57,21 @@ class WbClaim(Base):
     answer_text: Mapped[str | None] = mapped_column(Text, nullable=True, comment="Текст ответа продавца")
     product_details: Mapped[dict | None] = mapped_column(JSON, nullable=True, comment="Данные товара (JSON)")
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")
+
+
+class WbChat(Base):
+    """Чат с покупателем (buyer-chat-api)."""
+    __tablename__ = "chats"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    chat_id: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True, comment="ID чата")
+    reply_sign: Mapped[str | None] = mapped_column(Text, nullable=True, comment="Подпись чата для ответа")
+    client_name: Mapped[str | None] = mapped_column(String(255), nullable=True, comment="Имя покупателя")
+    nm_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True, index=True, comment="nmID товара")
+    subject_name: Mapped[str | None] = mapped_column(String(255), nullable=True, comment="Предмет товара")
+    last_message_text: Mapped[str | None] = mapped_column(Text, nullable=True, comment="Текст последнего сообщения")
+    last_message_dt: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True, comment="Время последнего сообщения")
+    is_new: Mapped[bool | None] = mapped_column(Boolean, nullable=True, comment="Новый чат (непрочитанный)")
+    good_card: Mapped[dict | None] = mapped_column(JSON, nullable=True, comment="Карточка товара (JSON)")
+    last_message: Mapped[dict | None] = mapped_column(JSON, nullable=True, comment="Последнее сообщение (JSON)")
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")

@@ -296,11 +296,11 @@ def sync_fbs_orders_full(self):
 )
 def sync_dbw_orders_full(self):
     """POST /dbw/sync/orders/full — полная синхронизация заказов DBW."""
-    from src.services.dbw.sync.orders import DbwOrdersSyncService
+    from src.services.dbw.sync.orders import DBWOrdersSyncService
 
     async def _run():
         async with DBManager() as db:
-            result = await DbwOrdersSyncService().sync_orders_full(db.session)
+            result = await DBWOrdersSyncService().sync_orders(db.session)
         logger.info(f"[sync.dbw.orders_full] Synced: {result.get('synced', 0)} orders")
         return result
 
@@ -320,11 +320,11 @@ def sync_dbw_orders_full(self):
 )
 def sync_dbs_orders_full(self):
     """POST /dbs/sync/orders/full — полная синхронизация заказов DBS."""
-    from src.services.dbs.sync.orders import DbsOrdersSyncService
+    from src.services.dbs.sync.orders import DBSOrdersSyncService
 
     async def _run():
         async with DBManager() as db:
-            result = await DbsOrdersSyncService().sync_orders_full(db.session)
+            result = await DBSOrdersSyncService().sync_orders(db.session)
         logger.info(f"[sync.dbs.orders_full] Synced: {result.get('synced', 0)} orders")
         return result
 
@@ -348,7 +348,7 @@ def sync_pickup_orders_full(self):
 
     async def _run():
         async with DBManager() as db:
-            result = await PickupOrdersSyncService().sync_orders_full(db.session)
+            result = await PickupOrdersSyncService().sync_orders(db.session)
         logger.info(f"[sync.pickup.orders_full] Synced: {result.get('synced', 0)} orders")
         return result
 
@@ -476,7 +476,7 @@ def sync_communications_claims_full(self):
 
     async def _run():
         async with DBManager() as db:
-            result = await ClaimsSyncService().sync_claims_full(db.session)
+            result = await ClaimsSyncService().sync_claims(db.session)
         logger.info(f"[sync.communications.claims_full] Synced: {result.get('synced', 0)} claims")
         return result
 
@@ -580,11 +580,11 @@ def sync_tariffs_supply(self):
 )
 def sync_reports_stocks(self):
     """POST /reports/sync/stocks/ — синхронизация остатков на складах."""
-    from src.services.reports.sync.reports import ReportsSyncService
+    from src.services.reports.sync.reports import ReportsSyncService, _default_date_from
 
     async def _run():
         async with DBManager() as db:
-            result = await ReportsSyncService().sync_stocks(db.session)
+            result = await ReportsSyncService().sync_stocks(db.session, date_from=_default_date_from())
         logger.info(f"[sync.reports.stocks] Synced: {result.get('synced', 0)} stock records")
         return result
 
@@ -600,11 +600,11 @@ def sync_reports_stocks(self):
 )
 def sync_reports_orders(self):
     """POST /reports/sync/orders/ — синхронизация отчёта по заказам."""
-    from src.services.reports.sync.reports import ReportsSyncService
+    from src.services.reports.sync.reports import ReportsSyncService, _default_date_from
 
     async def _run():
         async with DBManager() as db:
-            result = await ReportsSyncService().sync_orders(db.session)
+            result = await ReportsSyncService().sync_orders(db.session, date_from=_default_date_from())
         logger.info(f"[sync.reports.orders] Synced: {result.get('synced', 0)} order reports")
         return result
 
@@ -620,11 +620,11 @@ def sync_reports_orders(self):
 )
 def sync_reports_sales(self):
     """POST /reports/sync/sales/ — синхронизация отчёта по продажам."""
-    from src.services.reports.sync.reports import ReportsSyncService
+    from src.services.reports.sync.reports import ReportsSyncService, _default_date_from
 
     async def _run():
         async with DBManager() as db:
-            result = await ReportsSyncService().sync_sales(db.session)
+            result = await ReportsSyncService().sync_sales(db.session, date_from=_default_date_from())
         logger.info(f"[sync.reports.sales] Synced: {result.get('synced', 0)} sale reports")
         return result
 
@@ -989,10 +989,10 @@ def sync_fbs_supplies_full(self):
     retry_kwargs={"max_retries": 3},
 )
 def sync_dbw_orders_incremental(self):
-    from src.services.dbw.sync.orders import DbwOrdersSyncService
+    from src.services.dbw.sync.orders import DBWOrdersSyncService
     async def _run():
         async with DBManager() as db:
-            result = await DbwOrdersSyncService().sync_incremental(db.session)
+            result = await DBWOrdersSyncService().sync_incremental(db.session)
         logger.info("[sync.dbw.orders_incremental] Synced: %d orders", result.get("synced", 0))
         return result
     return run_async(_run())
@@ -1052,10 +1052,10 @@ def sync_pickup_orders_incremental(self):
     retry_kwargs={"max_retries": 3},
 )
 def sync_fbw_supplies_full(self):
-    from src.services.fbw.sync.supplies import FBWSuppliesSyncService
+    from src.services.fbw.sync.supplies import FbwSuppliesSyncService
     async def _run():
         async with DBManager() as db:
-            result = await FBWSuppliesSyncService().sync_supplies_full(db.session)
+            result = await FbwSuppliesSyncService().sync_supplies_full(db.session)
         logger.info("[sync.fbw.supplies_full] Synced: %d supplies", result.get("synced", 0))
         return result
     return run_async(_run())
@@ -1069,10 +1069,10 @@ def sync_fbw_supplies_full(self):
     retry_kwargs={"max_retries": 3},
 )
 def sync_fbw_supplies_incremental(self):
-    from src.services.fbw.sync.supplies import FBWSuppliesSyncService
+    from src.services.fbw.sync.supplies import FbwSuppliesSyncService
     async def _run():
         async with DBManager() as db:
-            result = await FBWSuppliesSyncService().sync_supplies_incremental(db.session)
+            result = await FbwSuppliesSyncService().sync_supplies_incremental(db.session)
         logger.info("[sync.fbw.supplies_incremental] Synced: %d supplies", result.get("synced", 0))
         return result
     return run_async(_run())
@@ -1086,10 +1086,10 @@ def sync_fbw_supplies_incremental(self):
     retry_kwargs={"max_retries": 3},
 )
 def sync_fbw_supply_goods(self):
-    from src.services.fbw.sync.supplies import FBWSuppliesSyncService
+    from src.services.fbw.sync.supplies import FbwSuppliesSyncService
     async def _run():
         async with DBManager() as db:
-            result = await FBWSuppliesSyncService().sync_supply_goods(db.session)
+            result = await FbwSuppliesSyncService().sync_supply_goods(db.session)
         logger.info("[sync.fbw.supply_goods] Synced: %d goods", result.get("synced", 0))
         return result
     return run_async(_run())
@@ -1103,10 +1103,10 @@ def sync_fbw_supply_goods(self):
     retry_kwargs={"max_retries": 3},
 )
 def sync_fbw_warehouses_full(self):
-    from src.services.fbw.sync.warehouses import FBWWarehousesSyncService
+    from src.services.fbw.sync.warehouses import FbwWarehousesSyncService
     async def _run():
         async with DBManager() as db:
-            result = await FBWWarehousesSyncService().sync_warehouses_full(db.session)
+            result = await FbwWarehousesSyncService().sync_warehouses_full(db.session)
         logger.info("[sync.fbw.warehouses_full] Synced: %d warehouses", result.get("synced", 0))
         return result
     return run_async(_run())
@@ -1120,10 +1120,10 @@ def sync_fbw_warehouses_full(self):
     retry_kwargs={"max_retries": 3},
 )
 def sync_fbw_transit_tariffs_full(self):
-    from src.services.fbw.sync.transit_tariffs import FBWTransitTariffsSyncService
+    from src.services.fbw.sync.transit_tariffs import FbwTransitTariffsSyncService
     async def _run():
         async with DBManager() as db:
-            result = await FBWTransitTariffsSyncService().sync_transit_tariffs_full(db.session)
+            result = await FbwTransitTariffsSyncService().sync_transit_tariffs_full(db.session)
         logger.info("[sync.fbw.transit_tariffs_full] Synced: %d tariffs", result.get("synced", 0))
         return result
     return run_async(_run())

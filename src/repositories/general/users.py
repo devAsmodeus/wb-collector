@@ -30,8 +30,8 @@ class UsersRepository:
                 "patronymic": u.patronymic,
                 "goods_return": u.goodsReturn,
                 "is_invitee": u.isInvitee,
-                "invitee_info": u.inviteeInfo,
-                "access": u.access,
+                "invitee_info": u.inviteeInfo.model_dump() if u.inviteeInfo and hasattr(u.inviteeInfo, 'model_dump') else u.inviteeInfo,
+                "access": [a.model_dump() if hasattr(a, 'model_dump') else a for a in u.access] if u.access else None,
                 "fetched_at": datetime.utcnow(),
             }
             for u in users if u.id is not None

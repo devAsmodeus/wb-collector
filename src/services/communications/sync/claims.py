@@ -14,23 +14,28 @@ class ClaimsSyncService(BaseService):
 
     async def sync_claims(self, session: AsyncSession) -> dict:
         """
-        Полная выгрузка всех претензий.
+        Полная выгрузка всех претензий (активных + архивных).
         Использует offset-based пагинацию.
+        WB API /api/v1/claims требует is_archive параметр.
         """
         repo = ClaimsRepository(session)
         all_claims: list[dict] = []
 
         async with ClaimsCollector() as collector:
-            offset = 0
-            limit = 100
-            while True:
-                response = await collector.get_claims(limit=limit, offset=offset, is_archive=False)
-                claims = response.get("data", {}).get("claims", [])
-                if not claims:
-                    break
-                all_claims.extend(claims)
-                offset += limit
+            for is_archive in [False, True]:
+                offset = 0
+                limit = 100
+                while True:
+                    response = await collector.get_claims(limit=limit, offset=offset, is_archive=is_archive)
+                    claims = response.get("claims", [])
+                    if not claims:
+                        break
+                    all_claims.extend(claims)
+                    logger.info(f"Claims: is_archive={is_archive}, offset={offset}, batch={len(claims)}")
+                    if len(claims) < limit:
+                        break
+                    offset += limit
 
         saved = await repo.upsert_many(all_claims)
-        logger.info(f"Claims synced: {saved} records saved")
+        logger.info(f"Claims synced: {saved} records saved (active + archive)")
         return {"synced": saved, "source": "full"}

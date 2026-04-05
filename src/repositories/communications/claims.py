@@ -19,15 +19,25 @@ class ClaimsRepository:
         rows = [
             {
                 "claim_id": c.get("id", ""),
-                "created_date": datetime.fromisoformat(c["createdDate"]) if c.get("createdDate") else None,
-                "state": c.get("status"),
-                "text": c.get("text"),
-                "user_name": c.get("userName"),
-                "answer_text": c.get("answer", {}).get("text") if c.get("answer") else None,
-                "product_details": c.get("productDetails"),
+                "created_date": datetime.fromisoformat(c["dt"]) if c.get("dt") else None,
+                "state": str(c.get("status")) if c.get("status") is not None else None,
+                "text": c.get("user_comment"),
+                "user_name": c.get("imt_name"),
+                "answer_text": c.get("wb_comment"),
+                "product_details": {
+                    "nm_id": c.get("nm_id"),
+                    "price": c.get("price"),
+                    "claim_type": c.get("claim_type"),
+                    "photos": c.get("photos"),
+                    "video_paths": c.get("video_paths"),
+                    "actions": c.get("actions"),
+                    "srid": c.get("srid"),
+                    "order_dt": c.get("order_dt"),
+                    "delivery_dt": c.get("delivery_dt"),
+                },
                 "fetched_at": datetime.utcnow(),
             }
-            for c in claims
+            for c in claims if c.get("id")
         ]
         stmt = insert(WbClaim).values(rows)
         stmt = stmt.on_conflict_do_update(

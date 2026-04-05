@@ -27,17 +27,17 @@ class FbsSuppliesSyncService(BaseService):
         async with SuppliesCollector() as collector:
             all_supplies = []
             limit = 1000
-            next_cursor = 0
+            offset = 0
             while True:
-                response = await collector.get_supplies(limit=limit, next_cursor=next_cursor)
+                response = await collector.get_supplies(limit=limit, offset=offset)
                 supplies = response.supplies if hasattr(response, 'supplies') else []
                 if not supplies:
                     break
                 all_supplies.extend(supplies)
                 new_next = getattr(response, 'next', None)
-                if not new_next or new_next == next_cursor or len(supplies) < limit:
+                if not new_next or new_next == offset or len(supplies) < limit:
                     break
-                next_cursor = new_next
+                offset = new_next
 
         if not all_supplies:
             return {"synced": 0}

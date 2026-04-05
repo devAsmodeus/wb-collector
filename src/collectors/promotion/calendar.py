@@ -17,7 +17,13 @@ class CalendarCollector:
 
     async def get_promotions(self, params: dict | None = None) -> PromotionsResponse:
         data = await self._client.get("/api/v1/calendar/promotions", params=params or {})
-        return PromotionsResponse.model_validate(data if isinstance(data, dict) else {})
+        if isinstance(data, dict):
+            # WB API wraps in {"data": {"promotions": [...]}}
+            inner = data.get("data", data)
+            if isinstance(inner, dict):
+                return PromotionsResponse.model_validate(inner)
+            return PromotionsResponse(promotions=[])
+        return PromotionsResponse(promotions=[])
 
     async def get_promotion_details(self, params: dict | None = None) -> dict:
         return await self._client.get("/api/v1/calendar/promotions/details", params=params or {})

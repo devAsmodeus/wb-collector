@@ -1,9 +1,9 @@
 from src.models.seller import SellerOrm, WbSellerRating, WbSellerSubscription, WbUser
 from src.models.products import WbCard, WbPrice, WbTag, WbWarehouse, WbCategory, WbSubject
-from src.models.orders import FbsOrder, DbwOrder, DbsOrder, PickupOrder
+from src.models.orders import FbsOrder, FbsPass, FbsSupply, DbwOrder, DbsOrder, PickupOrder
 from src.models.reports import WbStock, WbOrderReport, WbSaleReport, WbFinancialReport
 from src.models.promotion import WbCampaign, WbCampaignStat, WbPromotion
-from src.models.communications import WbFeedback, WbQuestion, WbClaim
+from src.models.communications import WbFeedback, WbQuestion, WbClaim, WbChat
 from src.models.references import (
     WbNews,
     TariffCommission, TariffBox, TariffPallet, TariffSupply, WbSyncState,
@@ -14,10 +14,10 @@ from src.models.analytics import AnalyticsFunnelProduct, AnalyticsSearchQuery, A
 __all__ = [
     "SellerOrm", "WbSellerRating", "WbSellerSubscription", "WbUser",
     "WbCard", "WbPrice", "WbTag", "WbWarehouse", "WbCategory", "WbSubject",
-    "FbsOrder", "DbwOrder", "DbsOrder", "PickupOrder",
+    "FbsOrder", "FbsPass", "FbsSupply", "DbwOrder", "DbsOrder", "PickupOrder",
     "WbStock", "WbOrderReport", "WbSaleReport", "WbFinancialReport",
     "WbCampaign", "WbCampaignStat", "WbPromotion",
-    "WbFeedback", "WbQuestion", "WbClaim",
+    "WbFeedback", "WbQuestion", "WbClaim", "WbChat",
     "WbNews",
     "TariffCommission", "TariffBox", "TariffPallet", "TariffSupply",
     "WbSyncState",

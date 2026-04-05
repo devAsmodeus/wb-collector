@@ -16,12 +16,6 @@ from src.database import Base
 
 # Импортируем все модели чтобы Alembic их видел
 import src.models  # noqa: F401
-from src.models.products import WbCard, WbPrice, WbTag, WbWarehouse, WbCategory, WbSubject  # noqa: F401
-from src.models.orders import FbsOrder, DbwOrder, DbsOrder, PickupOrder  # noqa: F401
-from src.models.reports import WbStock, WbOrderReport, WbSaleReport, WbFinancialReport  # noqa: F401
-from src.models.promotion import WbCampaign, WbCampaignStat, WbPromotion  # noqa: F401
-from src.models.communications import WbFeedback, WbQuestion, WbClaim  # noqa: F401
-from src.models.references import WbTariffCommission, WbTariffBox, WbTariffPallet, WbTariffSupply, WbSyncState  # noqa: F401
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.db_url)

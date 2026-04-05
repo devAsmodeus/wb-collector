@@ -9,10 +9,10 @@ class SyncCommissionsController(Controller):
     tags = ["10. Синхронизация"]
 
     @post(
-        "/",
+        "/full",
         summary="Синхронизация комиссий по категориям",
         description=(
-            "Загружает комиссии WB по категориям товаров и сохраняет в `wb_tariffs_commission`.\n\n"
+            "Загружает комиссии WB по категориям товаров и сохраняет в `tariffs_commission`.\n\n"
             "**WB:** `GET common-api.wildberries.ru/api/v1/tariffs/commission`"
         ),
     )
@@ -40,10 +40,10 @@ class SyncBoxController(Controller):
     tags = ["10. Синхронизация"]
 
     @post(
-        "/",
+        "/full",
         summary="Синхронизация тарифов коробами",
         description=(
-            "Загружает тарифы на доставку и хранение коробами и сохраняет в `wb_tariffs_box`.\n\n"
+            "Загружает тарифы на доставку и хранение коробами и сохраняет в `tariffs_box`.\n\n"
             "**WB:** `GET common-api.wildberries.ru/api/v1/tariffs/box`"
         ),
     )
@@ -71,10 +71,10 @@ class SyncPalletController(Controller):
     tags = ["10. Синхронизация"]
 
     @post(
-        "/",
+        "/full",
         summary="Синхронизация тарифов паллетами",
         description=(
-            "Загружает тарифы на доставку и хранение паллетами и сохраняет в `wb_tariffs_pallet`.\n\n"
+            "Загружает тарифы на доставку и хранение паллетами и сохраняет в `tariffs_pallet`.\n\n"
             "**WB:** `GET common-api.wildberries.ru/api/v1/tariffs/pallet`"
         ),
     )
@@ -102,10 +102,10 @@ class SyncSupplyController(Controller):
     tags = ["10. Синхронизация"]
 
     @post(
-        "/",
+        "/full",
         summary="Синхронизация коэффициентов поставок",
         description=(
-            "Загружает коэффициенты складов для поставок и сохраняет в `wb_tariffs_supply`.\n\n"
+            "Загружает коэффициенты складов для поставок и сохраняет в `tariffs_supply`.\n\n"
             "**WB:** `GET common-api.wildberries.ru/api/v1/tariffs/warehouseCoeff`"
         ),
     )

@@ -1,86 +1,91 @@
-# Расписание Celery-задач
+# Расписание Celery Beat
 
-Все задачи запускаются через Celery Beat. Таймзона: `Europe/Minsk`.
+Часовой пояс: **Europe/Minsk (GMT+3)**
 
 ## Запуск
 
 ```bash
-# Worker (обработчик задач)
-celery -A src.tasks.celery_app worker --loglevel=info --concurrency=4
+# Worker
+docker compose exec celery_worker celery -A src.tasks.celery_app worker --loglevel=info
 
 # Beat (планировщик)
-celery -A src.tasks.celery_app beat --loglevel=info
+docker compose exec celery_beat celery -A src.tasks.celery_app beat --loglevel=info
 ```
 
-## Сводка расписания
+---
 
-### Каждые 15 минут — заказы
-| Задача | Cron | Описание |
-|--------|------|----------|
-| sync.fbs.orders_full | */15 * * * * | Заказы FBS |
-| sync.dbw.orders_full | */15 * * * * | Заказы DBW |
-| sync.dbs.orders_full | */15 * * * * | Заказы DBS |
-| sync.pickup.orders_full | */15 * * * * | Заказы Самовывоз |
+## Ночное окно (03:00 – 05:30) — тяжёлые задачи
 
-### Каждые 30 минут — коммуникации
-| Задача | Cron | Описание |
-|--------|------|----------|
-| sync.communications.feedbacks_full | 7,37 * * * * | Отзывы |
-| sync.communications.questions_full | 12,42 * * * * | Вопросы |
-| sync.communications.claims_full | 17,47 * * * * | Жалобы |
+| Время | Задача | Описание |
+|-------|--------|----------|
+| 03:00 | `sync.reports.stocks` | Остатки (отчёт) |
+| 03:15 | `sync.reports.orders` | Заказы (отчёт) |
+| 03:30 | `sync.reports.sales` | Продажи (отчёт) |
+| 03:45 | `sync.finances.full` | Финансовый отчёт |
+| 04:00 | `sync.tariffs.commissions` | Тарифы — комиссии |
+| 04:00 | `sync.fbw.supplies_full` | Поставки FBW |
+| 04:03 | `sync.tariffs.box` | Тарифы — короб |
+| 04:06 | `sync.tariffs.pallet` | Тарифы — паллет |
+| 04:09 | `sync.tariffs.supply` | Тарифы — поставка |
+| 04:10 | `sync.fbw.supply_goods` | Товары поставок FBW |
+| 04:20 | `sync.fbw.warehouses_full` | Склады FBW |
+| 04:25 | `sync.fbw.transit_tariffs_full` | Тарифы транзита FBW |
+| 04:30 | `sync.promotion.calendar_full` | Календарь акций |
+| 04:35 | `sync.fbs.supplies_full` | Поставки FBS |
+| 04:40 | `sync.fbs.passes_full` | Пропуска FBS |
+| 05:00 | `sync.general.seller_full` | Данные продавца |
+| 05:00 | `sync.analytics.funnel_full` | Воронка продаж |
+| 05:05 | `sync.general.news_full` | Новости (Celery, пагинация) |
+| 05:10 | `sync.general.news_incremental` | Инкрементальные новости |
+| 05:10 | `sync.analytics.stocks_full` | Остатки по группам |
+| 05:15 | `sync.general.users_full` | Пользователи |
+| 05:20 | `sync.analytics.search_full` | Поисковые запросы |
 
-### Каждый час — товары
-| Задача | Cron | Описание |
-|--------|------|----------|
-| sync.products.cards_full | 5 * * * * | Карточки товаров |
-| sync.products.prices_full | 10 * * * * | Цены и скидки |
+---
 
-### Каждые 3 часа — маркетинг
-| Задача | Cron | Описание |
-|--------|------|----------|
-| sync.promotion.campaigns_full | 20 */3 * * * | Рекламные кампании |
-| sync.promotion.stats_full | 25 */3 * * * | Статистика кампаний |
+## Еженедельные (воскресенье)
 
-### Раз в сутки — отчёты (03:00–03:45)
-| Задача | Cron | Описание |
-|--------|------|----------|
-| sync.reports.stocks | 0 3 * * * | Остатки на складах |
-| sync.reports.orders | 15 3 * * * | Отчёт по заказам |
-| sync.reports.sales | 30 3 * * * | Отчёт по продажам |
-| sync.finances.full | 45 3 * * * | Финансовый отчёт |
+| Время | Задача | Описание |
+|-------|--------|----------|
+| 04:15 | `sync.products.directories_categories` | Категории |
+| 04:17 | `sync.products.directories_subjects` | Предметы |
+| 04:20 | `sync.products.tags_full` | Теги |
 
-### Раз в сутки — тарифы (04:00–04:09)
-| Задача | Cron | Описание |
-|--------|------|----------|
-| sync.tariffs.commissions | 0 4 * * * | Комиссии по категориям |
-| sync.tariffs.box | 3 4 * * * | Тарифы коробов |
-| sync.tariffs.pallet | 6 4 * * * | Тарифы паллет |
-| sync.tariffs.supply | 9 4 * * * | Тарифы поставок |
+---
 
-### Раз в сутки — справочники (04:15–04:30)
-| Задача | Cron | Описание |
-|--------|------|----------|
-| sync.products.directories_categories | 15 4 * * * | Категории товаров |
-| sync.products.directories_subjects | 17 4 * * * | Предметы товаров |
-| sync.products.tags_full | 20 4 * * * | Теги товаров |
-| sync.products.warehouses_full | 25 4 * * * | Склады продавца |
-| sync.promotion.calendar_full | 30 4 * * * | Промоакции WB |
+## Частые задачи
 
-### Раз в сутки — общее (05:00–05:10)
-| Задача | Cron | Описание |
-|--------|------|----------|
-| sync.general.seller_full | 0 5 * * * | Информация о продавце |
-| sync.general.news_full | 5 5 * * * | Новости (полная) |
-| sync.general.news_incremental | 10 5 * * * | Новости (инкрементальная) |
+| Интервал | Задача | Описание |
+|----------|--------|----------|
+| каждые 5 мин (:05) | `sync.products.cards_incremental` | Новые карточки |
+| каждые 15 мин | `sync.fbs.orders_full` | Заказы FBS |
+| каждые 15 мин | `sync.dbw.orders_full` | Заказы DBW |
+| каждые 15 мин | `sync.dbs.orders_full` | Заказы DBS |
+| каждые 15 мин | `sync.pickup.orders_full` | Заказы самовывоза |
+| каждые 30 мин | `sync.products.prices_incremental` | Цены |
+| каждые 30 мин | `sync.fbw.supplies_incremental` | Новые поставки FBW |
+| каждые 30 мин | `sync.analytics.funnel_incremental` | Воронка (инкрементальная) |
+| каждые 30 мин | `sync.analytics.stocks_incremental` | Остатки (инкрементальные) |
+| каждые 30 мин | `sync.analytics.search_incremental` | Поиск (инкрементальный) |
+| :07 и :37 | `sync.communications.feedbacks_full` | Отзывы |
+| :12 и :42 | `sync.communications.questions_full` | Вопросы |
+| :17 и :47 | `sync.communications.claims_full` | Претензии |
+| :20 каждые 3 ч | `sync.promotion.campaigns_full` | Кампании |
+| :25 каждые 3 ч | `sync.promotion.stats_full` | Статистика кампаний |
 
-## Retry-политика
+---
 
-Все задачи имеют:
-- **max_retries:** 3
-- **default_retry_delay:** 60 секунд (фиксированный)
-- **autoretry_for:** Exception (любая ошибка)
+## Системные
 
-Дополнительно в collectors/base.py:
-- 3 retry при сетевых ошибках (2с x номер попытки)
-- 60с пауза при 429 Too Many Requests
-- Rate limiting по интервалам из WB API документации
+| Время | Задача | Описание |
+|-------|--------|----------|
+| 08:00 | `sync.docs.wb_api` | Обновление YAML-документации WB API |
+
+---
+
+## Примечания
+
+- **Тяжёлые задачи** (`reports`, `finances`, `news full`) возвращают `task_id` — выполняются асинхронно
+- **Rate limit WB**: при 429 worker автоматически ждёт 60 секунд и повторяет
+- **Retry**: 3 попытки с интервалом 60 секунд для каждой задачи
+- **DBW/DBS/Pickup**: задачи запускаются, но WB возвращает 400 (схемы доставки не подключены к аккаунту) — это ожидаемо

@@ -158,6 +158,7 @@ class BarcodesResponse(BaseModel):
 class CardErrorItem(BaseModel):
     """Карточка с ошибками при создании / редактировании."""
     batchUUID: str | None = Field(None, description="UUID батча загрузки")
+    updatedAt: str | None = Field(None, description="Дата и время создания или изменения батча (добавлено WB 2026-04)")
     vendorCodes: list[str] = Field(default=[], description="Артикулы продавца с ошибками")
     errors: dict | None = Field(None, description="Список ошибок по полям")
     subjects: dict | None = Field(None, description="Ошибки по предметам")

@@ -132,7 +132,4 @@ class WbFinancialReport(Base):
     gi_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True, comment="ID поставки")
     rid: Mapped[int | None] = mapped_column(BigInteger, nullable=True, comment="ID заказа")
     kiz: Mapped[str | None] = mapped_column(String(100), nullable=True, comment="КИЗ маркировки")
-    article_substitution: Mapped[int | None] = mapped_column(BigInteger, nullable=True, comment="ID подменного артикула (WB 2026-04)")
-    sale_price_affiliated_discount_prc: Mapped[float | None] = mapped_column(Numeric(8, 2), nullable=True, comment="Скидка по подменному артикулу, % (WB 2026-04)")
-    sale_price_wholesale_discount_prc: Mapped[float | None] = mapped_column(Numeric(8, 2), nullable=True, comment="Оптовая скидка для бизнеса, % (WB 2026-04)")
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, comment="Дата синхронизации")

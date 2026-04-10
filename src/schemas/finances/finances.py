@@ -72,9 +72,6 @@ class FinancialReportItem(BaseModel):
     deduction: float | None = Field(None, description="Прочие удержания, руб.")
     acceptance: float | None = Field(None, description="Стоимость платной приёмки, руб.")
     srid: str | None = Field(None, description="Уникальный ID заказа")
-    article_substitution: int | None = Field(None, description="ID подменного артикула (добавлено WB 2026-04)")
-    sale_price_affiliated_discount_prc: float | None = Field(None, description="Скидка по подменному артикулу, % (добавлено WB 2026-04)")
-    sale_price_wholesale_discount_prc: float | None = Field(None, description="Оптовая скидка для бизнеса, % (добавлено WB 2026-04)")
 
 
 class DocumentCategory(BaseModel):

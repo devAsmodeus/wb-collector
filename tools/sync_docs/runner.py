@@ -39,7 +39,7 @@ def _git_commit(changed_names: list[str], summary: str) -> str:
     return " | ".join(log)
 
 
-def run() -> dict:
+def run(dry_run: bool = False) -> dict:
     """
     Полный цикл синхронизации:
     1. Скачиваем YAML
@@ -47,6 +47,7 @@ def run() -> dict:
     3. Отправляем уведомление
     4. Сохраняем манифест ТОЛЬКО ПОСЛЕ успешной отправки
 
+    dry_run=True — только проверка без отправки и сохранения манифеста.
     Важно: манифест сохраняется в конце, чтобы при падении задачи
     следующий запуск снова нашёл те же изменения (idempotent retry).
     """
@@ -80,18 +81,19 @@ def run() -> dict:
 
     report = format_report(changed, len(DOCS), errors)
 
-    # Уведомление в Telegram
+    # Уведомление в Telegram (пропускаем при dry_run)
     tg_ok = False
-    try:
-        from tools.telegram import send as tg_send
-        tg_ok = tg_send(report)
-    except Exception:
-        pass
+    if not dry_run:
+        try:
+            from tools.telegram import send as tg_send
+            tg_ok = tg_send(report)
+        except Exception:
+            pass
 
     # Сохраняем YAML и манифест только после отправки уведомления.
     # Если уведомление не ушло — манифест не обновляем, следующий запуск
     # снова обнаружит те же изменения.
-    if tg_ok or not changed:
+    if not dry_run and (tg_ok or not changed):
         for name, text in new_texts.items():
             save(name, text)
         save_manifest(new_entries)

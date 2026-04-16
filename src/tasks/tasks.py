@@ -794,9 +794,6 @@ def sync_feedbacks_historical(self):
 @celery_app.task(
     name="sync.docs.wb_api",
     bind=True,
-    autoretry_for=(Exception,),
-    default_retry_delay=60,
-    retry_kwargs={"max_retries": 3},
 )
 def sync_wb_api_docs(self):
     """Скачивает YAML-спеки WB API, сравнивает с сохранёнными версиями, шлёт уведомление при изменениях."""

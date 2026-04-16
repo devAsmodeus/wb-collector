@@ -5,7 +5,7 @@ def format_diff(name: str, label: str, d: dict) -> str:
     lines = [f"📄 {label} ({name})"]
 
     if d["version_changed"]:
-        lines.append(f"  • Версия: {d['old_version']} → {d['new_version']}")
+        lines.append(f"   Версия: {d['old_version']} → {d['new_version']}")
 
     if d["endpoints_added"]:
         lines.append(f"  ✅ Новые эндпоинты ({len(d['endpoints_added'])}):")
@@ -43,7 +43,7 @@ def format_diff(name: str, label: str, d: dict) -> str:
         lines.append(f"  📦 Новые схемы: {names}{extra}")
 
     if d["schemas_removed"]:
-        lines.append(f"  🗑  Удалённые схемы: {', '.join(d['schemas_removed'][:5])}")
+        lines.append(f"  🗑️  Удалены схемы: {', '.join(d['schemas_removed'][:5])}")
 
     if d["schemas_changed"]:
         lines.append(f"  🔧 Изменены схемы ({len(d['schemas_changed'])}):")
@@ -70,5 +70,6 @@ def format_report(changed: list[tuple[str, str, dict]], total: int, errors: list
     parts = [f"🔔 WB API docs [{now}] — обнаружены изменения!"]
     for name, label, d in changed:
         parts.append(format_diff(name, label, d))
-    parts.append(err_str)
+    if err_str:
+        parts.append(err_str)
     return "\n\n".join(p for p in parts if p)

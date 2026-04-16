@@ -39,22 +39,26 @@ def _git_commit(changed_names: list[str], summary: str) -> str:
     return " | ".join(log)
 
 
-def run() -> dict:
+def run(dry_run: bool = False) -> dict:
     """
     Полный цикл синхронизации:
     1. Скачиваем YAML
     2. Сравниваем с манифестом (хэш + семантика)
-    3. Коммитим изменения
-    Возвращает: {"status", "report", "changed_count", "errors"}
+    3. Отправляем уведомление
+    4. Сохраняем манифест ТОЛЬКО ПОСЛЕ успешной отправки
+
+    dry_run=True — только проверка без отправки и сохранения манифеста.
+    Важно: манифест сохраняется в конце, чтобы при падении задачи
+    следующий запуск снова нашёл те же изменения (idempotent retry).
     """
-    old_entries    = load_manifest()
-    new_entries    = []
-    changed        = []   # [(name, label, diff_dict)]
-    errors         = []
+    old_entries = load_manifest()
+    new_entries = []
+    changed     = []   # [(name, label, diff_dict)]
+    errors      = []
+    new_texts   = {}   # {name: text} — храним для save() после уведомления
 
     for name, label in DOCS:
         filename = f"{name}.yaml"
-        filepath = DOCS_DIR / filename
 
         new_text = fetch(name)
         if new_text is None:
@@ -68,34 +72,44 @@ def run() -> dict:
         old_sem   = old_entry.get("semantics", {}) if isinstance(old_entry, dict) else {}
 
         new_entries.append(build_entry(filename, new_text, new_sem))
+        new_texts[name] = new_text
 
         if old_sem:
             d = diff(old_sem, new_sem)
             if has_changes(d):
                 changed.append((name, label, d))
 
-        save(name, new_text)
-
-    save_manifest(new_entries)
-
     report = format_report(changed, len(DOCS), errors)
 
-    if changed:
-        changed_names = [name for name, _, _ in changed]
-        summary       = report[:500]
-        _git_commit(changed_names, summary)
+    # Уведомление в Telegram (пропускаем при dry_run)
+    tg_ok = False
+    if not dry_run:
+        try:
+            from tools.telegram import send as tg_send
+            tg_ok = tg_send(report)
+        except Exception:
+            pass
 
-    # Уведомление в Telegram всегда (изменения или нет)
-    try:
-        from tools.telegram import send as tg_send
-        tg_send(report)
-    except Exception:
-        pass
+    # Сохраняем YAML и манифест только после отправки уведомления.
+    # Если уведомление не ушло — манифест не обновляем, следующий запуск
+    # снова обнаружит те же изменения.
+    if not dry_run and (tg_ok or not changed):
+        for name, text in new_texts.items():
+            save(name, text)
+        save_manifest(new_entries)
+
+        if changed:
+            changed_names = [name for name, _, _ in changed]
+            try:
+                _git_commit(changed_names, report[:500])
+            except Exception:
+                pass  # git недоступен в контейнере — не критично
 
     return {
         "status":        "changed" if changed else "ok",
         "report":        report,
         "changed_count": len(changed),
         "errors":        errors,
+        "tg_sent":       tg_ok,
         "changed_files": [name for name, _, _ in changed],
     }

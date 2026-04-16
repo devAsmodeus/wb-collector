@@ -1,10 +1,10 @@
 {
-  "fetched_at": "2026-04-02T21:56:56Z",
+  "fetched_at": "2026-04-16T06:05:22Z",
   "files": [
     {
       "file": "01-general.yaml",
-      "sha256": "65cecafa5a12ba045f315c53f4a29464144901e2e6ce3c73d31954167227ef99",
-      "size": 58711,
+      "sha256": "6751d8afd21701f06b3d363d88e44788673a0bd5c16832e187e09f45946589b4",
+      "size": 58717,
       "semantics": {
         "version": "general",
         "endpoints": {
@@ -118,8 +118,8 @@
     },
     {
       "file": "02-products.yaml",
-      "sha256": "cfcbf5704bd84a4240373b178cc8245b8e057ee1a9b72429ed1397c0b70a9c21",
-      "size": 336314,
+      "sha256": "9b81858e6c5afb0cd1153198363d33fd140932a8308252f216fdae9db9ff4945",
+      "size": 344764,
       "semantics": {
         "version": "products",
         "endpoints": {
@@ -477,6 +477,7 @@
             "brands",
             "errors",
             "subjects",
+            "updatedAt",
             "vendorCodes"
           ],
           "viewer_contract.PublicErrorsCursorOutput": [
@@ -637,8 +638,8 @@
     },
     {
       "file": "03-orders-fbs.yaml",
-      "sha256": "4d75bac51560e48fd2ad271c0db6e47849d444ef34307e972a7a99ed9dd8a0b7",
-      "size": 173119,
+      "sha256": "40049f3fea7069af00518d106c6140a9be8e6470ee958105bc80f452f46c4308",
+      "size": 174201,
       "semantics": {
         "version": "order",
         "endpoints": {
@@ -989,8 +990,8 @@
     },
     {
       "file": "04-orders-dbw.yaml",
-      "sha256": "df51e26acf78b804c5565b5858535f7405e9c3e0bc15038515dd66fdffa1786f",
-      "size": 86019,
+      "sha256": "586919aa72a3072682804c84e4703647d6406a43b192a978abbe7e7ee129d6e5",
+      "size": 86119,
       "semantics": {
         "version": "ordersdbw",
         "endpoints": {
@@ -1203,8 +1204,8 @@
     },
     {
       "file": "05-orders-dbs.yaml",
-      "sha256": "56bf4f2ff4c8664cf7f74efe834c938f2573fc0d97dfbd4b18fd94c6a2355162",
-      "size": 134201,
+      "sha256": "39278e44b25a5da75a1cc5a22929a2481743d808ed32f5646870ebfd2a06ffaf",
+      "size": 134179,
       "semantics": {
         "version": "order",
         "endpoints": {
@@ -1632,8 +1633,8 @@
     },
     {
       "file": "06-in-store-pickup.yaml",
-      "sha256": "fdc4912aea01a045b3fb96e4df1c7335abd93cbf9d8158489a5a6496326fece4",
-      "size": 97224,
+      "sha256": "8a72a7aa342e13c22f5418c2e59bb6dab96a31a858af5dd8eab1670be24c3bef",
+      "size": 97202,
       "semantics": {
         "version": "instorepickup",
         "endpoints": {
@@ -2033,8 +2034,8 @@
     },
     {
       "file": "07-orders-fbw.yaml",
-      "sha256": "63c139db626e3c7723109f461d8672e9c288eafc6e62cd51863bb929b9068e4a",
-      "size": 47696,
+      "sha256": "4ce7824fe4d063c4b4170988e068702e9e20635265de7acf8f2f3fb3d872dbbf",
+      "size": 47699,
       "semantics": {
         "version": "ordersfbw",
         "endpoints": {
@@ -2198,8 +2199,8 @@
     },
     {
       "file": "08-promotion.yaml",
-      "sha256": "e4d19fa5564e014b802a99e1115376c93c639ad498c4fdf6ac796e51464f249e",
-      "size": 228585,
+      "sha256": "6dd4d2a8323c12d84184d9b6ba3e0290de528c247d5ccb195f8d93b879059dd8",
+      "size": 228591,
       "semantics": {
         "version": "promotion",
         "endpoints": {
@@ -2788,8 +2789,8 @@
     },
     {
       "file": "09-communications.yaml",
-      "sha256": "663fa65b6e8a28f1f727308029c173a1d84b054aa7b9a9d2c8b8a4bf7d626ea9",
-      "size": 175692,
+      "sha256": "2875fda7a05a016851fb81184508a9b7d50291a1757ae532ed1af60495d51c81",
+      "size": 176894,
       "semantics": {
         "version": "communication",
         "endpoints": {
@@ -3104,8 +3105,8 @@
     },
     {
       "file": "10-tariffs.yaml",
-      "sha256": "c2502b8f1958edd53351a7f9b7925c951276ae3e8478bb3ef0aa6771c8e904d1",
-      "size": 42325,
+      "sha256": "e2c8b0b50390abbbbabdefdbb4cfd3321e1c006aa64af8c7920cb83e4844afa5",
+      "size": 42328,
       "semantics": {
         "version": "tariffs",
         "endpoints": {
@@ -3260,8 +3261,8 @@
     },
     {
       "file": "11-analytics.yaml",
-      "sha256": "644cf0788b8796b02418d8a8c6980f15b2067bf20bc501090cf8aef692029a14",
-      "size": 244135,
+      "sha256": "08bdf307fe1d72dbb4fda41e17964192fa0662d718724c690eda80e60eab7877",
+      "size": 244138,
       "semantics": {
         "version": "analytics",
         "endpoints": {
@@ -3999,8 +4000,8 @@
     },
     {
       "file": "12-reports.yaml",
-      "sha256": "868c50c3c1716ca8eac0c1e5e1d81348b33ea210a0cac45a5e2c736a8f489671",
-      "size": 152418,
+      "sha256": "568d0f4d23ce9cb09fae3c7a92efee2127aab9eb8860cc53a6296bb3ec574b89",
+      "size": 152430,
       "semantics": {
         "version": "reports",
         "endpoints": {
@@ -4342,16 +4343,34 @@
     },
     {
       "file": "13-finances.yaml",
-      "sha256": "cb6307b8247099e559550efcbb2a89dd93b4e7851199421a8fe38f96b7a0da4f",
-      "size": 46701,
+      "sha256": "cab41e034d25ce2ae2d34c71775b1173877c27a4eeb245fba3745429c23c7f1a",
+      "size": 97263,
       "semantics": {
         "version": "finances",
         "endpoints": {
           "/api/v1/account/balance": [
             "get"
           ],
+          "/api/finance/v1/sales-reports/list": [
+            "post"
+          ],
+          "/api/finance/v1/sales-reports/detailed/{reportId}": [
+            "post"
+          ],
+          "/api/finance/v1/sales-reports/detailed": [
+            "post"
+          ],
           "/api/v5/supplier/reportDetailByPeriod": [
             "get"
+          ],
+          "/api/finance/v1/acquiring/list": [
+            "post"
+          ],
+          "/api/finance/v1/acquiring/detailed/{reportId}": [
+            "post"
+          ],
+          "/api/finance/v1/acquiring/detailed": [
+            "post"
           ],
           "/api/v1/documents/categories": [
             "get"
@@ -4366,7 +4385,9 @@
             "post"
           ]
         },
-        "deprecated": {},
+        "deprecated": {
+          "/api/v5/supplier/reportDetailByPeriod": true
+        },
         "schemas": {
           "requestDownload": [
             "params"
@@ -4391,12 +4412,191 @@
             "extension",
             "fileName"
           ],
+          "SalesReportListReq": [
+            "dateFrom",
+            "dateTo",
+            "limit",
+            "offset",
+            "period"
+          ],
+          "SalesReportListRes": [
+            "additionalPaymentSum",
+            "avgSalePercent",
+            "bankPaymentSum",
+            "cashbackAmountSum",
+            "cashbackCommissionChangeSum",
+            "cashbackDiscountSum",
+            "createDate",
+            "currency",
+            "dateFrom",
+            "dateTo",
+            "deductionSum",
+            "deliveryServiceSum",
+            "forPaySum",
+            "paidAcceptanceSum",
+            "paidStorageSum",
+            "paymentSchedule",
+            "penaltySum",
+            "reportId",
+            "reportType",
+            "retailAmountSum",
+            "sellerFinanceName"
+          ],
+          "FinancialReportsDetailedReportIdReq": [
+            "fields",
+            "limit",
+            "rrdId"
+          ],
+          "SalesReportsDetailedReq": [
+            "dateFrom",
+            "dateTo",
+            "fields",
+            "limit",
+            "period",
+            "rrdId"
+          ],
+          "SalesReportsDetailedRes": [
+            "acquiringBank",
+            "acquiringFee",
+            "acquiringPercent",
+            "additionalPayment",
+            "agencyVat",
+            "articleSubstitution",
+            "bonusTypeName",
+            "brandName",
+            "cashbackAmount",
+            "cashbackCommissionChange",
+            "cashbackDiscount",
+            "commissionPercent",
+            "country",
+            "createDate",
+            "currency",
+            "dateFrom",
+            "dateTo",
+            "declarationNumber",
+            "deduction",
+            "deliveryAmount",
+            "deliveryMethod",
+            "deliveryService",
+            "dlvPrc",
+            "docTypeName",
+            "fixTariffDateFrom",
+            "fixTariffDateTo",
+            "forPay",
+            "giBoxTypeName",
+            "giId",
+            "installmentCofinancingAmount",
+            "isB2b",
+            "isKgvpV2",
+            "kiz",
+            "kvw",
+            "kvwBase",
+            "loyaltyDiscount",
+            "loyaltyId",
+            "nmId",
+            "officeName",
+            "orderDt",
+            "orderId",
+            "orderUid",
+            "paidAcceptance",
+            "paidStorage",
+            "paymentProcessing",
+            "paymentSchedule",
+            "penalty",
+            "ppvzOfficeId",
+            "ppvzOfficeName",
+            "ppvzReward",
+            "ppvzSalesCommission",
+            "ppvzSupplierInn",
+            "ppvzSupplierName",
+            "productDiscountForReport",
+            "quantity",
+            "rebillLogisticCost",
+            "rebillLogisticOrg",
+            "reportId",
+            "reportType",
+            "retailAmount",
+            "retailPrice",
+            "retailPriceWithDisc",
+            "returnAmount",
+            "rrDate",
+            "rrdId",
+            "saleDt",
+            "salePercent",
+            "salePriceAffiliatedDiscountPrc",
+            "salePricePromocodeDiscountPrc",
+            "salePriceWholesaleDiscountPrc",
+            "sellerOperName",
+            "sellerPromo",
+            "sellerPromoDiscount",
+            "sellerPromoId",
+            "shkId",
+            "sku",
+            "spp",
+            "srid",
+            "srvDbs",
+            "stickerId",
+            "subjectName",
+            "supRatingUp",
+            "techSize",
+            "title",
+            "trbxId",
+            "uuidPromocode",
+            "vendorCode",
+            "vw",
+            "vwNds",
+            "wibesDiscountPercent"
+          ],
+          "AcquiringReportListReq": [
+            "dateFrom",
+            "dateTo",
+            "limit",
+            "offset"
+          ],
+          "AcquiringReportListRes": [
+            "acquiringFeeSum",
+            "acquiringFeeVatSum",
+            "createDate",
+            "currency",
+            "dateFrom",
+            "dateTo",
+            "reportId",
+            "sellerFinanceName"
+          ],
+          "AcquiringReportsDetailedReq": [
+            "dateFrom",
+            "dateTo",
+            "fields",
+            "limit",
+            "rrdId"
+          ],
+          "AcquiringReportsDetailedRes": [
+            "acqDate",
+            "acquiringBank",
+            "acquiringFee",
+            "acquiringFeeVat",
+            "currency",
+            "docTypeName",
+            "invoiceDate",
+            "invoiceNumber",
+            "nmId",
+            "reportId",
+            "retailAmount",
+            "rrdId",
+            "saleDate",
+            "shkId",
+            "srid",
+            "taxRegistrationReasonCode",
+            "tin"
+          ],
           "DetailReportItem": [
             "acceptance",
             "acquiring_bank",
             "acquiring_fee",
             "acquiring_percent",
             "additional_payment",
+            "agency_vat",
+            "article_substitution",
             "assembly_id",
             "barcode",
             "bonus_type_name",
@@ -4461,7 +4661,9 @@
             "sa_name",
             "sale_dt",
             "sale_percent",
+            "sale_price_affiliated_discount_prc",
             "sale_price_promocode_discount_prc",
+            "sale_price_wholesale_discount_prc",
             "seller_promo_discount",
             "seller_promo_id",
             "shk_id",
@@ -4485,8 +4687,26 @@
           "/api/v1/account/balance": [
             "https://finance-api.wildberries.ru"
           ],
+          "/api/finance/v1/sales-reports/list": [
+            "https://finance-api.wildberries.ru"
+          ],
+          "/api/finance/v1/sales-reports/detailed/{reportId}": [
+            "https://finance-api.wildberries.ru"
+          ],
+          "/api/finance/v1/sales-reports/detailed": [
+            "https://finance-api.wildberries.ru"
+          ],
           "/api/v5/supplier/reportDetailByPeriod": [
             "https://statistics-api.wildberries.ru"
+          ],
+          "/api/finance/v1/acquiring/list": [
+            "https://finance-api.wildberries.ru"
+          ],
+          "/api/finance/v1/acquiring/detailed/{reportId}": [
+            "https://finance-api.wildberries.ru"
+          ],
+          "/api/finance/v1/acquiring/detailed": [
+            "https://finance-api.wildberries.ru"
           ],
           "/api/v1/documents/categories": [
             "https://documents-api.wildberries.ru"
